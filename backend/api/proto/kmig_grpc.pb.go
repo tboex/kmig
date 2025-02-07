@@ -33,7 +33,7 @@ const (
 // Service Definition
 type KmigClient interface {
 	// Singleplayer
-	StartSinglePlayerGame(ctx context.Context, in *SinglePlayerRequest, opts ...grpc.CallOption) (*SinglePlayerResponse, error)
+	StartSinglePlayerGame(ctx context.Context, in *SinglePlayerRequest, opts ...grpc.CallOption) (*WordSubmissionResponse, error)
 	// Multiplayer
 	StartMultiplayerGame(ctx context.Context, in *MultiplayerRequest, opts ...grpc.CallOption) (*MultiplayerResponse, error)
 	JoinMultiplayerGame(ctx context.Context, in *JoinRequest, opts ...grpc.CallOption) (*JoinResponse, error)
@@ -50,9 +50,9 @@ func NewKmigClient(cc grpc.ClientConnInterface) KmigClient {
 	return &kmigClient{cc}
 }
 
-func (c *kmigClient) StartSinglePlayerGame(ctx context.Context, in *SinglePlayerRequest, opts ...grpc.CallOption) (*SinglePlayerResponse, error) {
+func (c *kmigClient) StartSinglePlayerGame(ctx context.Context, in *SinglePlayerRequest, opts ...grpc.CallOption) (*WordSubmissionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SinglePlayerResponse)
+	out := new(WordSubmissionResponse)
 	err := c.cc.Invoke(ctx, Kmig_StartSinglePlayerGame_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -107,7 +107,7 @@ func (c *kmigClient) GetGameState(ctx context.Context, in *GameStateRequest, opt
 // Service Definition
 type KmigServer interface {
 	// Singleplayer
-	StartSinglePlayerGame(context.Context, *SinglePlayerRequest) (*SinglePlayerResponse, error)
+	StartSinglePlayerGame(context.Context, *SinglePlayerRequest) (*WordSubmissionResponse, error)
 	// Multiplayer
 	StartMultiplayerGame(context.Context, *MultiplayerRequest) (*MultiplayerResponse, error)
 	JoinMultiplayerGame(context.Context, *JoinRequest) (*JoinResponse, error)
@@ -124,7 +124,7 @@ type KmigServer interface {
 // pointer dereference when methods are called.
 type UnimplementedKmigServer struct{}
 
-func (UnimplementedKmigServer) StartSinglePlayerGame(context.Context, *SinglePlayerRequest) (*SinglePlayerResponse, error) {
+func (UnimplementedKmigServer) StartSinglePlayerGame(context.Context, *SinglePlayerRequest) (*WordSubmissionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StartSinglePlayerGame not implemented")
 }
 func (UnimplementedKmigServer) StartMultiplayerGame(context.Context, *MultiplayerRequest) (*MultiplayerResponse, error) {

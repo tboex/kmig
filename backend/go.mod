@@ -4,7 +4,6 @@ go 1.23.5
 
 require (
 	github.com/go-redis/redis v6.15.9+incompatible
-	github.com/google/uuid v1.6.0
 	github.com/jmoiron/sqlx v1.4.0
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.70.0
@@ -14,8 +13,8 @@ require (
 require (
 	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/onsi/gomega v1.36.2 // indirect
-	github.com/sqids/sqids-go v0.4.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
+	golang.org/x/exp v0.0.0-20250207012021-f9890c6ad9f3 // indirect
 	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect

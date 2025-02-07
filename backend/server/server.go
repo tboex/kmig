@@ -1,44 +1,106 @@
-package main
+package server
 
 import (
-	"net"
+	"context"
 	"sync"
 
 	"github.com/go-redis/redis"
 	"github.com/jmoiron/sqlx"
-	proto "github.com/tboex/kmig/api/proto"
+	"github.com/tboex/kmig/api/proto"
 	"github.com/tboex/kmig/util"
 	"go.uber.org/zap"
-
-	"google.golang.org/grpc"
 )
 
-type kmigServer struct {
+type KmigServer struct {
 	proto.UnimplementedKmigServer
-	mu     sync.Mutex
-	db     *sqlx.DB
-	cache  *redis.Client
-	logger *zap.SugaredLogger
+	Dictionary map[string]util.Word
+	Mu         sync.Mutex
+	Db         *sqlx.DB
+	Cache      *redis.Client
+	Logger     *zap.SugaredLogger
 }
 
-func main() {
-	// Create Logger
-	logger := util.CreateLogger()
-	defer logger.Sync() // flushes buffer, if any
-	sugar := logger.Sugar()
+func (s *KmigServer) StartSinglePlayerGame(ctx context.Context, req *proto.SinglePlayerRequest) (*proto.WordSubmissionResponse, error) {
+	var userId = req.UserId
+	var gameId = util.GenerateGameID()
 
-	listener, err := net.Listen("tcp", ":50051")
-	if err != nil {
-		sugar.Errorf("Failed to listen: %v", err)
+	word := util.GetRandomWord(s.Dictionary)
+
+	StoreGuess(s, gameId, word.Korean)
+
+	return &proto.WordSubmissionResponse{
+		UserId:         userId,
+		GameId:         gameId,
+		Korean:         word.Korean,
+		Pronounciation: word.Pronounciation,
+		Hanja:          word.Hanja,
+		PartOfSpeech:   word.PartofSpeech,
+		Description:    word.Descripton,
+		English:        word.English,
+	}, nil
+}
+
+func (s *KmigServer) StartMultiplayerGame(ctx context.Context, req *proto.MultiplayerRequest) (*proto.MultiplayerResponse, error) {
+	var gameId = util.GenerateGameID()
+	var InviteUrl = util.GetGameURL(gameId)
+
+	return &proto.MultiplayerResponse{
+		UserId:    req.UserId,
+		GameId:    gameId,
+		InviteUrl: InviteUrl,
+	}, nil
+}
+
+func (s *KmigServer) SubmitWord(ctx context.Context, req *proto.WordSubmission) (*proto.WordSubmissionResponse, error) {
+	// Takes a submitted word, checks if it is valid, and returns a response.
+	var word = req.Word
+
+	s.Mu.Lock()
+	defer s.Mu.Unlock()
+
+	validGuess, msg := VerifyGuess(s, req.GameId, word)
+
+	if !validGuess {
+		return &proto.WordSubmissionResponse{
+			Accepted: false,
+			Victory:  false,
+			GameId:   req.GameId,
+			Error:    msg,
+		}, nil
 	}
 
-	grpcServer := grpc.NewServer()
-	// proto.RegisterKmigServer(grpcServer, &kmigServer{db: db, cache: cache, logger: sugar})
-	proto.RegisterKmigServer(grpcServer, &kmigServer{logger: sugar})
+	if _, exists := s.Dictionary[word]; exists {
+		s.Logger.Info("Word exists in dictionary")
+		matchedWord := util.FindValidMatch(word, s.Dictionary)
+		if matchedWord != (util.Word{}) {
+			StoreGuess(s, req.GameId, word)
 
-	sugar.Info(util.GenerateGameID())
-	sugar.Infoln("KMIG RPC service running on :50051")
-	if err := grpcServer.Serve(listener); err != nil {
-		sugar.Errorf("Failed to serve: %v", err)
+			return &proto.WordSubmissionResponse{
+				Accepted:       true,
+				Victory:        false,
+				GameId:         req.GameId,
+				Korean:         matchedWord.Korean,
+				Pronounciation: matchedWord.Pronounciation,
+				Hanja:          matchedWord.Hanja,
+				PartOfSpeech:   matchedWord.PartofSpeech,
+				Description:    matchedWord.Descripton,
+				English:        matchedWord.English,
+			}, nil
+		}
+
+		// No word was able to be matched, player is victorious
+		return &proto.WordSubmissionResponse{
+			Accepted: true,
+			Victory:  true,
+			GameId:   req.GameId,
+		}, nil
 	}
+
+	// Word not found in dictionary
+	return &proto.WordSubmissionResponse{
+		Accepted: false,
+		Victory:  false,
+		GameId:   req.GameId,
+		Error:    "Word not found in dictionary",
+	}, nil
 }

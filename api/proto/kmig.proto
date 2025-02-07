@@ -6,7 +6,7 @@ package kmig;
 service Kmig {
   // Singleplayer
   rpc StartSinglePlayerGame (SinglePlayerRequest) 
-    returns (SinglePlayerResponse);
+    returns (WordSubmissionResponse);
 
   // Multiplayer
   rpc StartMultiplayerGame (MultiplayerRequest)
@@ -30,7 +30,7 @@ message SinglePlayerRequest {
 message SinglePlayerResponse {
   string user_id = 1;
   string game_id = 2;
-  string game_state = 3;
+  string game_state = 3; // "active", "completed"
 }
 
 // Multiplayer
@@ -39,9 +39,9 @@ message MultiplayerRequest {
 }
 
 message MultiplayerResponse {
+  string user_id = 1;
   string game_id = 2;
   string invite_url = 3; // e.g., "https://kmig.com/join/{game_id}"
-  string user_id = 1;
 }
 
 message JoinRequest {
@@ -57,18 +57,6 @@ message JoinResponse {
 }
 
 // General Actions
-message GameStateRequest {
-  string game_id = 2;
-}
-
-message GameStateResponse {
-  string game_id = 1;
-  repeated string players = 2;
-  repeated string used_words = 3;
-  string current_turn = 4;
-  string status = 5; // "active", "completed"
-}
-
 message WordSubmission {
   string user_id = 1;
   string game_id = 2;
@@ -77,6 +65,26 @@ message WordSubmission {
 
 message WordSubmissionResponse {
   bool accepted = 1;
-  string game_id = 2;
-  string message = 3;
+  bool victory = 2;
+  string user_id = 3;
+  string game_id = 4;
+  string korean = 5;
+  string pronounciation = 6;
+  string hanja = 7;
+  string part_of_speech = 8;
+  string description = 9;
+  string english = 10;
+  string error = 11;
+}
+
+message GameStateRequest {
+  string game_id = 1;
+}
+
+message GameStateResponse {
+  string game_id = 1;
+  repeated string players = 2;
+  repeated string used_words = 3;
+  string current_turn = 4;
+  string status = 5; // "active", "completed"
 }
