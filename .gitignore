@@ -2,7 +2,6 @@ bin/
 *.exe
 *.log
 *.out
-go.sum
 .vscode/
 node_modules/
 package-lock.json
