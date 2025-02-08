@@ -2,6 +2,7 @@ package main
 
 import (
 	"net"
+	"os"
 
 	"github.com/go-redis/redis"
 	proto "github.com/tboex/kmig/api/proto"
@@ -23,7 +24,7 @@ func main() {
 	// Connect to Redis
 	sugar.Info("Connecting to Redis")
 	cache := redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
+		Addr: os.Getenv("REDIS_ADDR"),
 	})
 	defer cache.Close()
 
