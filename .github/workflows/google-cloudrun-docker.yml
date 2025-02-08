@@ -36,7 +36,7 @@ on:
 env:
   PROJECT_ID: 'kmig-450301'
   REGION: 'us-central1'
-  SERVICE: 'Kmig' # TODO: update to your service name
+  SERVICE: 'Kmig-service' # TODO: update to your service name
   WORKLOAD_IDENTITY_PROVIDER: 'projects/499258972867/locations/global/workloadIdentityPools/github/providers/my-repo'
 
 jobs:
