@@ -36,11 +36,11 @@ on:
 env:
   PROJECT_ID: 'kmig-450301'
   REGION: 'us-central1'
-  SERVICE: 'kmig-service' # TODO: update to your service name
+  SERVICE: 'kmig-server' # TODO: update to your service name
   WORKLOAD_IDENTITY_PROVIDER: 'projects/499258972867/locations/global/workloadIdentityPools/github/providers/my-repo'
   IMAGE_NAME: 'kmig'
   AR_REPO_LOCATION: 'us-central1'
-  AR_URL: 'us-central1-docker.pkg.dev/kmig-450301/kmig-service'
+  AR_URL: 'us-central1-docker.pkg.dev/kmig-450301/kmig-server'
 
 jobs:
   deploy:
