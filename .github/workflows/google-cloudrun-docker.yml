@@ -62,6 +62,9 @@ jobs:
           workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: kmig-github-gar-sa@kmig-450301.iam.gserviceaccount.com
 
+      - name: 'Test Auth'
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
       # BEGIN - Docker auth and build
       #
       # If you already have a container image, you can omit these steps.
