@@ -37,7 +37,7 @@ env:
   PROJECT_ID: 'kmig-450301'
   REGION: 'us-central1'
   SERVICE: 'kmig-server'
-  WORKLOAD_IDENTITY_PROVIDER: 'projects/499258972867/locations/global/workloadIdentityPools/github/providers/kmig-server'
+  WORKLOAD_IDENTITY_PROVIDER: 'projects/499258972867/locations/global/workloadIdentityPools/github/providers/kmig'
 
 jobs:
   deploy:
