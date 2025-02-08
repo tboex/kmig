@@ -45,4 +45,6 @@ func main() {
 	if err := grpcServer.Serve(listener); err != nil {
 		sugar.Errorf("Failed to serve: %v", err)
 	}
+
+	// TESTING Github Actions
 }
