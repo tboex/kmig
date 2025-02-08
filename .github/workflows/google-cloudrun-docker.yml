@@ -38,6 +38,9 @@ env:
   REGION: 'us-central1'
   SERVICE: 'kmig-service' # TODO: update to your service name
   WORKLOAD_IDENTITY_PROVIDER: 'projects/499258972867/locations/global/workloadIdentityPools/github/providers/my-repo'
+  IMAGE_NAME: 'kmig'
+  AR_REPO_LOCATION: 'us-central1'
+  AR_URL: 'us-central1-docker.pkg.dev/kmig-450301/kmig-service'
 
 jobs:
   deploy:
@@ -59,7 +62,9 @@ jobs:
         name: 'Authenticate to Google Cloud'
         uses: 'google-github-actions/auth@f112390a2df9932162083945e46d439060d66ec2' # google-github-actions/auth@v2
         with:
-          service_account: kmig-github-gar-sa@kmig-450301.iam.gserviceaccount.com
+          token_format: 'access_token'
+          project_id: ${{ env.PROJECT_ID }}
+          service_account: github-actions-service-account@kmig-450301.iam.gserviceaccount.com
           workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
 
       # BEGIN - Docker auth and build
@@ -74,9 +79,8 @@ jobs:
 
       - name: 'Build and Push Container'
         run: |-
-          DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
-          docker build --tag "${DOCKER_TAG}" ./backend
-          docker push "${DOCKER_TAG}"
+          docker build -t "${{ env.AR_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" ./backend
+          docker push "${{ env.AR_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
       - name: 'Deploy to Cloud Run'
 
         # END - Docker auth and build
