@@ -66,15 +66,8 @@ jobs:
         run: |-
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
-      # - name: 'Build and Push Container'
-      #   run: |-
-      #     DOCKER_TAG="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
-      #     docker build --tag "${DOCKER_TAG}" ./backend
-      #     docker push "${DOCKER_TAG}"
-
       - name: Build image
         run: docker build . --file ./backend --tag ${{ env.GAR_LOCATION }}
-        working-directory: kmig
 
       - name: Push image
         run: docker push ${{ env.GAR_LOCATION }}
