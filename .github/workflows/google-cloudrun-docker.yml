@@ -74,6 +74,7 @@ jobs:
 
       - name: Build image
         run: docker build . --file ./backend --tag ${{ env.GAR_LOCATION }}
+        working-directory: kmig
 
       - name: Push image
         run: docker push ${{ env.GAR_LOCATION }}
