@@ -36,8 +36,8 @@ on:
 env:
   PROJECT_ID: 'kmig-450301'
   REGION: 'us-central1'
-  SERVICE: 'kmig-server' # TODO: update to your service name
-  WORKLOAD_IDENTITY_PROVIDER: 'projects/499258972867/locations/global/workloadIdentityPools/github/providers/my-repo'
+  SERVICE: 'kmig-server'
+  WORKLOAD_IDENTITY_PROVIDER: 'projects/499258972867/locations/global/workloadIdentityPools/github/providers/kmig'
   IMAGE_NAME: 'kmig'
   AR_REPO_LOCATION: 'us-central1'
   AR_URL: 'us-central1-docker.pkg.dev/kmig-450301/kmig-server'
@@ -51,35 +51,29 @@ jobs:
       id-token: 'write'
 
     steps:
-      - name: 'Checkout'
-        uses: 'actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332' # actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      # Configure Workload Identity Federation and generate an access token.
-      #
-      # See https://github.com/google-github-actions/auth for more options,
-      # including authenticating via a JSON credentials file.
-      - id: 'auth'
-        name: 'Authenticate to Google Cloud'
-        uses: 'google-github-actions/auth@f112390a2df9932162083945e46d439060d66ec2' # google-github-actions/auth@v2
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v2'
         with:
           token_format: 'access_token'
           project_id: ${{ env.PROJECT_ID }}
-          service_account: kmig-backend@kmig-450301.iam.gserviceaccount.com
-          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
 
-      # BEGIN - Docker auth and build
-      #
-      # If you already have a container image, you can omit these steps.
-      - name: 'Docker Auth'
-        uses: 'docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567' # docker/login-action@v3
+      - name: Docker Auth
+        id: docker-auth
+        uses: 'docker/login-action@v1'
         with:
           username: 'oauth2accesstoken'
-          password: '${{ steps.auth.outputs.auth_token }}'
-          registry: '${{ env.REGION }}-docker.pkg.dev'
+          password: '${{ steps.auth.outputs.access_token }}'
+          registry: '${{ env.AR_REPO_LOCATION }}-docker.pkg.dev'
 
-      - name: 'Build and Push Container'
+      - name: Build and Push Container
         run: |-
-          docker build -t "${{ env.AR_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" ./backend
+          docker build -t "${{ env.AR_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }}" ./
           docker push "${{ env.AR_URL }}/${{ env.IMAGE_NAME }}:${{ github.sha }}"
       - name: 'Deploy to Cloud Run'
 
