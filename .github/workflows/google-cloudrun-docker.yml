@@ -64,7 +64,7 @@ jobs:
         with:
           token_format: 'access_token'
           project_id: ${{ env.PROJECT_ID }}
-          service_account: github-actions-service-account@kmig-450301.iam.gserviceaccount.com
+          service_account: kmig-backend@kmig-450301.iam.gserviceaccount.com
           workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
 
       # BEGIN - Docker auth and build
