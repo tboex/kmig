@@ -10,7 +10,13 @@ import (
 
 func StoreGuess(s *KmigServer, gameID, word string) error {
 	key := fmt.Sprintf("game:session:%s", gameID)
-	return s.Cache.RPush(key, word, 1*time.Hour).Err()
+	// Push the word to the list
+	err := s.Cache.RPush(key, word).Err()
+	if err != nil {
+		return err
+	}
+	// Set the expiration time for the list key
+	return s.Cache.Expire(key, 1*time.Hour).Err()
 }
 
 func GetGuesses(s *KmigServer, gameID string) ([]string, error) {

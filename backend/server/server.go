@@ -74,7 +74,12 @@ func (s *KmigServer) SubmitWord(ctx context.Context, req *proto.WordSubmission) 
 		s.Logger.Info("Word exists in dictionary")
 		matchedWord := util.FindValidMatch(word, s.Dictionary)
 		if matchedWord != (dictionary.Word{}) {
-			StoreGuess(s, req.GameId, word)
+			err := StoreGuess(s, req.GameId, word)
+			if err != nil {
+				s.Logger.Errorw("Error storing guess",
+					"error", err,
+				)
+			}
 
 			return &proto.WordSubmissionResponse{
 				Accepted:       true,

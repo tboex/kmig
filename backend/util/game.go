@@ -33,7 +33,7 @@ func GetGameURL(gameId string) string {
 	return settings.BaseGameURL + gameId
 }
 
-func FindValidMatch(submittedWord string, dictionary map[string]dictionary.Word) dictionary.Word {
+func FindValidMatch(submittedWord string, dictionary map[string]Word) Word {
 	// Finds a valid match for the given word in the dictionary.
 	// This assumes that the word that was requested exists in the dictionary so is a valid word.
 
@@ -65,8 +65,12 @@ func DoesFinalCharMatch(submittedWord, lastWord string) bool {
 	return firstChar == finalChar
 }
 
-func GetRandomWord(dictionary map[string]dictionary.Word) dictionary.Word {
+func GetRandomWord(dictionary map[string]Word) Word {
 	// Convert map keys to a slice
+	if len(dictionary) == 0 {
+		return Word{}
+	}
+
 	keys := make([]string, 0, len(dictionary))
 	for key := range dictionary {
 		keys = append(keys, key)
