@@ -3,6 +3,7 @@ package util
 import (
 	"math/rand"
 
+	"github.com/tboex/kmig/dictionary"
 	"github.com/tboex/kmig/settings"
 )
 
@@ -12,6 +13,8 @@ type GameSession struct {
 	ID      string
 	Players []string
 }
+
+type Word = dictionary.Word
 
 // Generates a new game ID and creates a new game session.
 func CreateGame() string {
@@ -30,7 +33,7 @@ func GetGameURL(gameId string) string {
 	return settings.BaseGameURL + gameId
 }
 
-func FindValidMatch(submittedWord string, dictionary map[string]Word) Word {
+func FindValidMatch(submittedWord string, dictionary map[string]dictionary.Word) dictionary.Word {
 	// Finds a valid match for the given word in the dictionary.
 	// This assumes that the word that was requested exists in the dictionary so is a valid word.
 
@@ -62,7 +65,7 @@ func DoesFinalCharMatch(submittedWord, lastWord string) bool {
 	return firstChar == finalChar
 }
 
-func GetRandomWord(dictionary map[string]Word) Word {
+func GetRandomWord(dictionary map[string]dictionary.Word) dictionary.Word {
 	// Convert map keys to a slice
 	keys := make([]string, 0, len(dictionary))
 	for key := range dictionary {

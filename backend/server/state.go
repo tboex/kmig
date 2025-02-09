@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/tboex/kmig/util"
@@ -9,7 +10,7 @@ import (
 
 func StoreGuess(s *KmigServer, gameID, word string) error {
 	key := fmt.Sprintf("game:session:%s", gameID)
-	return s.Cache.RPush(key, word).Err()
+	return s.Cache.RPush(key, word, 1*time.Hour).Err()
 }
 
 func GetGuesses(s *KmigServer, gameID string) ([]string, error) {

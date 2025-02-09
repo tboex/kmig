@@ -1,10 +1,8 @@
-package util
+package dictionary
 
 import (
 	"encoding/csv"
-	"fmt"
 	"os"
-	"path/filepath"
 
 	"go.uber.org/zap"
 )
@@ -21,14 +19,14 @@ type Word struct {
 
 func LoadDictionary(logger *zap.SugaredLogger) map[string]Word {
 	// Loads the dictionary from a file.
-	absPath, err := filepath.Abs("../backend/dictionary/dictionary.csv")
-	if err != nil {
-		fmt.Println("Error getting absolute path:", err)
-		return nil
-	}
+	// absPath, err := filepath.Abs("../backend/dictionary/dictionary.csv")
+	// if err != nil {
+	// 	fmt.Println("Error getting absolute path:", err)
+	// 	return nil
+	// }
 
 	logger.Debug("Loading dictionary")
-	file, err := os.Open(absPath)
+	file, err := os.Open("dictionary/dictionary.csv")
 	if err != nil {
 		logger.Errorw("Error opening file",
 			"error", err,

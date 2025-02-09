@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-redis/redis"
 	proto "github.com/tboex/kmig/api/proto"
+	"github.com/tboex/kmig/dictionary"
 	"github.com/tboex/kmig/server"
 	"github.com/tboex/kmig/util"
 
@@ -19,7 +20,7 @@ func main() {
 	sugar := logger.Sugar()
 
 	// Load Korean dictionary
-	var dictionary = util.LoadDictionary(sugar)
+	var dictionary = dictionary.LoadDictionary(sugar)
 
 	// Connect to Redis
 	sugar.Info("Connecting to Redis")
@@ -45,7 +46,6 @@ func main() {
 		Cache:      cache,
 	})
 
-	sugar.Info(util.GenerateGameID())
 	sugar.Infoln("KMIG RPC service running on :50051")
 	if err := grpcServer.Serve(listener); err != nil {
 		sugar.Errorf("Failed to serve: %v", err)

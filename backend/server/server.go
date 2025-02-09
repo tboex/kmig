@@ -7,13 +7,14 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/jmoiron/sqlx"
 	"github.com/tboex/kmig/api/proto"
+	"github.com/tboex/kmig/dictionary"
 	"github.com/tboex/kmig/util"
 	"go.uber.org/zap"
 )
 
 type KmigServer struct {
 	proto.UnimplementedKmigServer
-	Dictionary map[string]util.Word
+	Dictionary map[string]dictionary.Word
 	Mu         sync.Mutex
 	Db         *sqlx.DB
 	Cache      *redis.Client
@@ -72,7 +73,7 @@ func (s *KmigServer) SubmitWord(ctx context.Context, req *proto.WordSubmission) 
 	if _, exists := s.Dictionary[word]; exists {
 		s.Logger.Info("Word exists in dictionary")
 		matchedWord := util.FindValidMatch(word, s.Dictionary)
-		if matchedWord != (util.Word{}) {
+		if matchedWord != (dictionary.Word{}) {
 			StoreGuess(s, req.GameId, word)
 
 			return &proto.WordSubmissionResponse{
