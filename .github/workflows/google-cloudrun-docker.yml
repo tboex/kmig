@@ -39,6 +39,7 @@ env:
   SERVICE: 'kmig-server'
   WORKLOAD_IDENTITY_PROVIDER: 'projects/499258972867/locations/global/workloadIdentityPools/github/providers/kmig'
   GAR_LOCATION: 'us-central1-docker.pkg.dev/kmig-450301/kmig-service'
+  IMAGE_NAME : 'kmig'
 
 jobs:
   deploy:
@@ -67,15 +68,12 @@ jobs:
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: Build image
-        run: docker build --tag ${{ env.GAR_LOCATION }}/kmig ./backend
+        run: docker build --tag ${{ env.GAR_LOCATION }}/${{IMAGE_NAME}} ./backend
 
       - name: Push image
-        run: docker push ${{ env.GAR_LOCATION }}/kmig
+        run: docker push ${{ env.GAR_LOCATION }}/${{IMAGE_NAME}}
       
       - name: 'Deploy to Cloud Run'
-
-        # END - Docker auth and build
-
         uses: 'google-github-actions/deploy-cloudrun@33553064113a37d688aa6937bacbdc481580be17' # google-github-actions/deploy-cloudrun@v2
         with:
           service: '${{ env.SERVICE }}'
