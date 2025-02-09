@@ -8,8 +8,6 @@ RUN go mod download
 
 COPY . .
 
-ENV 
-
 RUN go build -o kmig-server ./main.go
 
 FROM debian:bullseye-slim
