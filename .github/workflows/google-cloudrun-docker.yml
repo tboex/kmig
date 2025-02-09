@@ -68,10 +68,10 @@ jobs:
           gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: Build image
-        run: docker build --tag ${{ env.GAR_LOCATION }}/${{IMAGE_NAME}} ./backend
+        run: docker build --tag ${{ env.GAR_LOCATION }}/${{ env.IMAGE_NAME }} ./backend
 
       - name: Push image
-        run: docker push ${{ env.GAR_LOCATION }}/${{IMAGE_NAME}}
+        run: docker push ${{ env.GAR_LOCATION }}/${{ env.IMAGE_NAME }}
       
       - name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@33553064113a37d688aa6937bacbdc481580be17' # google-github-actions/deploy-cloudrun@v2
