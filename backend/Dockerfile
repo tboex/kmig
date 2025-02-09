@@ -16,7 +16,7 @@ FROM debian:bullseye-slim
 COPY --from=builder /app/kmig-server /kmig-server
 
 # Copy the dictionary.csv file to the appropriate location
-COPY --from=builder /app/backend/dictionary/dictionary.csv /app/backend/dictionary/dictionary.csv
+COPY --from=builder app/dictionary/dictionary.csv app/dictionary/dictionary.csv
 
 EXPOSE 50051
 
