@@ -26,6 +26,11 @@ func main() {
 	cache := redis.NewClient(&redis.Options{
 		Addr: os.Getenv("REDIS_ADDR"),
 	})
+	_, err := cache.Ping().Result()
+	sugar.Debugw("Connected to Redis",
+		"address", os.Getenv("REDIS_ADDR"),
+		"error", err,
+	)
 	defer cache.Close()
 
 	listener, err := net.Listen("tcp", ":50051")
