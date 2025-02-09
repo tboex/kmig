@@ -26,7 +26,7 @@ func GetGuesses(s *KmigServer, gameID string) ([]string, error) {
 
 func DetermineNonRepeatedGuess(s *KmigServer, gameID, word string) bool {
 	guesses, err := GetGuesses(s, gameID)
-
+	s.Logger.Infof("Guesses: %v", guesses)
 	if err != nil {
 		s.Logger.Errorw("Error getting guesses",
 			"error", err,
