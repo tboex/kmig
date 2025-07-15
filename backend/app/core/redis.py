@@ -17,7 +17,6 @@ async def setup_redis_client():
     try:
         await redis_client.ping()
         logging.debug('Redis is connected')
-    except Exception as exc:
+    except Exception:
         logging.critical('Redis is not connected')
-        raise exc
     return redis_client
