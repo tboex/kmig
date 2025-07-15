@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --color-serika-dark--bg-color: #323437;
+  --color-serika-dark--main-color: #e2b714;
+  --color-serika-dark--caret-color: #e2b714;
+  --color-serika-dark--sub-color: #646669;
+  --color-serika-dark--sub-alt-color: #2c2e31;
+  --color-serika-dark--text-color: #d1d0c5;
+  --color-serika-dark--error-color: #ca4754;
+  --color-serika-dark--error-extra-color: #7e2a33;
+  --color-serika-dark--colorful-error-color: #ca4754;
+  --color-serika-dark--colorful-error-extra-color: #7e2a33;
+}

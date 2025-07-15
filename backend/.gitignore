@@ -1,0 +1,13 @@
+# Virtual Env
+venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Pytest cache
+.cache/
+
+# Coverage reports
+.coverage
+.coverage.*

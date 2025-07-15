@@ -1,0 +1,13 @@
+[flake8]
+max-line-length = 120
+max-complexity = 18
+exclude =
+    venv,
+inline-quotes = '
+multiline-quotes = '
+docstring-quotes = '
+ignore =
+    E231,  # missing whitespace after ':'
+    E711,  # Comparison to None should be 'if cond is None:' or 'if not cond:'
+    E712,  # Comparison to True should be 'if cond is True:' or 'if cond:'
+    W503,  # Line break before binary operator

@@ -1,26 +1,20 @@
-FROM golang:1.23.5-alpine AS builder
+FROM python:3.13.5-slim
 
+# Set CWD
 WORKDIR /app
 
-COPY go.mod go.sum ./
+# Install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN go mod download
+# Copy source
+COPY app/ ./app/
 
-COPY . .
+# Expose port
+EXPOSE 8000
 
-RUN go build -o kmig-server ./main.go
+# Set Env Vars
+ENV PYTHONUNBUFFERED=1
 
-FROM debian:bullseye-slim
-
-# Copy the binary from the builder stage
-COPY --from=builder /app/kmig-server /kmig-server
-
-# Copy the dictionary.csv file to the appropriate location
-COPY --from=builder app/dictionary/dictionary.csv app/dictionary/dictionary.csv
-
-# ENV Vars
-ENV DICT_PATH="/app/dictionary/dictionary.csv"
-
-EXPOSE 50051
-
-CMD ["/kmig-server"]
+# Run the app
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

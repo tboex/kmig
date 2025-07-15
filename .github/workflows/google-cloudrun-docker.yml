@@ -34,11 +34,11 @@ on:
     branches: ["main"]
 
 env:
-  PROJECT_ID: 'kmig-450301'
+  PROJECT_ID: "${{ secrets.PROJECT_ID_SECRET }}"
   REGION: 'us-central1'
   SERVICE: 'kmig-service'
-  WORKLOAD_IDENTITY_PROVIDER: 'projects/499258972867/locations/global/workloadIdentityPools/github/providers/kmig'
-  GAR_LOCATION: 'us-central1-docker.pkg.dev/kmig-450301/kmig-service'
+  WORKLOAD_IDENTITY_PROVIDER: "${{ secrets.WORKLOAD_IDENTITY_PROVIDER_SECRET }}"
+  GAR_LOCATION: "${{ secrets.GAR_LOCATION_SECRET }}"
   IMAGE_NAME : 'kmig'
 
 jobs:
