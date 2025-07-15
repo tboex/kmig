@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import logging
 
 from core.bootstrap import setup_routers, configure_logging
@@ -29,5 +30,11 @@ app = FastAPI(
     on_shutdown=[shutdown],
 )
 
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],  # Later add FE Url
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
 setup_routers(app)
