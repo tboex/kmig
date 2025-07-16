@@ -42,6 +42,7 @@ async def single(
             id=request.player_id,
             name=request.player_name,
         ),
+        word=request.word,
     )
 
     await update_game_state(

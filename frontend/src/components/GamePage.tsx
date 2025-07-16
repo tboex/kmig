@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import Toolbar from './Toolbar'
 import Popup from './Popup';
 import { startGame, submitWord, getBotTurn } from '../services/game';
+import Contact from './Contact';
 
 export default function GamePage() {
     const [mode, setMode] = useState<'solo' | 'multi'>('solo');
@@ -50,13 +51,13 @@ export default function GamePage() {
             const submitRes = await submitWord(gameData.game_id, submittedWord);
 
             if (submitRes.status.status === 'VICTORY') {
-                setPopup({ open: true, message: 'Victory!', type: 'success' });
+                setPopup({ open: true, message: submitRes.status.message, type: 'success' });
             } else if (submitRes.status.status === 'INVALID') {
-                setPopup({ open: true, message: 'Invalid entry!', type: 'error' });
+                setPopup({ open: true, message: submitRes.status.message, type: 'error' });
             }
 
             // If single mode, get bot's turn
-            if (gameData.mode === 'single') {
+            if (gameData.mode === 'single' && submitRes.status.status != 'INVALID') {
                 const botRes = await getBotTurn(gameData.game_id);
                 setChain(current => [
                     ...current,
@@ -95,7 +96,7 @@ export default function GamePage() {
                 setTimerDuration={setTimerDuration}
             />
             <div className="game-bar flex-1 flex flex-col items-center justify-center">
-                <div 
+                <div
                     ref={chainRef}
                     onScroll={handleChainScroll}
                     className="w-full max-w-md mb-4 h-96 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2"
@@ -134,6 +135,12 @@ export default function GamePage() {
                     </button>
                 </form>
             </div>
+            <Popup
+                open={popup.open}
+                message={popup.message}
+                type={popup.type}
+                onClose={() => setPopup({ ...popup, open: false })}
+            />
         </main>
     );
 }

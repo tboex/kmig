@@ -45,6 +45,7 @@ class SinglePlayerRequest(BaseModel):
     '''
     player_name: str = Field(..., description="Player's name")
     player_id: str = Field(..., description='Unique identifier for the player')
+    word: str = Field('', description='The word to be played in the game')
     guess_count: int = Field(5, description='Number of guesses allowed per player')
     max_time: int = Field(
         0,

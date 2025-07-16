@@ -18,7 +18,7 @@ from settings import LOGGER_NAME
 logger = logging.getLogger(LOGGER_NAME)
 
 
-async def init_game(state, game_id: str, mode: str, player: Player) -> dict[str, Any]:
+async def init_game(state, game_id: str, mode: str, player: Player, word: str) -> dict[str, Any]:
     game_status = {
         'game_id': game_id,
         'mode': mode,
@@ -40,6 +40,15 @@ async def init_game(state, game_id: str, mode: str, player: Player) -> dict[str,
 
         if not player_start:
             game_status = await bot_take_turn(state, game_id)
+        else:
+            await state.redis_client.hset(
+                f'game:{game_id}',
+                mapping={
+                    'previous_player': player.id,
+                    'current_turn': player.id,
+                },
+            )
+            game_status = await add_word(state, game_id, player, word)
 
     logging.info(f'Started Solo Game: {game_id}')
     return game_status
