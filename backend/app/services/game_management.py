@@ -184,7 +184,7 @@ async def bot_pick_word(state, game_id: str) -> Optional[Word]:
 
     if valid_words:
         chosen_word = random.choice(valid_words)
-        chosen_word_dict = chosen_word[1]
+        chosen_word_dict = state.dictionary.get(chosen_word)
         await state.redis_client.rpush(
             f'game:{game_id}:words',
             chosen_word_dict.get('korean'),
