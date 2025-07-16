@@ -1,4 +1,11 @@
+import datetime
 from pydantic import BaseModel, Field
+
+
+class Status(BaseModel):
+    status: str = Field('success', description='Status indicator for server')
+    message: str = Field('', description='Human readable message')
+    timestamp: str = str(datetime.datetime.now())
 
 
 class Word(BaseModel):
@@ -19,6 +26,17 @@ class Player(BaseModel):
     '''
     id: str = Field(..., description='Unique identifier for the player')
     name: str = Field(..., description='Name of the player')
+
+
+class GameStatusResponse(BaseModel):
+    '''
+    Model representing the response from the server
+    '''
+    mode: str
+    status: str = ''
+    message: str = ''
+    previous_player: str = ''
+    current_turn: str = ''
 
 
 class SinglePlayerRequest(BaseModel):
@@ -44,10 +62,10 @@ class SinglePlayerResponse(BaseModel):
     '''
     game_id: str = Field(..., description='Unique identifier for the game')
     mode: str = Field('single', description="Game mode, always 'single' for single player")
-    status: str = Field('waiting_for_player_turn', description='Current status of the game')
-    player: Player | None = Field(None, description='Details of the player in the game')
-    word: Word | None = Field(None, description='The word to be guessed in the game, if applicable')
-    turn: Player | None = Field(None, description="Current player's turn in the game, if applicable")
+    status: Status = Field(..., description='Current status of the game')
+    player: Player | None = None
+    word: Word | None = None
+    turn: Player | None = None
 
 
 class SubmitWordRequest(BaseModel):
@@ -63,4 +81,12 @@ class SubmitWordResponse(SinglePlayerResponse):
     '''
     Response model for submitting a word in the game.
     '''
-    success: bool = Field(False, description='Indicates whether the word submission was successful')
+    success: bool = False
+
+
+class NoActiveGameResponse(BaseModel):
+    '''
+    Indicates that there is no active game for that game id
+    '''
+    game_id: str = Field(..., description='Unique identifier for the game')
+    status: Status = Field(..., description='Current status of the game')

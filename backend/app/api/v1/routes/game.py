@@ -1,17 +1,26 @@
+from typing import Union
 from fastapi import APIRouter, Depends
 
 from core.state import get_state
 from models.game import (
     Player,
+    GameStatusResponse,
     SinglePlayerRequest,
     SinglePlayerResponse,
     SubmitWordRequest,
     SubmitWordResponse,
+    NoActiveGameResponse,
+    Status,
 )
 from services.game_management import (
     init_game,
     add_word,
     bot_take_turn,
+)
+from services.cache_management import (
+    update_game_state,
+    game_is_active,
+    get_game_state,
 )
 from utils.hash import generate_hash
 
@@ -23,10 +32,11 @@ async def single(
     request: SinglePlayerRequest,
     state=Depends(get_state),
 ) -> SinglePlayerResponse:
+    game_id = generate_hash()
 
     response = await init_game(
         state=state,
-        game_id=generate_hash(),
+        game_id=game_id,
         mode='single',
         player=Player(
             id=request.player_id,
@@ -34,10 +44,16 @@ async def single(
         ),
     )
 
+    await update_game_state(
+        state=state,
+        game_id=game_id,
+        round_state=response,
+    )
+
     return SinglePlayerResponse(
-        game_id=response.get('game_id', ''),
+        game_id=game_id,
         mode=response.get('mode', 'single'),
-        status=response.get('status', 'waiting_for_player_turn'),
+        status=response.get('status'),
         player=response.get('player', None),
         word=response.get('word', None),
         turn=response.get('turn', ''),
@@ -59,7 +75,16 @@ async def submit_word(
     game_id: str,
     request: SubmitWordRequest,
     state=Depends(get_state),
-) -> SubmitWordResponse:
+) -> Union[SubmitWordResponse, NoActiveGameResponse]:
+
+    if not await game_is_active(state, game_id):
+        return NoActiveGameResponse(
+            game_id=game_id,
+            status=Status(
+                status='INVALID',
+                message='No Active Game',
+            )
+        )
 
     response = await add_word(
         state=state,
@@ -71,13 +96,19 @@ async def submit_word(
         ),
     )
 
+    await update_game_state(
+        state=state,
+        game_id=game_id,
+        round_state=response,
+    )
+
     return SubmitWordResponse(
         game_id=response.get('game_id', ''),
         mode=response.get('mode', 'single'),
-        status=response.get('status', 'waiting_for_player_turn'),
+        status=response['status'],
         player=response.get('player', None),
         word=response.get('word', None),
-        turn=response.get('turn'),
+        turn=response.get('turn', None),
         success=response.get('success', False),
     )
 
@@ -96,29 +127,32 @@ async def kmig_bot_turn(
     return SinglePlayerResponse(
         game_id=response.get('game_id', ''),
         mode=response.get('mode', 'single'),
-        status=response.get('status', 'waiting_for_player_turn'),
+        status=response.get('status'),
         player=response.get('player', None),
         word=response.get('word', None),
         turn=response.get('turn'),
     )
 
 
-@router.get('{game_id}', response_model_exclude_none=True)
-async def game_status(game_id: str) -> dict:
+@router.get('/{game_id}', response_model_exclude_none=True)
+async def game_status(game_id: str, state=Depends(get_state)) -> GameStatusResponse:
     '''
     Get the current status of the game.
     Returns game details including players, words played, and current turn.
     '''
-    return {
-        'game_id': game_id,
-        'status': 'in_progress',
-        'players': [],
-        'words_played': [],
-        'current_turn': 1,
-    }
+
+    response = await get_game_state(state, game_id)
+
+    return GameStatusResponse(
+        mode=response.get('mode', ''),
+        status=response.get('status', ''),
+        message=response.get('message', ''),
+        previous_player=response.get('previous_player', ''),
+        current_turn=response.get('current_turn', ''),
+    )
 
 
-@router.get('{game_id}/forfeit', response_model_exclude_none=True)
+@router.get('/{game_id}/forfeit', response_model_exclude_none=True)
 async def forfeit_game(game_id: str) -> dict:
     '''
     Forfeit the current game.
