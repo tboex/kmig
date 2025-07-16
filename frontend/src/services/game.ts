@@ -7,16 +7,36 @@ export async function startGame(
 ) {
     if (mode === 'solo') {
         const res = await fetch(`${API_BASE_URL}/kmig/v1/game/single`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                "player_name": 'tim',
+                'player_name': 'tim',
                 'player_id': 'timboex',
                 'guess_count': guessCount,
                 'max_time': timerDuration,
             })
         });
-        if (!res.ok) throw new Error("Failed to start single player game");
+        if (!res.ok) throw new Error('Failed to start single player game');
         return res.json();
     }
+}
+
+export async function submitWord(gameId: string, word: string) {
+    const res = await fetch(`${API_BASE_URL}/kmig/v1/game/${gameId}/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            'player_name': 'tim',
+            'player_id': 'timboex',
+            'word': word,
+         }),
+    });
+    if (!res.ok) throw new Error('Failed to submit word');
+    return res.json();
+}
+
+export async function getBotTurn(gameId: string) {
+    const res = await fetch(`${API_BASE_URL}/kmig/v1/game/${gameId}/bot-turn`);
+    if (!res.ok) throw new Error('Failed to get bot turn');
+    return res.json();
 }

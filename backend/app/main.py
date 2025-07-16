@@ -15,7 +15,7 @@ logger = logging.getLogger(LOGGER_NAME)
 
 async def startup():
     app.state.redis_client = await setup_redis_client()
-    app.state.dictionary = load_dictionary('app/utils/dictionary.csv')
+    app.state.dictionary = load_dictionary('utils/dictionary.csv')
 
 
 async def shutdown():

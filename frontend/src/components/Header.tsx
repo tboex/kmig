@@ -4,9 +4,9 @@ export default function Header() {
       <div className="w-full max-w-screen-xl mx-auto flex items-center justify-between px-4 md:px-8 lg:px-16">
         {/* Left section (Logo) */}
         <div className="flex flex-row items-center space-x-6">
-          <div id="kmig" className="text-2xl lg:text-3xl font-bold tracking-tight text-serika-dark--text-color">
+          <a id="kmig" href="/" className="text-2xl lg:text-3xl font-bold tracking-tight text-serika-dark--text-color">
             끝말잇기
-          </div>
+          </a>
           <nav className="flex flex-row items-center space-x-4 text-sm text-serika-dark--sub-color">
             <a id="startGameButton" title="start game" href="/" className="hover:text-serika-dark--text-color">
               <div className="icon">
