@@ -6,7 +6,6 @@ export async function startGame(
     timerDuration: number,
 ) {
     if (mode === 'solo') {
-        console.log(API_BASE_URL)
         const res = await fetch(`${API_BASE_URL}/kmig/v1/game/single`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
