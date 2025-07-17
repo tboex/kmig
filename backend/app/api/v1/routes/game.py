@@ -146,7 +146,7 @@ async def game_status(game_id: str, state=Depends(get_state)) -> GameStatusRespo
 
     return GameStatusResponse(
         mode=response.get('mode', ''),
-        status=response.get('status', 'INVALID'),
+        status=response.get('status', 'INACTIVE'),
         message=response.get('message', 'No active game'),
         previous_player=response.get('previous_player', ''),
         current_turn=response.get('current_turn', ''),
