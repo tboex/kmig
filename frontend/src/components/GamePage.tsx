@@ -61,7 +61,11 @@ export default function GamePage() {
         //     handleStartGame(userInput); 
         // }
 
-        setChain([...chain, { sender: 'user', text: userInput, name: usernameInput }]);
+        setChain([...chain, {
+            sender: 'user',
+            text: userInput,
+            name: usernameInput
+        }]);
         const submittedWord = userInput;
         setUserInput('');
 

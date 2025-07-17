@@ -8,4 +8,10 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    allowedHosts: [
+      'devserver-main--timely-sprinkles-8ead71.netlify.app',
+      'timely-sprinkles-8ead71.netlify.app', // production Netlify domain
+    ],
+  }
 })
