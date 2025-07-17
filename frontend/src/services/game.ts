@@ -4,6 +4,7 @@ export async function startGame(
     mode: 'solo' | 'multi',
     guessCount: number,
     timerDuration: number,
+    word?: string,
 ) {
     if (mode === 'solo') {
         const res = await fetch(`${API_BASE_URL}/kmig/v1/game/single`, {
@@ -14,6 +15,7 @@ export async function startGame(
                 'player_id': 'timboex',
                 'guess_count': guessCount,
                 'max_time': timerDuration,
+                'word': word,
             })
         });
         if (!res.ok) throw new Error('Failed to start single player game');
@@ -38,5 +40,12 @@ export async function submitWord(gameId: string, word: string) {
 export async function getBotTurn(gameId: string) {
     const res = await fetch(`${API_BASE_URL}/kmig/v1/game/${gameId}/bot-turn`);
     if (!res.ok) throw new Error('Failed to get bot turn');
+    return res.json();
+}
+
+
+export async function getGameStatus(gameId: string) {
+    const res = await fetch(`${API_BASE_URL}/kmig/v1/game/${gameId}`);
+    if (!res.ok) throw new Error('Failed to get game status');
     return res.json();
 }

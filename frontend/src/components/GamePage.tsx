@@ -1,33 +1,45 @@
 import { useRef, useState, useEffect } from 'react';
 import Toolbar from './Toolbar'
 import Popup from './Popup';
-import { startGame, submitWord, getBotTurn } from '../services/game';
-import Contact from './Contact';
+import Username from './Username';
+import { startGame, submitWord, getBotTurn, getGameStatus } from '../services/game';
+
 
 export default function GamePage() {
     const [mode, setMode] = useState<'solo' | 'multi'>('solo');
     const [toolbarMode, setToolbarMode] = useState<'guesses' | 'timer'>('guesses');
     const [guessCount, setGuessCount] = useState<number>(5);
-    const [timerDuration, setTimerDuration] = useState<number>(30);
+    const [timerDuration, setTimerDuration] = useState<number>(0);
     const [gameData, setGameData] = useState<any>(null);
+    const [username, setUsername] = useState(() => localStorage.getItem('kmig_username') || '');
+    const [showUsernamePopup, setShowUsernamePopup] = useState(!username);
+    const [usernameInput, setUsernameInput] = useState('');
     const [popup, setPopup] = useState<{ open: boolean; message: string; type?: 'success' | 'error' | 'info' | 'defeat' }>({ open: false, message: '' });
 
     // New state for the chain and input
-    const [chain, setChain] = useState<{ sender: 'bot' | 'user', text: string }[]>([]);
+    const [chain, setChain] = useState<{ sender: 'other' | 'user', text: string, name: string }[]>([]);
     const [userInput, setUserInput] = useState('');
     const chainRef = useRef<HTMLDivElement>(null);
     const [isScrolledUp, setIsScrolledUp] = useState(false);
 
-    async function handleStartGame() {
+    async function handleStartGame(word?: string) {
         try {
-            const data = await startGame(mode, guessCount, timerDuration);
+            const data = await startGame(mode, guessCount, timerDuration, word);
             setGameData(data);
             if (data.hasOwnProperty('word')) {
-                setChain([{ sender: 'bot', text: data.word.korean }]);
+                setChain([{ sender: 'other', text: data.word.korean, name: data.player.name }]);
             }
         } catch (err) {
             console.log(err);
             alert("Failed to start game");
+        }
+    }
+
+    function handleUsernameSubmit() {
+        if (usernameInput.trim()) {
+            setUsername(usernameInput.trim());
+            localStorage.setItem('kmig_username', usernameInput.trim());
+            setShowUsernamePopup(false);
         }
     }
 
@@ -42,7 +54,14 @@ export default function GamePage() {
         e.preventDefault();
         if (!userInput.trim() || !gameData?.game_id) return;
 
-        setChain([...chain, { sender: 'user', text: userInput }]);
+        // TODO: Check if game is still active before submitting
+        // const game_status = await getGameStatus(gameData.game_id);
+
+        // if(game_status.status.status === 'INACTIVE') {
+        //     handleStartGame(userInput); 
+        // }
+
+        setChain([...chain, { sender: 'user', text: userInput, name: usernameInput }]);
         const submittedWord = userInput;
         setUserInput('');
 
@@ -61,7 +80,7 @@ export default function GamePage() {
                 const botRes = await getBotTurn(gameData.game_id);
                 setChain(current => [
                     ...current,
-                    { sender: 'bot', text: botRes.word?.korean || '봇의 응답 없음' }
+                    { sender: 'other', text: botRes.word?.korean || '봇의 응답 없음', name: botRes.player.name }
                 ]);
             }
         } catch (err) {
@@ -109,12 +128,13 @@ export default function GamePage() {
                                 <div
                                     key={chain.length - 1 - idx}
                                     style={{ opacity }}
-                                    className={`px-4 py-2 rounded-lg transition-opacity duration-500 ${
-                                        msg.sender === 'bot'
+                                    className={`px-4 py-2 rounded-lg transition-opacity duration-500 mb-2 ${
+                                        msg.sender === 'other'
                                             ? 'bg-serika-dark--sub-alt-color text-serika-dark--main-color self-start'
                                             : 'bg-serika-dark--main-color text-black self-end'
                                     }`}
                                 >
+                                     <div className="text-xs text-serika-dark--sub-color mb-1">{msg.name}</div>
                                     {msg.text}
                                 </div>
                             );
@@ -135,6 +155,12 @@ export default function GamePage() {
                     </button>
                 </form>
             </div>
+            <Username
+                open={showUsernamePopup}
+                usernameInput={usernameInput}
+                setUsernameInput={setUsernameInput}
+                onSubmit={handleUsernameSubmit}
+            />
             <Popup
                 open={popup.open}
                 message={popup.message}
