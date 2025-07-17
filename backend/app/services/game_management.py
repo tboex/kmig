@@ -40,7 +40,7 @@ async def init_game(state, game_id: str, mode: str, player: Player, word: str) -
 
         if not player_start:
             game_status = await bot_take_turn(state, game_id)
-        else:
+        elif word:
             await state.redis_client.hset(
                 f'game:{game_id}',
                 mapping={
