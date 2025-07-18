@@ -1,6 +1,7 @@
 from typing import Optional, Any
 import random
 import logging
+import unicodedata
 
 from services.cache_management import (
     add_player,
@@ -54,20 +55,50 @@ async def init_game(state, game_id: str, mode: str, player: Player, word: str) -
     return game_status
 
 
+def is_korean_word(word: str) -> bool:
+    '''
+    Checks if all characters in a given word are Korean (Hangul).
+
+    Args:
+        word (str): The word to check.
+
+    Returns:
+        bool: True if all characters are Hangul, False otherwise.
+    '''
+    if not word:
+        return False  # No word
+
+    for char in word:
+        if 'HANGUL' not in unicodedata.name(char, ''):
+            return False  # Found a non-Hangul character
+    return True
+
+
 async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, Word | None]:
     dictionary = state.dictionary
+
+    if not is_korean_word(word):
+        return (
+            False,
+            Status(status='INVALID', message='Word is not a valid Korean word'),
+            None,
+        )
 
     words = await state.redis_client.lrange(f'game:{game_id}:words', 0, -1)
 
     if word in words:
-        return (False, Status(status='INVALID', message='Word already used'), Word(
-            korean=word,
-            pronunciation=None,
-            hanja=None,
-            part_of_speech=None,
-            definition=None,
-            english=None,
-        ))
+        return (
+            False,
+            Status(status='INVALID', message='Word already used'),
+            Word(
+                korean=word,
+                pronunciation=None,
+                hanja=None,
+                part_of_speech=None,
+                definition=None,
+                english=None,
+            ),
+        )
 
     response_word = dictionary.get(word, '')
     if not response_word:
