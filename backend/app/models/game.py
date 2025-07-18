@@ -17,7 +17,7 @@ class Word(BaseModel):
     hanja: str | None = Field(None, description='Hanja representation of the word, if applicable')
     part_of_speech: str | None = Field(None, description='Part of speech of the word (e.g., noun, verb)')
     definition: str | None = Field(None, description='Definition of the word in Korean')
-    english_meaning: str | None = Field(None, description='English word')
+    english: str | None = Field(None, description='English word')
 
 
 class Player(BaseModel):

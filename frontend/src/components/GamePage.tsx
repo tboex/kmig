@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import Toolbar from './Toolbar'
 import Popup from './Popup';
 import Username from './Username';
+import WordTooltip from './WordTooltip';
 import { startGame, submitWord, getBotTurn, getGameStatus } from '../services/game';
 
 
@@ -14,10 +15,23 @@ export default function GamePage() {
     const [username, setUsername] = useState(() => localStorage.getItem('kmig_username') || '');
     const [showUsernamePopup, setShowUsernamePopup] = useState(!username);
     const [usernameInput, setUsernameInput] = useState('');
-    const [popup, setPopup] = useState<{ open: boolean; message: string; type?: 'success' | 'error' | 'info' | 'defeat' }>({ open: false, message: '' });
+    const [popup, setPopup] = useState<{
+        open: boolean;
+        message: string;
+        type?: 'success' | 'error' | 'info' | 'defeat'
+    }>({ open: false, message: '', type: 'info' });
 
     // New state for the chain and input
-    const [chain, setChain] = useState<{ sender: 'other' | 'user', text: string, name: string }[]>([]);
+    const [chain, setChain] = useState<{
+        sender: 'other' | 'user',
+        text: string,
+        name: string,
+        pronunciation?: string,
+        hanja?: string,
+        part_of_speech?: string,
+        definition?: string,
+        english?: string,
+    }[]>([]);
     const [userInput, setUserInput] = useState('');
     const chainRef = useRef<HTMLDivElement>(null);
     const [isScrolledUp, setIsScrolledUp] = useState(false);
@@ -26,8 +40,20 @@ export default function GamePage() {
         try {
             const data = await startGame(mode, guessCount, timerDuration, word);
             setGameData(data);
+            if (data.game_id && mode === 'multi') {
+                window.history.replaceState(null, '', `/game/${data.game_id}`);
+            }
             if (data.hasOwnProperty('word')) {
-                setChain([{ sender: 'other', text: data.word.korean, name: data.player.name }]);
+                setChain([{
+                    sender: 'other',
+                    text: data.word.korean,
+                    name: data.player.name,
+                    pronunciation: data.word.pronunciation,
+                    hanja: data.word.hanja,
+                    part_of_speech: data.word.part_of_speech,
+                    definition: data.word.definition,
+                    english: data.word.english,
+                }]);
             }
         } catch (err) {
             console.log(err);
@@ -58,14 +84,10 @@ export default function GamePage() {
         // const game_status = await getGameStatus(gameData.game_id);
 
         // if(game_status.status.status === 'INACTIVE') {
-        //     handleStartGame(userInput); 
+        //     handleStartGame(userInput);
         // }
 
-        setChain([...chain, {
-            sender: 'user',
-            text: userInput,
-            name: usernameInput
-        }]);
+
         const submittedWord = userInput;
         setUserInput('');
 
@@ -76,7 +98,24 @@ export default function GamePage() {
             if (submitRes.status.status === 'VICTORY') {
                 setPopup({ open: true, message: submitRes.status.message, type: 'success' });
             } else if (submitRes.status.status === 'INVALID') {
+                setChain([...chain, {
+                    sender: 'user',
+                    text: userInput,
+                    name: usernameInput
+                }]);
                 setPopup({ open: true, message: submitRes.status.message, type: 'error' });
+            }
+            else {
+                setChain([...chain, {
+                    sender: 'user',
+                    text: submitRes.word.korean,
+                    name: submitRes.player.name,
+                    pronunciation: submitRes.word.pronunciation,
+                    hanja: submitRes.word.hanja,
+                    part_of_speech: submitRes.word.part_of_speech,
+                    definition: submitRes.word.definition,
+                    english: submitRes.word.english,
+                }]);
             }
 
             // If single mode, get bot's turn
@@ -84,7 +123,16 @@ export default function GamePage() {
                 const botRes = await getBotTurn(gameData.game_id);
                 setChain(current => [
                     ...current,
-                    { sender: 'other', text: botRes.word?.korean || '봇의 응답 없음', name: botRes.player.name }
+                    {
+                        sender: 'other',
+                        text: botRes.word?.korean || '봇의 응답 없음',
+                        name: botRes.player.name,
+                        pronunciation: botRes.word?.pronunciation,
+                        hanja: botRes.word?.hanja,
+                        part_of_speech: botRes.word?.part_of_speech,
+                        definition: botRes.word?.definition,
+                        english: botRes.word?.english,
+                    }
                 ]);
             }
         } catch (err) {
@@ -122,7 +170,7 @@ export default function GamePage() {
                 <div
                     ref={chainRef}
                     onScroll={handleChainScroll}
-                    className="w-full max-w-md mb-4 h-96 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2"
+                    className="game-play-space w-full max-w-md mb-4 h-96 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2"
                 >
                         {[...chain].reverse().map((msg, idx) => {
                             const fadeSteps = 5;
@@ -132,14 +180,24 @@ export default function GamePage() {
                                 <div
                                     key={chain.length - 1 - idx}
                                     style={{ opacity }}
-                                    className={`px-4 py-2 rounded-lg transition-opacity duration-500 mb-2 ${
+                                    className={`relative px-4 py-2 rounded-lg transition-opacity duration-500 mb-2 ${
                                         msg.sender === 'other'
                                             ? 'bg-serika-dark--sub-alt-color text-serika-dark--main-color self-start'
                                             : 'bg-serika-dark--main-color text-black self-end'
                                     }`}
                                 >
-                                     <div className="text-xs text-serika-dark--sub-color mb-1">{msg.name}</div>
-                                    {msg.text}
+                                    <div className="text-xs text-serika-dark--sub-color mb-1">{msg.name}</div>
+                                    <WordTooltip
+                                        tooltip={
+                                            <>
+                                            {msg.pronunciation && <div><b>Pronunciation:</b> {msg.pronunciation}</div>}
+                                            {msg.hanja && <div><b>Hanja:</b> {msg.hanja}</div>}
+                                            {msg.definition && <div><b>Definition:</b> {msg.definition}</div>}
+                                            </>
+                                        }
+                                        >
+                                        {msg.text}
+                                    </WordTooltip>
                                 </div>
                             );
                         })}

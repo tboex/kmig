@@ -66,7 +66,7 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, W
             hanja=None,
             part_of_speech=None,
             definition=None,
-            english_meaning=None,
+            english=None,
         ))
 
     response_word = dictionary.get(word, '')
@@ -173,7 +173,7 @@ async def bot_pick_word(state, game_id: str) -> Optional[Word]:
             hanja=word_dict.get('hanja', ''),
             part_of_speech=word_dict.get('part_of_speech'),
             definition=word_dict.get('definition'),
-            english_meaning=word_dict.get('english'),
+            english=word_dict.get('english'),
         )
 
     last_character = previous_words[-1][-1]  # Last character of the last word played
@@ -200,7 +200,7 @@ async def bot_pick_word(state, game_id: str) -> Optional[Word]:
             hanja=chosen_word_dict.get('hanja', ''),
             part_of_speech=chosen_word_dict.get('part_of_speech'),
             definition=chosen_word_dict.get('definition'),
-            english_meaning=chosen_word_dict.get('english'),
+            english=chosen_word_dict.get('english'),
         )
 
     return None
