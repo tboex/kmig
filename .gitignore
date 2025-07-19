@@ -7,3 +7,6 @@ node_modules/
 package-lock.json
 *DS_Store
 *__debug**
+
+# Local Netlify folder
+.netlify
