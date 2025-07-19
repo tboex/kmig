@@ -1,5 +1,7 @@
 from typing import Union
-from fastapi import APIRouter, Depends
+import json
+from fastapi import APIRouter, Depends, WebSocket
+from pydantic import ValidationError
 
 from core.state import get_state
 from models.game import (
@@ -7,6 +9,10 @@ from models.game import (
     GameStatusResponse,
     SinglePlayerRequest,
     SinglePlayerResponse,
+    MultiplayerRequest,
+    MultiplayerResponse,
+    MultiplayerJoinRequest,
+    MultiplayerWSRequest,
     SubmitWordRequest,
     SubmitWordResponse,
     NoActiveGameResponse,
@@ -16,15 +22,19 @@ from services.game_management import (
     init_game,
     add_word,
     bot_take_turn,
+    join_game,
 )
 from services.cache_management import (
     update_game_state,
     game_is_active,
     get_game_state,
 )
+from core.websocket import ConnectionManager
 from utils.hash import generate_hash
 
 router = APIRouter()
+
+manager = ConnectionManager()
 
 
 @router.post('/single', response_model_exclude_none=True)
@@ -62,13 +72,70 @@ async def single(
 
 
 @router.post('/multi', response_model_exclude_none=True)
-async def multi() -> None:
-    return None
+async def multi(
+    request: MultiplayerRequest,
+    state=Depends(get_state),
+) -> MultiplayerResponse:
+    '''
+    Start a multiplayer game and return the gameid.
+    '''
+
+    game_id = generate_hash()
+
+    response = await init_game(
+        state=state,
+        game_id=game_id,
+        mode='multi',
+        player=Player(
+            id=request.player_id,
+            name=request.player_name,
+        ),
+        word=request.word,  # TODO: Do I want the ability to pass word in MP?
+    )
+
+    await update_game_state(
+        state=state,
+        game_id=game_id,
+        round_state=response,
+    )
+
+    return MultiplayerResponse(
+        game_id=game_id,
+        mode=response.get('mode', 'multi'),
+        status=response.get('status'),
+        player=response.get('player', None),
+        word=response.get('word', None),
+        turn=response.get('turn', ''),
+    )
 
 
-@router.post('/multi/join', response_model_exclude_none=True)
-async def join_multi() -> None:
-    return None
+@router.post('/{game_id}/join', response_model_exclude_none=True)
+async def join_multi(
+    game_id: str,
+    request: MultiplayerJoinRequest,
+    state=Depends(get_state),
+) -> GameStatusResponse:
+
+    response = await join_game(
+        state=state,
+        game_id=game_id,
+        player=Player(
+            id=request.player_id,
+            name=request.player_name,
+        ),
+    )
+
+    await update_game_state(
+        state=state,
+        game_id=game_id,
+        round_state=response,
+    )
+
+    return GameStatusResponse(
+        mode='multi',
+        status=response['status'].status,
+        message=response['status'].message,
+    )
 
 
 @router.post('/{game_id}/submit', response_model_exclude_none=True)
@@ -135,6 +202,47 @@ async def kmig_bot_turn(
     )
 
 
+@router.websocket('/ws/{game_id}')
+async def websocket_endpoint(
+    websocket: WebSocket,
+    game_id: str,
+):
+    state = websocket.app.state
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            try:
+                request = json.loads(data)
+                request = MultiplayerWSRequest(**request)
+
+                response = await add_word(
+                    state=state,
+                    game_id=game_id,
+                    word=request.word,
+                    player=Player(
+                        id=request.player_id,
+                        name=request.player_name,
+                    ),
+                )
+
+                await update_game_state(
+                    state=state,
+                    game_id=game_id,
+                    round_state=response,
+                )
+                await manager.broadcast(f'Message from {game_id}: {response}')
+            except (json.JSONDecodeError, ValidationError) as e:
+                await manager.send_personal_message(
+                    f'Invalid payload: {str(e)}', websocket
+                )
+                continue
+    except Exception as e:
+        print(f'WebSocket error: {e}')
+    finally:
+        manager.disconnect(websocket)
+
+
 @router.get('/{game_id}', response_model_exclude_none=True)
 async def game_status(game_id: str, state=Depends(get_state)) -> GameStatusResponse:
     '''
@@ -159,6 +267,9 @@ async def forfeit_game(game_id: str) -> dict:
     Forfeit the current game.
     Returns a message indicating the game has been forfeited.
     '''
+
+    # TODO NTI
+
     return {
         'game_id': game_id,
         'status': 'forfeited',

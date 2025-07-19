@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
@@ -14,8 +15,9 @@ logger = logging.getLogger(LOGGER_NAME)
 
 
 async def startup():
+    dictionary_path = os.path.join(os.path.dirname(__file__), 'utils', 'dictionary.csv')
     app.state.redis_client = await setup_redis_client()
-    app.state.dictionary = load_dictionary('utils/dictionary.csv')
+    app.state.dictionary = load_dictionary(dictionary_path)
 
 
 async def shutdown():

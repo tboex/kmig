@@ -34,6 +34,11 @@ async def add_player(state, game_id: str, player: Player) -> None:
     await state.redis_client.expire(f'game:{game_id}:player:{player.id}', KEY_EXPIRY)
 
 
+async def is_valid_turn(state, game_id: str, player_id: str) -> bool:
+    current_turn = await state.redis_client.hget(f'game:{game_id}', 'current_turn')
+    return current_turn == player_id
+
+
 async def game_is_active(state, game_id:str) -> bool:
     return await state.redis_client.exists(f'game:{game_id}')
 
@@ -43,8 +48,7 @@ async def update_game_state(state, game_id: str, round_state: dict) -> None:
     await state.redis_client.hset(
         f'game:{game_id}',
         mapping={
-            'status': round_state['status'].status if round_state['status'].status else current_game_state.get('status'),  # noqa: E501
-            'message': round_state['status'].message if round_state['status'].message else current_game_state.get('message'),  # noqa: E501
+            'status': round_state.get('server_status') if round_state.get('server_status') else current_game_state.get('status'),  # noqa: E501
             'previous_player': getattr(round_state.get('player'), 'id', None) if getattr(round_state.get('player'), 'id', None) else current_game_state.get('previous_player'),  # noqa: E501
             'current_turn': getattr(round_state.get('turn'), 'id', None) if getattr(round_state.get('turn'), 'id', None) else current_game_state.get('current_turn'),  # noqa: E501
         },

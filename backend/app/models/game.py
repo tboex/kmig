@@ -13,11 +13,11 @@ class Word(BaseModel):
     Model representing a word in the game.
     '''
     korean: str = Field('', description='Korean word')
-    pronunciation: str | None = Field(None, description='Pronunciation of the word in Korean')
-    hanja: str | None = Field(None, description='Hanja representation of the word, if applicable')
-    part_of_speech: str | None = Field(None, description='Part of speech of the word (e.g., noun, verb)')
-    definition: str | None = Field(None, description='Definition of the word in Korean')
-    english: str | None = Field(None, description='English word')
+    pronunciation: str | None = None
+    hanja: str | None = None
+    part_of_speech: str | None = None
+    definition: str | None = None
+    english: str | None = None
 
 
 class Player(BaseModel):
@@ -35,8 +35,8 @@ class GameStatusResponse(BaseModel):
     mode: str
     status: str = ''
     message: str = ''
-    previous_player: str = ''
-    current_turn: str = ''
+    previous_player: str = 'n/a'
+    current_turn: str = 'n/a'
 
 
 class SinglePlayerRequest(BaseModel):
@@ -67,6 +67,38 @@ class SinglePlayerResponse(BaseModel):
     player: Player | None = None
     word: Word | None = None
     turn: Player | None = None
+
+
+class MultiplayerRequest(SinglePlayerRequest):
+    '''
+    Request model for multiplayer game.
+    '''
+    pass
+
+
+class MultiplayerResponse(SinglePlayerResponse):
+    '''
+    Response model for multiplayer game.
+    '''
+    pass
+
+
+class MultiplayerJoinRequest(BaseModel):
+    '''
+    Request model for joining a multiplayer game.
+    '''
+    player_id: str = Field(..., description='Unique identifier for the player joining the game')
+    player_name: str = Field(..., description='Name of the player joining the game')
+
+
+class MultiplayerWSRequest(BaseModel):
+    '''
+    Request model for WebSocket connection in multiplayer game.
+    '''
+    game_id: str = Field(..., description='Unique identifier for the game')
+    player_id: str = Field(..., description='Unique identifier for the player')
+    player_name: str = Field(..., description='Name of the player')
+    word: str = Field('', description='The word to be played in the game')
 
 
 class SubmitWordRequest(BaseModel):

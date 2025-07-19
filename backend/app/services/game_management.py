@@ -6,6 +6,7 @@ import unicodedata
 from services.cache_management import (
     add_player,
     init_game_state,
+    is_valid_turn,
 )
 from models.game import (
     Word,
@@ -24,6 +25,7 @@ async def init_game(state, game_id: str, mode: str, player: Player, word: str) -
         'game_id': game_id,
         'mode': mode,
         'status': Status(status='WAITING', message='First turn not taken'),
+        'server_status': '',
         'player': None,
         'word': None,
         'turn': player,
@@ -53,6 +55,52 @@ async def init_game(state, game_id: str, mode: str, player: Player, word: str) -
 
     logging.info(f'Started Solo Game: {game_id}')
     return game_status
+
+
+async def join_game(state, game_id: str, player: Player) -> dict[str, Any]:
+    game_status = {
+        'game_id': game_id,
+        'mode': 'multi',
+        'status': None,
+        'server_status': '',
+        'player': None,
+        'word': None,
+        'turn': None,
+    }
+
+    if not await state.redis_client.exists(f'game:{game_id}'):
+        game_status['status'] = Status(status='INVALID', message='Game does not exist')
+        return game_status
+
+    if await state.redis_client.exists(f'game:{game_id}:player:{player.id}'):
+        game_status['status'] = Status(status='INVALID', message='Player already joined')
+        return game_status
+
+    await add_player(state, game_id, player)
+    game_status['player'] = player
+    game_status['status'] = Status(status='ACTIVE', message='Player joined successfully')
+    logging.info(f'Player {player.name} joined game: {game_id}')
+
+    if stating_player := await chose_starting_player(state, game_id):
+        game_status['turn'] = stating_player
+        game_status['server_status'] = 'READY'
+
+    return game_status
+
+
+async def chose_starting_player(state, game_id: str) -> Player | None:
+    players = await state.redis_client.lrange(f'game:{game_id}:players', 0, -1)
+    if not players:
+        return None
+
+    # Randomly choose a player to start
+    starting_player_id = random.choice(players)
+    player_details = await state.redis_client.hgetall(f'game:{game_id}:player:{starting_player_id}')
+
+    return Player(
+        id=player_details.get('id'),
+        name=player_details.get('name')
+    )
 
 
 def is_korean_word(word: str) -> bool:
@@ -124,11 +172,16 @@ async def add_word(state, game_id: str, player: Player, word: str) -> dict:
     game_status = {
         'game_id': game_id,
         'mode': stored_state.get('mode', 'single'),
+        'server_status': stored_state.get('status', 'WAITING'),
         'status': None,
         'player': player,
-        'word': None,
-        'turn': player,
+        'word': Word(korean=word, pronunciation=None, hanja=None, part_of_speech=None, definition=None, english=None),
+        'turn': stored_state.get('current_turn'),
     }
+
+    if not await is_valid_turn(state, game_id, player.id):
+        game_status['status'] = Status(status='INVALID', message='Not your turn')
+        return game_status
 
     valid, status, response_word = await is_valid_word(state, game_id, word)
     game_status['success'], game_status['status'], game_status['word'] = valid, status, response_word
@@ -163,6 +216,7 @@ async def bot_take_turn(state, game_id: str) -> dict[str, Any]:
     game_status = {
         'game_id': game_id,
         'mode': 'single',
+        'server_status': '',
         'status': None,
         'player': None,
         'word': None,
