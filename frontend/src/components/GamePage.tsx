@@ -190,9 +190,10 @@ export default function GamePage() {
                                     <WordTooltip
                                         tooltip={
                                             <>
+                                            {msg.english && <div><b>English:</b> {msg.english}</div>}
+                                            {msg.definition && <div><b>Definition:</b> {msg.definition}</div>}
                                             {msg.pronunciation && <div><b>Pronunciation:</b> {msg.pronunciation}</div>}
                                             {msg.hanja && <div><b>Hanja:</b> {msg.hanja}</div>}
-                                            {msg.definition && <div><b>Definition:</b> {msg.definition}</div>}
                                             </>
                                         }
                                         >

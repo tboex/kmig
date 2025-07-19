@@ -10,8 +10,8 @@ export default defineConfig({
   ],
   server: {
     allowedHosts: [
-      'devserver-main--timely-sprinkles-8ead71.netlify.app',
-      'timely-sprinkles-8ead71.netlify.app', // production Netlify domain
+      'kmig.netlify.app', // production Netlify domain
+      'devserver-main--kmig.netlify.app'
     ],
   }
 })
