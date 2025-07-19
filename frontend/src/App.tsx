@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './App.css'
 import Header from './components/Header'
+import LandingPage from './components/LandingPage'
 import GamePage from './components/GamePage'
 import GamePageMultiplayer from './components/GamePageMultiplayer'
 import Footer from './components/Footer'
@@ -18,8 +19,9 @@ function App() {
         <Header />
         <div className="flex-1 flex flex-col">
           <Routes>
-            <Route path="/" element={<GamePage />} />
-            <Route path="/game/:gameId" element={<GamePage />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/solo" element={<GamePage />} />
+            <Route path="/game/:gameId" element={<GamePageMultiplayer />} />
           </Routes>
         </div>
         <Footer

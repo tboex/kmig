@@ -1,20 +1,15 @@
-import { useRef, useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import Toolbar from './Toolbar'
+import { useRef, useState, useEffect, use } from 'react';
+import { useLocation } from 'react-router-dom';
 import Popup from './Popup';
 import Username from './Username';
 import WordTooltip from './WordTooltip';
-import { startGame, submitWord, getBotTurn, getGameStatus } from '../services/game';
+import { submitWord, getBotTurn } from '../services/game';
 
 
 export default function GamePage() {
-    const { gameId } = useParams();
-    const navigate = useNavigate();
-    const [mode, setMode] = useState<'solo' | 'multi'>('solo');
-    const [toolbarMode, setToolbarMode] = useState<'guesses' | 'timer'>('guesses');
-    const [guessCount, setGuessCount] = useState<number>(5);
-    const [timerDuration, setTimerDuration] = useState<number>(0);
-    const [gameData, setGameData] = useState<any>(null);
+    const location = useLocation();
+    const initialGameData = location.state?.gameData;
+    const [gameData, setGameData] = useState<any>(initialGameData);
     const [username, setUsername] = useState(() => localStorage.getItem('kmig_username') || '');
     const [showUsernamePopup, setShowUsernamePopup] = useState(!username);
     const [usernameInput, setUsernameInput] = useState('');
@@ -23,8 +18,6 @@ export default function GamePage() {
         message: string;
         type?: 'success' | 'error' | 'info' | 'defeat'
     }>({ open: false, message: '', type: 'info' });
-
-    // New state for the chain and input
     const [chain, setChain] = useState<{
         sender: 'other' | 'user',
         text: string,
@@ -39,62 +32,6 @@ export default function GamePage() {
     const chainRef = useRef<HTMLDivElement>(null);
     const [isScrolledUp, setIsScrolledUp] = useState(false);
 
-    async function handleStartGame(word?: string) {
-        try {
-            console.log(mode)
-            if (mode === 'solo') {
-                navigate(`/`);
-                const data = await startGame(mode, username, guessCount, timerDuration, word);
-                setGameData(data);
-
-                // for bot response
-                if (data.hasOwnProperty('word')) {
-                setChain([{
-                    sender: 'other',
-                    text: data.word.korean,
-                    name: data.player.name,
-                    pronunciation: data.word.pronunciation,
-                    hanja: data.word.hanja,
-                    part_of_speech: data.word.part_of_speech,
-                    definition: data.word.definition,
-                    english: data.word.english,
-                }]);
-            }
-            } else if (mode === 'multi') {
-                const data = await startGame(mode, username, guessCount, timerDuration, word);
-                setGameData(data);
-                navigate(`/game/${data.game_id}`);
-            }
-        } catch (err) {
-            console.log(err);
-            alert("Failed to start game");
-        }
-    }
-
-    function handleUsernameSubmit() {
-        if (usernameInput.trim()) {
-            setUsername(usernameInput.trim());
-            localStorage.setItem('kmig_username', usernameInput.trim());
-            setShowUsernamePopup(false);
-        }
-    }
-
-    useEffect(() => {
-        setChain([]);
-        if (gameId) {
-            setMode('multi');
-            getGameStatus(gameId)
-                .then(data => {
-                    setGameData(data);
-                })
-                .catch(err => {
-                    setPopup({ open: true, message: '게임을 불러올 수 없습니다.', type: 'error' });
-                });
-            // Setup WebSocket connection here if needed
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [gameId]);
-
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (!userInput.trim() || !gameData?.game_id) return;
@@ -103,7 +40,7 @@ export default function GamePage() {
         setUserInput('');
 
         try {
-            const submitRes = await submitWord(gameData.game_id, submittedWord);
+            const submitRes = await submitWord(gameData.game_id, submittedWord, username);
 
             if (submitRes.status.status === 'VICTORY') {
                 setPopup({ open: true, message: submitRes.status.message, type: 'success' });
@@ -150,6 +87,26 @@ export default function GamePage() {
         }
     }
 
+
+    useEffect(() => {
+        setGameData(initialGameData);
+        setUsername(localStorage.getItem('kmig_username') || '');
+
+        if (initialGameData && initialGameData.word) {
+
+            setChain([{
+                sender: 'other',
+                text: initialGameData.word.korean,
+                name: initialGameData.player?.name || 'Bot',
+                pronunciation: initialGameData.word.pronunciation,
+                hanja: initialGameData.word.hanja,
+                part_of_speech: initialGameData.word.part_of_speech,
+                definition: initialGameData.word.definition,
+                english: initialGameData.word.english,
+            }]);
+        }
+    }, [initialGameData]);
+
     function handleChainScroll() {
         const el = chainRef.current;
         if (!el) return;
@@ -166,16 +123,6 @@ export default function GamePage() {
 
     return (
         <main className="game-page w-full flex-1 flex flex-col  bg-serika-dark--bg-color">
-            <Toolbar
-                mode={mode}
-                setMode={setMode}
-                toolbarMode={toolbarMode}
-                setToolbarMode={setToolbarMode}
-                guessCount={guessCount}
-                setGuessCount={setGuessCount}
-                timerDuration={timerDuration}
-                setTimerDuration={setTimerDuration}
-            />
             <div className="game-bar flex-1 flex flex-col items-center justify-center">
                 <div
                     ref={chainRef}
@@ -228,12 +175,6 @@ export default function GamePage() {
                     </button>
                 </form>
             </div>
-            <Username
-                open={showUsernamePopup}
-                usernameInput={usernameInput}
-                setUsernameInput={setUsernameInput}
-                onSubmit={handleUsernameSubmit}
-            />
             <Popup
                 open={popup.open}
                 message={popup.message}

@@ -3,8 +3,8 @@ const API_BASE_URL = import.meta.env.VITE_KMIG_API_URL || "http://localhost:8000
 export async function startGame(
     mode: 'solo' | 'multi',
     username: string,
-    guessCount: number,
-    timerDuration: number,
+    guessCount?: number,
+    timerDuration?: number,
     word?: string,
 ) {
     if (mode === 'solo') {
@@ -39,13 +39,13 @@ export async function startGame(
     }
 }
 
-export async function submitWord(gameId: string, word: string) {
+export async function submitWord(gameId: string, word: string, username: string) {
     const res = await fetch(`${API_BASE_URL}/kmig/v1/game/${gameId}/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            'player_name': 'tim',
-            'player_id': 'timboex',
+            'player_name': username,
+            'player_id': username,
             'word': word,
          }),
     });
