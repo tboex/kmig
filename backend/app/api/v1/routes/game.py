@@ -1,8 +1,10 @@
 from typing import Union
+import logging
 import json
 from fastapi import APIRouter, Depends, WebSocket
 from pydantic import ValidationError
 
+from settings import LOGGER_NAME
 from core.state import get_state
 from models.game import (
     Player,
@@ -32,6 +34,8 @@ from services.cache_management import (
 )
 from core.websocket import ConnectionManager
 from utils.hash import generate_hash
+
+logger = logging.getLogger(LOGGER_NAME)
 
 router = APIRouter()
 
@@ -126,8 +130,6 @@ async def join_multi(
         ),
     )
 
-    print(response)
-
     await update_game_state(
         state=state,
         game_id=game_id,
@@ -216,7 +218,13 @@ async def websocket_endpoint(
 ):
     state = websocket.app.state
     await manager.connect(websocket)
+
     try:
+        if not await game_is_active(state, game_id):
+            await manager.send_personal_message(
+                f'No active game for game_id: {game_id}', websocket
+            )
+            raise Exception(f'No active game for game_id: {game_id}')
         while True:
             data = await websocket.receive_text()
             try:
@@ -245,8 +253,9 @@ async def websocket_endpoint(
                 )
                 continue
     except Exception as e:
-        print(f'WebSocket error: {e}')
+        logger.error(f'WebSocket error: {e}')
     finally:
+        logger.info(f'WebSocket connection closed for game_id: {game_id}')
         manager.disconnect(websocket)
 
 
