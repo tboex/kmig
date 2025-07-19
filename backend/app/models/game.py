@@ -37,6 +37,7 @@ class GameStatusResponse(BaseModel):
     message: str = ''
     previous_player: str = 'n/a'
     current_turn: str = 'n/a'
+    players: list[str] = Field(default_factory=list, description='List of player IDs in the game')
 
 
 class SinglePlayerRequest(BaseModel):
@@ -63,7 +64,7 @@ class SinglePlayerResponse(BaseModel):
     '''
     game_id: str = Field(..., description='Unique identifier for the game')
     mode: str = Field('single', description="Game mode, always 'single' for single player")
-    status: Status = Field(..., description='Current status of the game')
+    status: Status | None = Field(None, description='Status of Submission')
     player: Player | None = None
     word: Word | None = None
     turn: Player | None = None

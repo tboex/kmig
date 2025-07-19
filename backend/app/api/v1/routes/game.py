@@ -28,6 +28,7 @@ from services.cache_management import (
     update_game_state,
     game_is_active,
     get_game_state,
+    get_player_list,
 )
 from core.websocket import ConnectionManager
 from utils.hash import generate_hash
@@ -102,7 +103,7 @@ async def multi(
     return MultiplayerResponse(
         game_id=game_id,
         mode=response.get('mode', 'multi'),
-        status=response.get('status'),
+        status=response.get('status', None),
         player=response.get('player', None),
         word=response.get('word', None),
         turn=response.get('turn', ''),
@@ -125,16 +126,22 @@ async def join_multi(
         ),
     )
 
+    print(response)
+
     await update_game_state(
         state=state,
         game_id=game_id,
         round_state=response,
     )
 
+    players = await get_player_list(state, game_id)
+
     return GameStatusResponse(
         mode='multi',
         status=response['status'].status,
         message=response['status'].message,
+        current_turn=response['turn'].id if response.get('turn') else 'n/a',
+        players=players,
     )
 
 
@@ -252,12 +259,15 @@ async def game_status(game_id: str, state=Depends(get_state)) -> GameStatusRespo
 
     response = await get_game_state(state, game_id)
 
+    players = await get_player_list(state, game_id)
+
     return GameStatusResponse(
         mode=response.get('mode', ''),
         status=response.get('status', 'INACTIVE'),
         message=response.get('message', 'No active game'),
         previous_player=response.get('previous_player', ''),
         current_turn=response.get('current_turn', ''),
+        players=players,
     )
 
 

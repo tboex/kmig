@@ -57,3 +57,8 @@ async def update_game_state(state, game_id: str, round_state: dict) -> None:
 
 async def get_game_state(state, game_id: str) -> dict:
     return await state.redis_client.hgetall(f'game:{game_id}')
+
+
+async def get_player_list(state, game_id: str) -> list[str]:
+    players = await state.redis_client.lrange(f'game:{game_id}:players', 0, -1)
+    return players

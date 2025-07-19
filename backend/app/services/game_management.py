@@ -24,11 +24,11 @@ async def init_game(state, game_id: str, mode: str, player: Player, word: str) -
     game_status = {
         'game_id': game_id,
         'mode': mode,
-        'status': Status(status='WAITING', message='First turn not taken'),
-        'server_status': '',
+        'status': None,
+        'server_status': 'CREATING',
         'player': None,
         'word': None,
-        'turn': player,
+        'turn': None,
     }
 
     await init_game_state(state=state, game_id=game_id, mode=mode)
@@ -53,7 +53,7 @@ async def init_game(state, game_id: str, mode: str, player: Player, word: str) -
             )
             game_status = await add_word(state, game_id, player, word)
 
-    logging.info(f'Started Solo Game: {game_id}')
+    logging.info(f'Started {mode} Game: {game_id}')
     return game_status
 
 
@@ -77,7 +77,6 @@ async def join_game(state, game_id: str, player: Player) -> dict[str, Any]:
         return game_status
 
     await add_player(state, game_id, player)
-    game_status['player'] = player
     game_status['status'] = Status(status='ACTIVE', message='Player joined successfully')
     logging.info(f'Player {player.name} joined game: {game_id}')
 
@@ -172,7 +171,7 @@ async def add_word(state, game_id: str, player: Player, word: str) -> dict:
     game_status = {
         'game_id': game_id,
         'mode': stored_state.get('mode', 'single'),
-        'server_status': stored_state.get('status', 'WAITING'),
+        'server_status': 'PLAYING',
         'status': None,
         'player': player,
         'word': Word(korean=word, pronunciation=None, hanja=None, part_of_speech=None, definition=None, english=None),
