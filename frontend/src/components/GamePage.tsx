@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Toolbar from './Toolbar'
 import Popup from './Popup';
 import Username from './Username';
@@ -7,6 +8,8 @@ import { startGame, submitWord, getBotTurn, getGameStatus } from '../services/ga
 
 
 export default function GamePage() {
+    const { gameId } = useParams();
+    const navigate = useNavigate();
     const [mode, setMode] = useState<'solo' | 'multi'>('solo');
     const [toolbarMode, setToolbarMode] = useState<'guesses' | 'timer'>('guesses');
     const [guessCount, setGuessCount] = useState<number>(5);
@@ -38,12 +41,14 @@ export default function GamePage() {
 
     async function handleStartGame(word?: string) {
         try {
-            const data = await startGame(mode, guessCount, timerDuration, word);
-            setGameData(data);
-            if (data.game_id && mode === 'multi') {
-                window.history.replaceState(null, '', `/game/${data.game_id}`);
-            }
-            if (data.hasOwnProperty('word')) {
+            console.log(mode)
+            if (mode === 'solo') {
+                navigate(`/`);
+                const data = await startGame(mode, username, guessCount, timerDuration, word);
+                setGameData(data);
+
+                // for bot response
+                if (data.hasOwnProperty('word')) {
                 setChain([{
                     sender: 'other',
                     text: data.word.korean,
@@ -54,6 +59,11 @@ export default function GamePage() {
                     definition: data.word.definition,
                     english: data.word.english,
                 }]);
+            }
+            } else if (mode === 'multi') {
+                const data = await startGame(mode, username, guessCount, timerDuration, word);
+                setGameData(data);
+                navigate(`/game/${data.game_id}`);
             }
         } catch (err) {
             console.log(err);
@@ -69,30 +79,30 @@ export default function GamePage() {
         }
     }
 
-    // Call handleStartGame on mount and whenever settings change
     useEffect(() => {
-        setChain([])
-        handleStartGame();
+        setChain([]);
+        if (gameId) {
+            setMode('multi');
+            getGameStatus(gameId)
+                .then(data => {
+                    setGameData(data);
+                })
+                .catch(err => {
+                    setPopup({ open: true, message: '게임을 불러올 수 없습니다.', type: 'error' });
+                });
+            // Setup WebSocket connection here if needed
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [mode, toolbarMode, guessCount, timerDuration]);
+    }, [gameId]);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (!userInput.trim() || !gameData?.game_id) return;
 
-        // TODO: Check if game is still active before submitting
-        // const game_status = await getGameStatus(gameData.game_id);
-
-        // if(game_status.status.status === 'INACTIVE') {
-        //     handleStartGame(userInput);
-        // }
-
-
         const submittedWord = userInput;
         setUserInput('');
 
         try {
-            // POST user's word
             const submitRes = await submitWord(gameData.game_id, submittedWord);
 
             if (submitRes.status.status === 'VICTORY') {

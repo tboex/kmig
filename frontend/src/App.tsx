@@ -19,7 +19,7 @@ function App() {
         <div className="flex-1 flex flex-col">
           <Routes>
             <Route path="/" element={<GamePage />} />
-            <Route path="/game/:gameId" element={<GamePageMultiplayer />} />
+            <Route path="/game/:gameId" element={<GamePage />} />
           </Routes>
         </div>
         <Footer
