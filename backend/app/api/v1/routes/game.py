@@ -201,6 +201,12 @@ async def kmig_bot_turn(
         game_id=game_id,
     )
 
+    await update_game_state(
+        state=state,
+        game_id=game_id,
+        round_state=response,
+    )
+
     return SinglePlayerResponse(
         game_id=response.get('game_id', ''),
         mode=response.get('mode', 'single'),

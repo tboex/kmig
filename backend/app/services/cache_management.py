@@ -62,3 +62,13 @@ async def get_game_state(state, game_id: str) -> dict:
 async def get_player_list(state, game_id: str) -> list[str]:
     players = await state.redis_client.lrange(f'game:{game_id}:players', 0, -1)
     return players
+
+
+async def get_player_details(state, game_id: str, player_id: str) -> Player | None:
+    player_data = await state.redis_client.hgetall(f'game:{game_id}:player:{player_id}')
+    if not player_data:
+        return None
+    return Player(
+        id=player_data.get('id'),
+        name=player_data.get('name'),
+    )

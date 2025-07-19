@@ -7,6 +7,7 @@ from services.cache_management import (
     add_player,
     init_game_state,
     is_valid_turn,
+    get_player_details,
 )
 from models.game import (
     Word,
@@ -43,15 +44,9 @@ async def init_game(state, game_id: str, mode: str, player: Player, word: str) -
 
         if not player_start:
             game_status = await bot_take_turn(state, game_id)
-        elif word:
-            await state.redis_client.hset(
-                f'game:{game_id}',
-                mapping={
-                    'previous_player': player.id,
-                    'current_turn': player.id,
-                },
-            )
-            game_status = await add_word(state, game_id, player, word)
+        else:
+            game_status['turn'] = player
+            game_status['status'] = Status(status='ACTIVE', message='Game started successfully')
 
     logging.info(f'Started {mode} Game: {game_id}')
     return game_status
@@ -175,7 +170,7 @@ async def add_word(state, game_id: str, player: Player, word: str) -> dict:
         'status': None,
         'player': player,
         'word': Word(korean=word, pronunciation=None, hanja=None, part_of_speech=None, definition=None, english=None),
-        'turn': stored_state.get('current_turn'),
+        'turn': await get_player_details(state, game_id, stored_state.get('current_turn')),
     }
 
     if not await is_valid_turn(state, game_id, player.id):
