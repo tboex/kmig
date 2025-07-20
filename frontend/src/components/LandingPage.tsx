@@ -5,13 +5,11 @@ import { startGame } from '../services/game';
 export default function LandingPage() {
   const navigate = useNavigate();
   const [username, setUsername] = useState(() => localStorage.getItem('kmig_username') || '');
-  const [setGameData] = useState<any>(null);
 
   async function handleSolo() {
     if (!username.trim()) return;
     localStorage.setItem('kmig_username', username.trim());
     const data = await startGame('solo', username.trim());
-    setGameData(data);
     navigate('/solo', { state: { gameData: data } });
   }
 
@@ -19,7 +17,6 @@ export default function LandingPage() {
     if (!username.trim()) return;
     localStorage.setItem('kmig_username', username.trim());
     const data = await startGame('multi', username.trim());
-    setGameData(data);
     navigate(`/game/${data.game_id}`, { state: { gameData: data } });
   }
 
