@@ -175,17 +175,17 @@ async def handle_websocket_submit_word_request(
         game_id=request.game_id,
         round_state=status,
     )
-
+    print(status)
     await manager.broadcast(
         json.dumps({
             'type': 'word_submitted',
             'game_id': request.game_id,
             'player_id': request.player_id,
             'player_name': request.player_name,
-            'word': request.word,
             'current_turn': status['turn'].id if status.get('turn') else 'n/a',
             'status': status['status'].status,
             'message': status['status'].message,
+            'word': status['word'] if status.get('word') else None,
         })
     )
 
