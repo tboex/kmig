@@ -1,6 +1,11 @@
-import React from 'react';
+type UsernameProps = {
+  open: boolean;
+  usernameInput: string;
+  setUsernameInput: (value: string) => void;
+  onSubmit: () => void;
+};
 
-export default function Username({ open, usernameInput, setUsernameInput, onSubmit }) {
+export default function Username({ open, usernameInput, setUsernameInput, onSubmit }: UsernameProps) {
   if (!open) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">

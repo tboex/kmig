@@ -1,7 +1,6 @@
-import { useRef, useState, useEffect, use } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Popup from './Popup';
-import Username from './Username';
 import WordTooltip from './WordTooltip';
 import { submitWord, getBotTurn } from '../services/game';
 
@@ -11,8 +10,7 @@ export default function GamePage() {
     const initialGameData = location.state?.gameData;
     const [gameData, setGameData] = useState<any>(initialGameData);
     const [username, setUsername] = useState(() => localStorage.getItem('kmig_username') || '');
-    const [showUsernamePopup, setShowUsernamePopup] = useState(!username);
-    const [usernameInput, setUsernameInput] = useState('');
+    const [usernameInput] = useState('');
     const [popup, setPopup] = useState<{
         open: boolean;
         message: string;

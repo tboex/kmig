@@ -5,7 +5,7 @@ import { startGame } from '../services/game';
 export default function LandingPage() {
   const navigate = useNavigate();
   const [username, setUsername] = useState(() => localStorage.getItem('kmig_username') || '');
-  const [gameData, setGameData] = useState<any>(null);
+  const [setGameData] = useState<any>(null);
 
   async function handleSolo() {
     if (!username.trim()) return;

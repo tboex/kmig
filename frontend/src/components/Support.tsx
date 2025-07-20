@@ -1,6 +1,8 @@
-import React from 'react';
+interface SupportProps {
+  onClose: () => void;
+}
 
-export default function Support({ onClose }) {
+export default function Support({ onClose }: SupportProps) {
   return (
     <div className="support-popup-window fixed inset-0 flex items-center justify-center z-50">
       {/* Blurred and darkened background */}

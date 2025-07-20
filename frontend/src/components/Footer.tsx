@@ -1,4 +1,9 @@
-export default function Footer({ onContactClick, onSupportClick }) {
+type FooterProps = {
+  onContactClick: () => void;
+  onSupportClick: () => void;
+};
+
+export default function Footer({ onContactClick, onSupportClick }: FooterProps) {
   return (
     <footer className="w-full h-30 px-4  bg-serika-dark--bg-color flex items-center justify-between z-50">
         {/* Left section (Logo) */}

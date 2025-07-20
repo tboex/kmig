@@ -1,15 +1,20 @@
 import { useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
-export default function WordTooltip({ children, tooltip }) {
+interface WordTooltipProps {
+  children: React.ReactNode;
+  tooltip: React.ReactNode;
+}
+
+export default function WordTooltip({ children, tooltip }: WordTooltipProps) {
   const [show, setShow] = useState(false);
-  const ref = useRef();
+  const ref = useRef<HTMLSpanElement>(null);
 
   // Get the position of the hovered word
   const [coords, setCoords] = useState({ x: 0, y: 0 });
 
-  function handleMouseEnter(e) {
-    const rect = e.target.getBoundingClientRect();
+  function handleMouseEnter(e: React.MouseEvent<HTMLSpanElement>) {
+    const rect = (e.target as HTMLSpanElement).getBoundingClientRect();
     setCoords({ x: rect.left + rect.width / 2, y: rect.top });
     setShow(true);
   }
