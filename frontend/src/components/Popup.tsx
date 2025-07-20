@@ -2,10 +2,11 @@ type PopupProps = {
   open: boolean;
   message: string;
   type?: 'success' | 'error' | 'info' | 'defeat';
+  word?: string;
   onClose: () => void;
 };
 
-export default function Popup({ open, message, type = 'info', onClose }: PopupProps) {
+export default function Popup({ open, message, type = 'info', word, onClose }: PopupProps) {
   if (!open) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -18,6 +19,7 @@ export default function Popup({ open, message, type = 'info', onClose }: PopupPr
         ${type === 'info' ? 'border-blue-500 text-blue-700' : ''}
         ${type === 'defeat' ? 'border-gray-500 text-gray-700' : ''}
         border-2`}>
+        <div className="title mb-4 text-lg font-bold">{word}</div>
         <div className="mb-4">{message}</div>
         <button
           className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"

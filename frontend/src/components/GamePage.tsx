@@ -163,7 +163,7 @@ export default function GamePage() {
                 </div>
                 <form onSubmit={handleSubmit} className="w-full max-w-md flex items-center space-x-2">
                     {isUserTurn && (
-                        <TurnIndicator isUserTurn={true} />
+                        <TurnIndicator isUserTurn={true} currentTurn={username} />
                     )}
                     <input
                         className="flex-1 px-3 py-2 rounded bg-serika-dark--sub-alt-color text-serika-dark--text-color outline-none"
@@ -172,7 +172,7 @@ export default function GamePage() {
                         placeholder="Enter a word…"
                     />
                     {!isUserTurn && (
-                        <TurnIndicator isUserTurn={false} />
+                        <TurnIndicator isUserTurn={false} currentTurn={'kmig_bot'} />
                     )}
                     <button
                         type="submit"
