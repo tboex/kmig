@@ -17,6 +17,7 @@ export default function GamePageMultiplayer() {
         part_of_speech?: string,
         definition?: string,
         english?: string,
+        valid?: boolean,
     }[]>([]);
     const [userInput, setUserInput] = useState('');
     const [username, setUsername] = useState(() => localStorage.getItem('kmig_username') || '');
@@ -38,6 +39,12 @@ export default function GamePageMultiplayer() {
         localStorage.setItem('kmig_username', name);
         setShowUsernamePrompt(false);
     }
+
+    useEffect(() => {
+        if (!isScrolledUp && chainRef.current) {
+            chainRef.current.scrollTop = 0;
+        }
+    }, [chain, isScrolledUp]);
 
     // Connect to WebSocket on mount
     useEffect(() => {
@@ -74,18 +81,29 @@ export default function GamePageMultiplayer() {
                         part_of_speech: msg.word.part_of_speech,
                         definition: msg.word.definition,
                         english: msg.word.english,
+                        valid: true,
                     }]);
                 } else if (msg.type === 'word_submitted' && msg.status === 'INVALID') {
-                    setPopup({
-                        open: true,
-                        message: msg.message || 'Invalid word.',
-                        word: msg.word.korean,
-                        type: 'error'
-                    });
-                }
-                // Add all messages to chat chain except player_joined (optional)
-                if (msg.text && msg.sender) {
-                    setChain(prev => [...prev, msg]);
+                    setCurrentTurn(msg.current_turn);
+                    setChain(prev => [...prev, {
+                        sender: msg.player_name === username ? 'user' : 'other',
+                        text: msg.word.korean,
+                        name: msg.player_name,
+                        pronunciation: msg.word.pronunciation,
+                        hanja: msg.word.hanja,
+                        part_of_speech: msg.word.part_of_speech,
+                        definition: msg.word.definition,
+                        english: msg.word.english,
+                        valid: false,
+                    }]);
+                    if (username === msg.player_name) {
+                        setPopup({
+                            open: true,
+                            message: msg.message || 'Invalid word.',
+                            word: msg.word.korean,
+                            type: 'error'
+                        });
+                    }
                 }
             } catch (e) {
                 console.error('Invalid message:', event.data);
@@ -128,12 +146,6 @@ export default function GamePageMultiplayer() {
         );
     }
 
-    useEffect(() => {
-        if (!isScrolledUp && chainRef.current) {
-            chainRef.current.scrollTop = 0;
-        }
-    }, [chain, isScrolledUp]);
-
     function handleChainScroll() {
         const el = chainRef.current;
         if (!el) return;
@@ -159,11 +171,14 @@ export default function GamePageMultiplayer() {
                                 <div
                                     key={chain.length - 1 - idx}
                                     style={{ opacity }}
-                                    className={`relative px-4 py-2 rounded-lg transition-opacity duration-500 mb-2 ${
-                                        msg.sender === 'other'
-                                            ? 'bg-serika-dark--sub-alt-color text-serika-dark--main-color self-start'
-                                            : 'bg-serika-dark--main-color text-black self-end'
-                                    }`}
+                                    className={`relative px-4 py-2 rounded-lg transition-opacity duration-500 mb-2
+                                        ${msg.valid === false
+                                            ? 'bg-serika-dark--error-color text-serika-dark--text-color'
+                                            : msg.sender === 'other'
+                                                ? 'bg-serika-dark--sub-alt-color text-serika-dark--main-color self-start'
+                                                : 'bg-serika-dark--main-color text-black self-end'
+                                        }`
+                                    }
                                 >
                                     <div className="text-xs text-serika-dark--sub-color mb-1">{msg.name}</div>
                                     <WordTooltip
@@ -223,6 +238,7 @@ export default function GamePageMultiplayer() {
                 open={popup.open}
                 message={popup.message}
                 type={popup.type}
+                word={popup.word}
                 onClose={() => setPopup({ ...popup, open: false })}
             />
         </main>
