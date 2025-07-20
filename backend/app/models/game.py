@@ -92,16 +92,6 @@ class MultiplayerJoinRequest(BaseModel):
     player_name: str = Field(..., description='Name of the player joining the game')
 
 
-class MultiplayerWSRequest(BaseModel):
-    '''
-    Request model for WebSocket connection in multiplayer game.
-    '''
-    game_id: str = Field(..., description='Unique identifier for the game')
-    player_id: str = Field(..., description='Unique identifier for the player')
-    player_name: str = Field(..., description='Name of the player')
-    word: str = Field('', description='The word to be played in the game')
-
-
 class SubmitWordRequest(BaseModel):
     '''
     Request model for submitting a word in the game.
@@ -124,3 +114,38 @@ class NoActiveGameResponse(BaseModel):
     '''
     game_id: str = Field(..., description='Unique identifier for the game')
     status: Status = Field(..., description='Current status of the game')
+
+
+class WSJoinRequest(BaseModel):
+    '''
+    Request model for joining a game via WebSocket.
+    '''
+    game_id: str = Field(..., description='Unique identifier for the game')
+    player_id: str = Field(..., description='Unique identifier for the player')
+    player_name: str = Field(..., description='Name of the player joining the game')
+
+
+class WSSubmitWordRequest(SubmitWordRequest):
+    '''
+    Request model for submitting a word via WebSocket.
+    '''
+    game_id: str = Field(..., description='Unique identifier for the game')
+
+
+class WSChatRequest(BaseModel):
+    '''
+    Request model for sending a chat message via WebSocket.
+    '''
+    game_id: str = Field(..., description='Unique identifier for the game')
+    player_id: str = Field(..., description='Unique identifier for the player')
+    player_name: str = Field(..., description='Name of the player sending the message')
+    message: str = Field(..., description='Chat message content')
+
+
+class WSStatusRequest(BaseModel):
+    '''
+    Request model for sending a status update via WebSocket.
+    '''
+    game_id: str = Field(..., description='Unique identifier for the game')
+    player_id: str = Field(..., description='Unique identifier for the player')
+    player_name: str = Field(..., description='Name of the player sending the status update')

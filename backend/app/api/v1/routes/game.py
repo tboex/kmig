@@ -14,7 +14,6 @@ from models.game import (
     MultiplayerRequest,
     MultiplayerResponse,
     MultiplayerJoinRequest,
-    MultiplayerWSRequest,
     SubmitWordRequest,
     SubmitWordResponse,
     NoActiveGameResponse,
@@ -32,7 +31,10 @@ from services.cache_management import (
     get_game_state,
     get_player_list,
 )
-from core.websocket import ConnectionManager
+from core.websocket import (
+    ConnectionManager,
+    handle_message,
+)
 from utils.hash import generate_hash
 
 logger = logging.getLogger(LOGGER_NAME)
@@ -234,26 +236,16 @@ async def websocket_endpoint(
         while True:
             data = await websocket.receive_text()
             try:
-                request = json.loads(data)
-                request = MultiplayerWSRequest(**request)
-
-                response = await add_word(
-                    state=state,
-                    game_id=game_id,
-                    word=request.word,
-                    player=Player(
-                        id=request.player_id,
-                        name=request.player_name,
-                    ),
+                await handle_message(
+                    data,
+                    game_id,
+                    state,
+                    manager,
+                    websocket,
                 )
 
-                await update_game_state(
-                    state=state,
-                    game_id=game_id,
-                    round_state=response,
-                )
-                await manager.broadcast(f'Message from {game_id}: {response}')
             except (json.JSONDecodeError, ValidationError) as e:
+                logger.error(f'Invalid payload: {str(e)}')
                 await manager.send_personal_message(
                     f'Invalid payload: {str(e)}', websocket
                 )

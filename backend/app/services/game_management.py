@@ -84,7 +84,7 @@ async def join_game(state, game_id: str, player: Player) -> dict[str, Any]:
 
 async def chose_starting_player(state, game_id: str) -> Player | None:
     players = await state.redis_client.lrange(f'game:{game_id}:players', 0, -1)
-    if not players:
+    if not players or len(players) < 2:
         return None
 
     # Randomly choose a player to start

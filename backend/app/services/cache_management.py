@@ -25,13 +25,14 @@ async def init_game_state(state, game_id:str, mode: str) -> None:
 
 
 async def add_player(state, game_id: str, player: Player) -> None:
-    await state.redis_client.rpush(f'game:{game_id}:players', player.id)
-    await state.redis_client.expire(f'game:{game_id}:players', KEY_EXPIRY)
-    await state.redis_client.hset(f'game:{game_id}:player:{player.id}', mapping={
-        'id': player.id,
-        'name': player.name,
-    })
-    await state.redis_client.expire(f'game:{game_id}:player:{player.id}', KEY_EXPIRY)
+    if not await state.redis_client.exists(f'game:{game_id}:player:{player.id}'):
+        await state.redis_client.rpush(f'game:{game_id}:players', player.id)
+        await state.redis_client.expire(f'game:{game_id}:players', KEY_EXPIRY)
+        await state.redis_client.hset(f'game:{game_id}:player:{player.id}', mapping={
+            'id': player.id,
+            'name': player.name,
+        })
+        await state.redis_client.expire(f'game:{game_id}:player:{player.id}', KEY_EXPIRY)
 
 
 async def is_valid_turn(state, game_id: str, player_id: str) -> bool:
