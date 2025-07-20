@@ -185,7 +185,7 @@ async def handle_websocket_submit_word_request(
             'current_turn': status['turn'].id if status.get('turn') else 'n/a',
             'status': status['status'].status,
             'message': status['status'].message,
-            'word': status['word'].model_dump() if status.get('word') else None,
+            'word': status['word'] if status.get('word') else None,
         })
     )
 
