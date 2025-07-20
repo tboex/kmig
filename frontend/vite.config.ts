@@ -16,5 +16,6 @@ export default defineConfig({
       'kmig.netlify.app', // production Netlify domain
       'devserver-main--kmig.netlify.app'
     ],
-  }
+  },
+  base: '/',
 })
