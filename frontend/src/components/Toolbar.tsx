@@ -19,12 +19,12 @@ export default function Toolbar({
     timerDuration, setTimerDuration,
 }: ToolbarProps) {
     return (
-        <div className="toolbar h-12 bg-serika-dark--sub-alt-color flex items-center justify-between px-4 mx-auto rounded-lg">
+        <div className="toolbar h-12 bg-desert-oasis--sub-alt-color flex items-center justify-between px-4 mx-auto rounded-lg">
             {/* Left section (Player Count) */}
             <div className="toolbar-left flex items-center space-x-4">
                 <button
-                    className={`solo-player-button flex flex-row items-center space-x-2 hover:text-serika-dark--text-color ${
-                        mode === 'solo' ? 'text-serika-dark--main-color' : 'text-serika-dark--sub-color'
+                    className={`solo-player-button flex flex-row items-center space-x-2 hover:text-desert-oasis--text-color ${
+                        mode === 'solo' ? 'text-desert-oasis--main-color' : 'text-desert-oasis--sub-color'
                     }`}
                     onClick={() => setMode('solo')}
                 >
@@ -33,8 +33,8 @@ export default function Toolbar({
                     <div>solo</div>
                 </button>
                 <button
-                    className={`multi-player-button flex flex-row items-center space-x-2 hover:text-serika-dark--text-color ${
-                        mode === 'multi' ? 'text-serika-dark--main-color' : 'text-serika-dark--sub-color'
+                    className={`multi-player-button flex flex-row items-center space-x-2 hover:text-desert-oasis--text-color ${
+                        mode === 'multi' ? 'text-desert-oasis--main-color' : 'text-desert-oasis--sub-color'
                     }`}
                     onClick={() => setMode('multi')}
                 >
@@ -43,13 +43,13 @@ export default function Toolbar({
                 </button>
             </div>
 
-            <div className="spacer leftSpacer w-1 h-6 mx-6 rounded-sm bg-serika-dark--bg-color"></div>
+            <div className="spacer leftSpacer w-1 h-6 mx-6 rounded-sm bg-desert-oasis--bg-color"></div>
 
             {/* Middle section (Settings) */}
             <div className="toolbar-center flex items-center space-x-4">
                 <button
-                    className={`timer-button flex flex-row items-center space-x-2 hover:text-serika-dark--text-color ${
-                        toolbarMode === 'timer' ? 'text-serika-dark--main-color' : 'text-serika-dark--sub-color'
+                    className={`timer-button flex flex-row items-center space-x-2 hover:text-desert-oasis--text-color ${
+                        toolbarMode === 'timer' ? 'text-desert-oasis--main-color' : 'text-desert-oasis--sub-color'
                     }`}
                     onClick={() => setToolbarMode('timer')}
                 >
@@ -57,8 +57,8 @@ export default function Toolbar({
                     <div>timer</div>
                 </button>
                 <button
-                    className={`guesses-button flex flex-row items-center space-x-2 hover:text-serika-dark--text-color ${
-                        toolbarMode === 'guesses' ? 'text-serika-dark--main-color' : 'text-serika-dark--sub-color'
+                    className={`guesses-button flex flex-row items-center space-x-2 hover:text-desert-oasis--text-color ${
+                        toolbarMode === 'guesses' ? 'text-desert-oasis--main-color' : 'text-desert-oasis--sub-color'
                     }`}
                     onClick={() => setToolbarMode('guesses')}
                 >
@@ -67,7 +67,7 @@ export default function Toolbar({
                 </button>
             </div>
 
-            <div className="spacer rightSpacer w-1 h-6 mx-6 rounded-sm bg-serika-dark--bg-color"></div>
+            <div className="spacer rightSpacer w-1 h-6 mx-6 rounded-sm bg-desert-oasis--bg-color"></div>
 
             {/* Right section (Config) */}
             <div className="toolbar-right flex items-center space-x-4">
@@ -75,8 +75,8 @@ export default function Toolbar({
                     GUESS_OPTIONS.map(opt => (
                         <button
                             key={opt}
-                            className={`textButton flex flex-row items-center space-x-2 cursor-default hover:text-serika-dark--text-color ${
-                                guessCount === opt ? 'text-serika-dark--main-color' : 'text-serika-dark--sub-color'
+                            className={`textButton flex flex-row items-center space-x-2 cursor-default hover:text-desert-oasis--text-color ${
+                                guessCount === opt ? 'text-desert-oasis--main-color' : 'text-desert-oasis--sub-color'
                             }`}
                             onClick={() => setGuessCount(opt)}
                         >
@@ -88,8 +88,8 @@ export default function Toolbar({
                     TIMER_OPTIONS.map(opt => (
                         <button
                             key={opt}
-                            className={`textButton flex flex-row items-center space-x-2 cursor-default hover:text-serika-dark--text-color ${
-                                timerDuration === opt ? 'text-serika-dark--main-color' : 'text-serika-dark--sub-color'
+                            className={`textButton flex flex-row items-center space-x-2 cursor-default hover:text-desert-oasis--text-color ${
+                                timerDuration === opt ? 'text-desert-oasis--main-color' : 'text-desert-oasis--sub-color'
                             }`}
                             onClick={() => setTimerDuration(opt)}
                         >
