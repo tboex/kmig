@@ -148,8 +148,8 @@ async def handle_websocket_join_request(
         json.dumps({
             'type': 'player_joined',
             'game_id': request.game_id,
-            'player_id': request.player_id,
-            'player_name': request.player_name,
+            'current_turn': status['turn'].id if status.get('turn') else 'n/a',
+            'players': players,
         })
     )
 
