@@ -123,7 +123,14 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, W
         return (
             False,
             Status(status='INVALID', message='Word is not a valid Korean word'),
-            None,
+            Word(
+                korean=word,
+                pronunciation=None,
+                hanja=None,
+                part_of_speech=None,
+                definition=None,
+                english=None,
+            ),
         )
 
     words = await state.redis_client.lrange(f'game:{game_id}:words', 0, -1)
@@ -144,7 +151,18 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, W
 
     response_word = dictionary.get(word, '')
     if not response_word:
-        return (False, Status(status='INVALID', message='Word not in dictionary'), None)
+        return (
+            False,
+            Status(status='INVALID', message='Word not in dictionary'),
+            Word(
+                korean=word,
+                pronunciation=None,
+                hanja=None,
+                part_of_speech=None,
+                definition=None,
+                english=None,
+            ),
+        )
 
     if not words:
         return (True, Status(status='VALID', message='First word is always valid'), response_word)
