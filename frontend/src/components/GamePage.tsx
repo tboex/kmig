@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Popup from './Popup';
 import WordTooltip from './WordTooltip';
+import TurnIndicator from './TurnIndicator';
 import { submitWord, getBotTurn } from '../services/game';
 
 
@@ -26,9 +27,11 @@ export default function GamePage() {
         definition?: string,
         english?: string,
     }[]>([]);
+
     const [userInput, setUserInput] = useState('');
     const chainRef = useRef<HTMLDivElement>(null);
     const [isScrolledUp, setIsScrolledUp] = useState(false);
+    const isUserTurn = chain.length === 0 || chain[chain.length - 1].sender !== 'user';
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -158,18 +161,25 @@ export default function GamePage() {
                             );
                         })}
                 </div>
-                <form onSubmit={handleSubmit} className="w-full max-w-md flex space-x-2">
+                <form onSubmit={handleSubmit} className="w-full max-w-md flex items-center space-x-2">
+                    {isUserTurn && (
+                        <TurnIndicator isUserTurn={true} />
+                    )}
                     <input
                         className="flex-1 px-3 py-2 rounded bg-serika-dark--sub-alt-color text-serika-dark--text-color outline-none"
                         value={userInput}
                         onChange={e => setUserInput(e.target.value)}
-                        placeholder="단어를 입력하세요…"
+                        placeholder="Enter a word…"
                     />
+                    {!isUserTurn && (
+                        <TurnIndicator isUserTurn={false} />
+                    )}
                     <button
                         type="submit"
                         className="px-4 py-2 rounded bg-serika-dark--main-color text-black font-bold"
+                        disabled={!isUserTurn}
                     >
-                        제출
+                        submit
                     </button>
                 </form>
             </div>
