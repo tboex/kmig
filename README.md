@@ -1,4 +1,4 @@
-[![](https://github.com/tboex/kmig/blob/master/frontend/static/images/github.png?raw=true)](https://kmig.io/)
+[![](https://github.com/tboex/kmig/blob/main/frontend/static/images/github.png)](https://kmig.io/)
 
 ![React](https://img.shields.io/badge/React-087ea4?style=for-the-badge&logo=React&logoColor=white)
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
