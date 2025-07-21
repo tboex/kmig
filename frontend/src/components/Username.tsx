@@ -9,9 +9,7 @@ export default function Username({ open, usernameInput, setUsernameInput, onSubm
   if (!open) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      {/* Blurred background */}
       <div className="absolute inset-0 backdrop-blur-sm"></div>
-      {/* Popup content */}
       <div className="relative p-6 rounded-lg shadow-lg bg-white min-w-[250px] text-center border-2">
         <h2 className="text-lg font-bold mb-2">Enter your username</h2>
         <input

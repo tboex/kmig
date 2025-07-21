@@ -5,12 +5,11 @@ interface ContactProps {
 export default function Contact({ onClose }: ContactProps) {
   return (
     <div className="contact-popup-window fixed inset-0 flex items-center justify-center z-50">
-      {/* Blurred and darkened background */}
+      {/* background */}
       <div
         className="absolute inset-0 bg-opacity-30 backdrop-blur-sm"
         onClick={onClose}
       />
-      {/* Popup content */}
       <div className="relative p-6 rounded-lg shadow-lg bg-desert-oasis--bg-color text-center z-10">
         <div className="title mb-4 text-left text-3xl text-desert-oasis--sub-color">Contact</div>
         <div className='text text-lg text-desert-oasis--text-color'>Reach out to me with any feedback, recommended changes, or study tips</div>

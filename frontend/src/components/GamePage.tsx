@@ -111,7 +111,8 @@ export default function GamePage() {
     function handleChainScroll() {
         const el = chainRef.current;
         if (!el) return;
-        // If at the bottom (allowing a small threshold)
+
+        // if at the bottom (allowing a small threshold)
         const atBottom = el.scrollTop <= 5;
         setIsScrolledUp(!atBottom);
     }

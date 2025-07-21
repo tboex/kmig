@@ -10,7 +10,6 @@ export default function WordTooltip({ children, tooltip }: WordTooltipProps) {
   const [show, setShow] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
 
-  // Get the position of the hovered word
   const [coords, setCoords] = useState({ x: 0, y: 0 });
 
   function handleMouseEnter(e: React.MouseEvent<HTMLSpanElement>) {

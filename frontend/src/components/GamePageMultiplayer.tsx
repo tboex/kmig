@@ -59,18 +59,16 @@ export default function GamePageMultiplayer() {
             ws.send(JSON.stringify({
                 type: 'join',
                 player_id: username,
-                player_name: username, // differentiate account name once made
+                player_name: username, // TODO: differentiate account name once made
             }));
         };
         ws.onmessage = (event) => {
             try {
                 const msg = JSON.parse(event.data);
-                // If message is player_joined and has current_turn, update turn state
-                console.log('WebSocket message:', msg);
+
                 if (msg.type === 'player_joined' && msg.current_turn !== 'n/a') {
                     setCurrentTurn(msg.current_turn);
                 } else if (msg.type === 'word_submitted' && msg.current_turn !== 'n/a' && msg.status === 'VALID') {
-                    // Handle word submission
                     setCurrentTurn(msg.current_turn);
                     setChain(prev => [...prev, {
                         sender: msg.player_name === username ? 'user' : 'other',
@@ -122,8 +120,8 @@ export default function GamePageMultiplayer() {
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (!userInput.trim() || !wsRef.current || wsRef.current.readyState !== 1) return;
+
         // Send message to server
-        console.log('Submitting word:', userInput);
         wsRef.current.send(JSON.stringify({
             type: 'submit',
             player_id: username,
@@ -149,7 +147,7 @@ export default function GamePageMultiplayer() {
     function handleChainScroll() {
         const el = chainRef.current;
         if (!el) return;
-        // If at the bottom (allowing a small threshold)
+        // if at the bottom (allowing a small threshold)
         const atBottom = el.scrollTop <= 5;
         setIsScrolledUp(!atBottom);
     }
@@ -157,7 +155,6 @@ export default function GamePageMultiplayer() {
     return (
         <main className="game-page w-full flex-1 flex flex-col bg-desert-oasis--bg-color items-center justify-center min-h-screen">
             <div className="w-full max-w-md flex flex-row items-start mb-4">
-                {/* Chat area */}
                 <div
                     ref={chainRef}
                     onScroll={handleChainScroll}

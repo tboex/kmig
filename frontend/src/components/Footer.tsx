@@ -30,6 +30,7 @@ export default function Footer({ onContactClick, onSupportClick }: FooterProps) 
                 <i className="fas fa-fw fa-file-contract"></i>
                 <div>terms</div>
             </a>
+            {/* Ill add this later maybe */}
             {/* <a href="/security" className="flex flex-row items-center space-x-2 text-desert-oasis--sub-color hover:text-desert-oasis--text-color">
                 <i className="fas fa-fw fa-shield-alt"></i>
                 <div>security</div>

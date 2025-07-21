@@ -12,6 +12,9 @@ type ToolbarProps = {
 const GUESS_OPTIONS = [5, 10, 15, 20];
 const TIMER_OPTIONS = [0, 30, 60, 90, 120];
 
+
+{/* not using anymore, but keeping for reference */}
+
 export default function Toolbar({
     mode, setMode,
     toolbarMode, setToolbarMode,
