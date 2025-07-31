@@ -9,12 +9,12 @@ export default function Support({ onClose }: SupportProps) {
         className="absolute inset-0 bg-opacity-30 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative p-6 rounded-lg shadow-lg bg-desert-oasis--bg-color text-center z-10">
-        <div className="title mb-4 text-left text-3xl text-desert-oasis--sub-color">Support KMIG</div>
-        <div className='text text-lg text-desert-oasis--text-color'>Server costs are expensive. If you enjoy the website I made, please provide anything you can.</div>
+      <div className="relative p-6 rounded-lg shadow-lg bg-serika-dark--bg-color text-center z-10">
+        <div className="title mb-4 text-left text-3xl text-serika-dark--sub-color">Support KMIG</div>
+        <div className='text text-lg text-serika-dark--text-color'>Server costs are expensive. If you enjoy the website I made, please provide anything you can.</div>
         <div className='buttons flex flex-row gap-4 mt-6 w-full'>
             <a
-                className="flex-1 flex flex-row items-center justify-center space-x-4 p-4 rounded-lg bg-desert-oasis--sub-alt-color text-desert-oasis--text-color text-xl hover:bg-desert-oasis--main-color hover:text-black transition"
+                className="flex-1 flex flex-row items-center justify-center space-x-4 p-4 rounded-lg bg-serika-dark--sub-alt-color text-serika-dark--text-color text-xl hover:bg-serika-dark--main-color hover:text-black transition"
                 target="_blank"
                 href="https://ko-fi.com/kmiggame"
                 rel="noopener noreferrer"

@@ -124,7 +124,7 @@ export default function GamePage() {
     }, [chain, isScrolledUp]);
 
     return (
-        <main className="game-page w-full flex-1 flex flex-col  bg-desert-oasis--bg-color">
+        <main className="game-page w-full flex-1 flex flex-col  bg-serika-dark--bg-color">
             <div className="game-bar flex-1 flex flex-col items-center justify-center">
                 <div
                     ref={chainRef}
@@ -141,11 +141,11 @@ export default function GamePage() {
                                     style={{ opacity }}
                                     className={`relative px-4 py-2 rounded-lg transition-opacity duration-500 mb-2 ${
                                         msg.sender === 'other'
-                                            ? 'bg-desert-oasis--sub-alt-color text-desert-oasis--main-color self-start'
-                                            : 'bg-desert-oasis--main-color text-black self-end'
+                                            ? 'bg-serika-dark--sub-alt-color text-serika-dark--main-color self-start'
+                                            : 'bg-serika-dark--main-color text-black self-end'
                                     }`}
                                 >
-                                    <div className="text-xs text-desert-oasis--sub-color mb-1">{msg.name}</div>
+                                    <div className="text-xs text-serika-dark--sub-color mb-1">{msg.name}</div>
                                     <WordTooltip
                                         tooltip={
                                             <>
@@ -167,7 +167,7 @@ export default function GamePage() {
                         <TurnIndicator isUserTurn={true} currentTurn={username} />
                     )}
                     <input
-                        className="flex-1 px-3 py-2 rounded bg-desert-oasis--sub-alt-color text-desert-oasis--text-color outline-none"
+                        className="flex-1 px-3 py-2 rounded bg-serika-dark--sub-alt-color text-serika-dark--text-color outline-none"
                         value={userInput}
                         onChange={e => setUserInput(e.target.value)}
                         placeholder="Enter a word…"
@@ -177,7 +177,7 @@ export default function GamePage() {
                     )}
                     <button
                         type="submit"
-                        className="px-4 py-2 rounded bg-desert-oasis--main-color text-black font-bold"
+                        className="px-4 py-2 rounded bg-serika-dark--main-color text-black font-bold"
                         disabled={!isUserTurn}
                     >
                         submit
