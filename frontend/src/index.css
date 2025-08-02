@@ -1,3 +1,11 @@
 @import "tailwindcss";
 @import "../static/themes/serika_dark.css";
 @import "../static/themes/desert_oasis.css";
+
+html, body {
+  overscroll-behavior: none;
+}
+
+main {
+  overscroll-behavior: contain;
+}
