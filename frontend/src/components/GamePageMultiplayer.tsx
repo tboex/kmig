@@ -5,6 +5,7 @@ import Invite from './Invite';
 import TurnIndicator from './TurnIndicator';
 import WordTooltip from './WordTooltip';
 import Popup from './Popup';
+import GameOver from './GameOver';
 
 export default function GamePageMultiplayer() {
     const { gameId } = useParams();
@@ -32,6 +33,10 @@ export default function GamePageMultiplayer() {
     const [isScrolledUp, setIsScrolledUp] = useState(false);
     const [currentTurn, setCurrentTurn] = useState<string>('');
     const wsRef = useRef<WebSocket | null>(null);
+    const [gameOver, setGameOver] = useState<{ isOpen: boolean; isDefeat: boolean }>({
+        isOpen: false,
+        isDefeat: false
+    });
 
     // Prompt for username if not set
     function handleUsernameSubmit(name: string) {
@@ -68,6 +73,9 @@ export default function GamePageMultiplayer() {
 
                 if (msg.type === 'player_joined' && msg.current_turn !== 'n/a') {
                     setCurrentTurn(msg.current_turn);
+                } else if (msg.type === 'word_submitted' && msg.status === 'GAME OVER') {
+                    const isDefeat = msg.current_turn === username;
+                    setGameOver({ isOpen: true, isDefeat });
                 } else if (msg.type === 'word_submitted' && msg.current_turn !== 'n/a' && msg.status === 'VALID') {
                     setCurrentTurn(msg.current_turn);
                     setChain(prev => [...prev, {
@@ -129,6 +137,14 @@ export default function GamePageMultiplayer() {
             word: userInput.trim(),
          }));
         setUserInput('');
+    }
+
+    function handlePlayAgain() {
+        setGameOver({ isOpen: false, isDefeat: false });
+        setChain([]);
+        setCurrentTurn('');
+        // You might want to redirect to landing page or restart the game
+        window.location.href = '/';
     }
 
     if (showUsernamePrompt) {
@@ -237,6 +253,12 @@ export default function GamePageMultiplayer() {
                 type={popup.type}
                 word={popup.word}
                 onClose={() => setPopup({ ...popup, open: false })}
+            />
+            <GameOver
+                isOpen={gameOver.isOpen}
+                isDefeat={gameOver.isDefeat}
+                onClose={() => setGameOver({ isOpen: false, isDefeat: false })}
+                onPlayAgain={handlePlayAgain}
             />
         </main>
     );
