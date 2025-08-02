@@ -5,7 +5,7 @@ type FooterProps = {
 
 export default function Footer({ onContactClick, onSupportClick }: FooterProps) {
   return (
-    <footer className="w-full h-30 px-4  bg-serika-dark--bg-color flex items-center justify-between z-50">
+    <footer className="sticky bottom-0 left-0 right-0 w-full h-15 px-4 bg-serika-dark--bg-color flex items-center justify-between z-50">
         {/* Left section (Logo) */}
         <div className="flex flex-row items-center space-x-6">
             <button

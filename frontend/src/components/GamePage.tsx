@@ -124,7 +124,8 @@ export default function GamePage() {
     }, [chain, isScrolledUp]);
 
     return (
-        <main className="game-page w-full flex-1 flex flex-col  bg-serika-dark--bg-color">
+        <main className="game-page w-full flex-1 flex flex-col  bg-serika-dark--bg-color"
+            style={{ height: 'calc(100vh - 200px)'}}>
             <div className="game-bar flex-1 flex flex-col items-center justify-center">
                 <div
                     ref={chainRef}

@@ -2,7 +2,7 @@ import logo from '../assets/logo.svg';
 
 export default function Header() {
   return (
-    <header className="w-full h-25 bg-serika-dark--bg-color flex items-center justify-between">
+    <header className="w-full h-15 bg-serika-dark--bg-color flex items-center justify-between">
       <div className="w-full max-w-screen-xl mx-auto flex items-center justify-between px-4 md:px-8 lg:px-16">
         {/* Left section (Logo) */}
         <div className="flex flex-row items-center space-x-6">

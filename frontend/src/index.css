@@ -4,6 +4,8 @@
 
 html, body {
   overscroll-behavior: none;
+  background-color: var(--color-bg, #323437);
+  overflow-x: hidden;
 }
 
 main {

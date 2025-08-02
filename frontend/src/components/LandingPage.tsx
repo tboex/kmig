@@ -22,7 +22,8 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-serika-dark--bg-color">
+    <div className="flex flex-col items-center justify-center bg-serika-dark--bg-color"
+       style={{ height: 'calc(100vh - 200px)'}}>
     <img
       src={logo}
       alt="KMIG Logo"

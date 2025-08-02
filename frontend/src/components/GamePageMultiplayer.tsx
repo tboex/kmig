@@ -191,7 +191,8 @@ export default function GamePageMultiplayer() {
     }
 
     return (
-        <main className="game-page w-full flex-1 flex flex-col bg-serika-dark--bg-color items-center justify-center min-h-screen">
+        <main className="game-page w-full flex-1 flex flex-col bg-serika-dark--bg-color items-center justify-center"
+            style={{ height: 'calc(100vh - 200px)'}}>
             <PlayerStatus
                 players={playerIds.map(playerId => ({
                     id: playerId,
