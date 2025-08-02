@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Username from './Username';
 import Invite from './Invite';
-import TurnIndicator from './TurnIndicator';
 import WordTooltip from './WordTooltip';
 import Popup from './Popup';
 import GameOver from './GameOver';
+import PlayerStatus from './PlayerStatus';
 
 export default function GamePageMultiplayer() {
     const { gameId } = useParams();
@@ -37,6 +37,8 @@ export default function GamePageMultiplayer() {
         isOpen: false,
         isDefeat: false
     });
+    const [playerIds, setPlayerIds] = useState<string[]>([]);
+    const [playerFailures, setPlayerFailures] = useState<Record<string, number>>({});
 
     // Prompt for username if not set
     function handleUsernameSubmit(name: string) {
@@ -73,6 +75,18 @@ export default function GamePageMultiplayer() {
 
                 if (msg.type === 'player_joined' && msg.current_turn !== 'n/a') {
                     setCurrentTurn(msg.current_turn);
+                    if (msg.players) {
+                        setPlayerIds(msg.players);
+                        setPlayerFailures(prev => {
+                            const updated = { ...prev };
+                            msg.players.forEach((playerId: string) => {
+                                if (!(playerId in updated)) {
+                                    updated[playerId] = 0;
+                                }
+                            });
+                            return updated;
+                        });
+                    }
                 } else if (msg.type === 'word_submitted' && msg.status === 'GAME OVER') {
                     const isDefeat = msg.current_turn === username;
                     setGameOver({ isOpen: true, isDefeat });
@@ -91,6 +105,14 @@ export default function GamePageMultiplayer() {
                     }]);
                 } else if (msg.type === 'word_submitted' && msg.status === 'INVALID') {
                     setCurrentTurn(msg.current_turn);
+
+                    if (msg.player_name) {
+                        setPlayerFailures(prev => ({
+                            ...prev,
+                            [msg.player_name]: (prev[msg.player_name] || 0) + 1
+                        }));
+                    }
+
                     setChain(prev => [...prev, {
                         sender: msg.player_name === username ? 'user' : 'other',
                         text: msg.word.korean,
@@ -170,6 +192,15 @@ export default function GamePageMultiplayer() {
 
     return (
         <main className="game-page w-full flex-1 flex flex-col bg-serika-dark--bg-color items-center justify-center min-h-screen">
+            <PlayerStatus
+                players={playerIds.map(playerId => ({
+                    id: playerId,
+                    name: playerId,
+                    failures: playerFailures[playerId] || 0,
+                    maxFailures: 3, // You can make this configurable
+                    isCurrentTurn: playerId === currentTurn
+                }))}
+            />
             <div className="w-full max-w-md flex flex-row items-start mb-4">
                 <div
                     ref={chainRef}
@@ -212,39 +243,25 @@ export default function GamePageMultiplayer() {
                 </div>
 
             </div>
-            <form onSubmit={handleSubmit} className="w-full max-w-md flex flex-row items-center justify-between space-x-2 mt-2">
-                {/* Left: Always render, show indicator only if it's user's turn */}
-                <div className="flex-shrink-0 mr-4" style={{ width: 150 }}>
-                    {currentTurn === username && currentTurn !== '' && (
-                        <TurnIndicator isUserTurn={true} currentTurn={currentTurn} />
-                    )}
-                </div>
-                {/* Input and button */}
-                <div className="flex-1 flex flex-row items-center space-x-2">
-                    <input
-                        className="flex-1 px-3 py-2 rounded bg-serika-dark--sub-alt-color text-serika-dark--text-color outline-none"
-                        value={userInput}
-                        onChange={e => setUserInput(e.target.value)}
-                        placeholder="Enter a word…"
-                    />
-                    <button
-                        type="submit"
-                        className="px-4 py-2 rounded bg-serika-dark--main-color text-black font-bold
-                            hover:text-serika-dark--text-color
-                            disabled:opacity-50
-                            disabled:text-serika-dark--sub-color
-                            disabled:hover:text-serika-dark--sub-color"
-                        disabled={currentTurn !== username}
-                    >
-                        Submit
-                    </button>
-                </div>
-                {/* Right: Always render, show indicator only if it's NOT user's turn */}
-                <div className="flex-shrink-0 ml-4" style={{ width: 150 }}>
-                    {currentTurn !== username && currentTurn !== '' && (
-                        <TurnIndicator isUserTurn={false} currentTurn={currentTurn} />
-                    )}
-                </div>
+            <form onSubmit={handleSubmit} className="w-full max-w-md flex items-center justify-center space-x-2 mt-2">
+                <input
+                    className="flex-1 px-3 py-2 rounded bg-serika-dark--sub-alt-color text-serika-dark--text-color outline-none"
+                    value={userInput}
+                    onChange={e => setUserInput(e.target.value)}
+                    placeholder="Enter a word…"
+                    style={{ maxWidth: '300px' }} // Equal width from center
+                />
+                <button
+                    type="submit"
+                    className="px-4 py-2 rounded bg-serika-dark--main-color text-black font-bold
+                    hover:text-serika-dark--text-color
+                    disabled:opacity-50
+                    disabled:text-serika-dark--sub-color
+                    disabled:hover:text-serika-dark--sub-color"
+                    disabled={currentTurn !== username}
+                >
+                    Submit
+                </button>
             </form>
             <Invite />
             <Popup

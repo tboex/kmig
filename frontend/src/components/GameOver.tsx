@@ -16,7 +16,7 @@ export default function GameOver({ isOpen, isDefeat, onClose, onPlayAgain }: Gam
         </div>
 
         <h2 className={`text-3xl font-bold mb-4 ${isDefeat ? 'text-serika-dark--error-color' : 'text-serika-dark--main-color'}`}>
-          {isDefeat ? 'Defeat!': 'Victory!'}
+          {isDefeat ? '패배!': '승리!'}
         </h2>
 
         <p className="text-serika-dark--main-color mb-6">
