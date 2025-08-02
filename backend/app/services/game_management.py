@@ -8,6 +8,8 @@ from services.cache_management import (
     init_game_state,
     is_valid_turn,
     get_player_details,
+    check_game_over,
+    decrement_player_failures,
 )
 from models.game import (
     Word,
@@ -201,6 +203,12 @@ async def add_word(state, game_id: str, player: Player, word: str) -> dict:
     if valid:
         await state.redis_client.rpush(f'game:{game_id}:words', word)
         game_status['turn'] = await get_next_player(state, game_id)
+    else:
+        await decrement_player_failures(state, game_id, player.id)
+        if await check_game_over(state, game_id):
+            game_status['server_status'] = 'GAME OVER'
+            game_status['status'] = Status(status='GAME OVER', message=f'{player.id} has no remaining failures')
+            return game_status
 
     return game_status
 
