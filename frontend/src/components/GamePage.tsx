@@ -8,6 +8,7 @@ import Invite from './Invite';
 import { submitWord, getBotTurn } from '../services/game';
 import { useSettings } from '../contexts/SettingsContext';
 
+
 export default function GamePage() {
     const location = useLocation();
     const initialGameData = location.state?.gameData;
@@ -67,7 +68,11 @@ export default function GamePage() {
             const submitRes = await submitWord(gameData.game_id, submittedWord, username);
 
             if (submitRes.status.status === 'GAME OVER') {
-                setGameOver({ isOpen: true, isDefeat: true });
+                if (userFailures < 3) {
+                    setGameOver({ isOpen: true, isDefeat: false });
+                } else {
+                    setGameOver({ isOpen: true, isDefeat: true });
+                }
                 setChain(prev => [...prev, {
                     sender: 'user',
                     text: submitRes.word.korean,
@@ -93,6 +98,19 @@ export default function GamePage() {
                     word: submittedWord,
                     type: 'error'
                 });
+            } else if (submitRes.status.status === 'VICTORY'){
+                setGameOver({ isOpen: true, isDefeat: false });
+                setChain(prev => [...prev, {
+                    sender: 'user',
+                    text: submitRes.word.korean,
+                    name: username,
+                    pronunciation: submitRes.word.pronunciation,
+                    hanja: submitRes.word.hanja,
+                    part_of_speech: submitRes.word.part_of_speech,
+                    definition: submitRes.word.definition,
+                    english: submitRes.word.english,
+                    valid: true,
+                }]);
             } else {
                 setChain(prev => [...prev, {
                     sender: 'user',
@@ -115,7 +133,7 @@ export default function GamePage() {
                             ...current,
                             {
                                 sender: 'other',
-                                text: "i'm thinking...",
+                                text: "지금 생각하고 있어...",
                                 name: 'kmig',
                                 valid: true,
                             }
@@ -130,14 +148,42 @@ export default function GamePage() {
                     const failureChance = getBotFailureChance();
                     const shouldBotFail = Math.random() < failureChance;
 
+                    const getBotFailurePhrase = (failureCount: number) => {
+                        const phraseSets = {
+                            first: [
+                                "음음... 단어를 생각할 수 없었어",
+                                "아... 모르겠어",
+                                "이번엔 패스할게"
+                            ],
+                            second: [
+                                "또 막혔네...",
+                                "이번에도 어렵다",
+                                "음... 또 모르겠어"
+                            ],
+                            final: [
+                                "마지막 기회인데...",
+                                "정말 어렵다...",
+                                "이제 정말 위험해..."
+                            ]
+                        };
+
+                        let phrases;
+                        if (failureCount === 0) phrases = phraseSets.first;
+                        else if (failureCount === 1) phrases = phraseSets.second;
+                        else phrases = phraseSets.final;
+
+                        return phrases[Math.floor(Math.random() * phrases.length)];
+                    };
+
 
                     if (shouldBotFail) {
+                        const failurePhrase = getBotFailurePhrase(botFailures);
                         setBotFailures(prev => prev + 1);
                         setChain(current => [
                             ...current,
                             {
                                 sender: 'other',
-                                text: "hmm... i couldn't think of a word",
+                                text: failurePhrase,
                                 name: 'kmig bot',
                                 valid: false,
                             }
@@ -174,9 +220,9 @@ export default function GamePage() {
                     } else {
                         const botRes = await getBotTurn(gameData.game_id);
                         if (botRes.status?.status === 'VICTORY') {
-                            setGameOver({ isOpen: true, isDefeat: true });
-                        } else if (botRes.status?.status === 'DEFEAT') {
                             setGameOver({ isOpen: true, isDefeat: false });
+                        } else if (botRes.status?.status === 'DEFEAT') {
+                            setGameOver({ isOpen: true, isDefeat: true });
                         }
 
                         setChain(current => [

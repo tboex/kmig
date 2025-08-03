@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef, isValidElement } from 'react';
 import { createPortal } from 'react-dom';
 
 interface WordTooltipProps {
@@ -9,10 +9,30 @@ interface WordTooltipProps {
 export default function WordTooltip({ children, tooltip }: WordTooltipProps) {
   const [show, setShow] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
-
   const [coords, setCoords] = useState({ x: 0, y: 0 });
 
+  const hasTooltipContent = () => {
+    if (!tooltip) return false;
+
+    if (typeof tooltip === 'string') {
+      return tooltip.trim().length > 0;
+    }
+
+    if (isValidElement(tooltip)) {
+      const element = tooltip as React.ReactElement<{ children?: React.ReactNode }>;
+      const tooltipString = React.Children.toArray(element.props.children)
+        .join('')
+        .replace(/<[^>]*>/g, '') // Remove HTML tags
+        .trim();
+      return tooltipString.length > 0;
+    }
+
+    return true;
+  };
+
   function handleMouseEnter(e: React.MouseEvent<HTMLSpanElement>) {
+    if (!hasTooltipContent()) return;
+
     const rect = (e.target as HTMLSpanElement).getBoundingClientRect();
     setCoords({ x: rect.left + rect.width / 2, y: rect.top });
     setShow(true);
@@ -20,6 +40,10 @@ export default function WordTooltip({ children, tooltip }: WordTooltipProps) {
 
   function handleMouseLeave() {
     setShow(false);
+  }
+
+  if (!hasTooltipContent()) {
+    return <span>{children}</span>;
   }
 
   return (
