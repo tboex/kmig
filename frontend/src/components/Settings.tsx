@@ -1,7 +1,7 @@
 import { useSettings } from '../contexts/SettingsContext';
 
 export default function Settings() {
-  const { botDelay, setBotDelay, botDelayMs, setBotDelayMs } = useSettings();
+  const { botDelay, setBotDelay, botDelayMs, setBotDelayMs, botDifficulty, setBotDifficulty } = useSettings();
 
   return (
     <main className="flex-1 flex flex-col bg-serika-dark--bg-color items-center justify-start p-8">
@@ -14,6 +14,43 @@ export default function Settings() {
           <h2 className="text-xl font-semibold text-serika-dark--text-color mb-4">
             Bot Behavior
           </h2>
+
+          {/* Bot Difficulty Setting */}
+          <div className="mb-6">
+            <label className="block text-serika-dark--text-color font-medium mb-2">
+              Bot Difficulty
+            </label>
+            <p className="text-sm text-serika-dark--sub-color mb-3">
+              Controls how often the bot makes mistakes
+            </p>
+            <div className="flex flex-col space-y-2">
+              {[
+                { value: 'easy', label: 'Easy', chance: '30% fail chance' },
+                { value: 'medium', label: 'Medium', chance: '15% fail chance' },
+                { value: 'hard', label: 'Hard', chance: '5% fail chance' }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => setBotDifficulty(option.value as any)}
+                  className={`flex items-center justify-between p-3 rounded-lg border-2 transition-colors
+                    ${botDifficulty === option.value
+                      ? 'border-serika-dark--main-color bg-serika-dark--main-color bg-opacity-20 text-serika-dark--bg-color'
+                      : 'border-serika-dark--sub-color bg-serika-dark--bg-color text-serika-dark--text-color hover:border-serika-dark--main-color'
+                    }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-4 h-4 rounded-full border-2
+                      ${botDifficulty === option.value
+                        ? 'border-serika-dark--main-color bg-serika-dark--bg-color'
+                        : 'border-serika-dark--sub-color'
+                      }`}
+                    />
+                    <span className="font-medium">{option.label}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Bot Delay Toggle */}
           <div className="flex items-center justify-between mb-4">

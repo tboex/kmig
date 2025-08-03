@@ -206,7 +206,7 @@ export default function GamePageMultiplayer() {
                 <div
                     ref={chainRef}
                     onScroll={handleChainScroll}
-                    className="game-play-space w-full max-w-md mb-4 h-96 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2"
+                    className="game-play-space w-full max-w-md mb-4 h-96 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2 scrollbar-hide"
                 >
                         {[...chain].reverse().map((msg, idx) => {
                             const fadeSteps = 5;

@@ -1,11 +1,15 @@
 // src/contexts/SettingsContext.tsx
 import { createContext, useContext, useState } from 'react';
 
+type BotDifficulty = 'easy' | 'medium' | 'hard';
+
 interface SettingsContextType {
   botDelay: boolean;
   setBotDelay: (delay: boolean) => void;
   botDelayMs: number;
   setBotDelayMs: (ms: number) => void;
+  botDifficulty: BotDifficulty;
+  setBotDifficulty: (difficulty: BotDifficulty) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -19,6 +23,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     return parseInt(localStorage.getItem('kmig_bot_delay_ms') || '1500');
   });
 
+  const [botDifficulty, setBotDifficultyState] = useState<BotDifficulty>(() => {
+    return (localStorage.getItem('kmig_bot_difficulty') as BotDifficulty) || 'medium';
+  });
+
   const setBotDelay = (delay: boolean) => {
     setBotDelayState(delay);
     localStorage.setItem('kmig_bot_delay', delay.toString());
@@ -29,12 +37,19 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('kmig_bot_delay_ms', ms.toString());
   };
 
+  const setBotDifficulty = (difficulty: BotDifficulty) => {
+    setBotDifficultyState(difficulty);
+    localStorage.setItem('kmig_bot_difficulty', difficulty);
+  };
+
   return (
     <SettingsContext.Provider value={{
       botDelay,
       setBotDelay,
       botDelayMs,
-      setBotDelayMs
+      setBotDelayMs,
+      botDifficulty,
+      setBotDifficulty
     }}>
       {children}
     </SettingsContext.Provider>

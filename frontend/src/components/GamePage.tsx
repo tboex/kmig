@@ -42,9 +42,19 @@ export default function GamePage() {
 
     const [botFailures, setBotFailures] = useState(0);
     const [userFailures, setUserFailures] = useState(0);
-    const { botDelay, botDelayMs } = useSettings();
+
+    const { botDelay, botDelayMs, botDifficulty } = useSettings();
 
     const isUserTurn = currentTurn === 'user';
+
+    const getBotFailureChance = () => {
+        switch (botDifficulty) {
+            case 'easy': return 0.3;   // 30%
+            case 'medium': return 0.15; // 15%
+            case 'hard': return 0.05;   // 5%
+            default: return 0.15;
+        }
+    };
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -116,29 +126,76 @@ export default function GamePage() {
                         setChain(current => current.slice(0, -1));
                     }
 
-                    const botRes = await getBotTurn(gameData.game_id);
-                    if (botRes.status?.status === 'VICTORY') {
-                        setGameOver({ isOpen: true, isDefeat: true });
-                    } else if (botRes.status?.status === 'DEFEAT') {
-                        setGameOver({ isOpen: true, isDefeat: false });
-                    }
+                    // Fake bot failure
+                    const failureChance = getBotFailureChance();
+                    const shouldBotFail = Math.random() < failureChance;
 
-                    setChain(current => [
-                        ...current,
-                        {
-                            sender: 'other',
-                            text: botRes.word?.korean || '봇의 응답 없음',
-                            name: botRes.player?.name || 'Bot',
-                            pronunciation: botRes.word?.pronunciation,
-                            hanja: botRes.word?.hanja,
-                            part_of_speech: botRes.word?.part_of_speech,
-                            definition: botRes.word?.definition,
-                            english: botRes.word?.english,
-                            valid: botRes.word ? true : false,
+
+                    if (shouldBotFail) {
+                        setBotFailures(prev => prev + 1);
+                        setChain(current => [
+                            ...current,
+                            {
+                                sender: 'other',
+                                text: "hmm... i couldn't think of a word",
+                                name: 'kmig bot',
+                                valid: false,
+                            }
+                        ]);
+
+                        if (botFailures + 1 >= 3) {
+                            setGameOver({ isOpen: true, isDefeat: false });
+                        } else {
+                            // logic is repeated below, but i might want to change behavior here
+                            const botRes = await getBotTurn(gameData.game_id);
+                            if (botRes.status?.status === 'VICTORY') {
+                                setGameOver({ isOpen: true, isDefeat: true });
+                            } else if (botRes.status?.status === 'DEFEAT') {
+                                setGameOver({ isOpen: true, isDefeat: false });
+                            }
+
+                            setChain(current => [
+                                ...current,
+                                {
+                                    sender: 'other',
+                                    text: botRes.word?.korean || '봇의 응답 없음',
+                                    name: botRes.player?.name || 'kmig bot',
+                                    pronunciation: botRes.word?.pronunciation,
+                                    hanja: botRes.word?.hanja,
+                                    part_of_speech: botRes.word?.part_of_speech,
+                                    definition: botRes.word?.definition,
+                                    english: botRes.word?.english,
+                                    valid: botRes.word ? true : false,
+                                }
+                            ]);
+
+                            setCurrentTurn('user');
                         }
-                    ]);
+                    } else {
+                        const botRes = await getBotTurn(gameData.game_id);
+                        if (botRes.status?.status === 'VICTORY') {
+                            setGameOver({ isOpen: true, isDefeat: true });
+                        } else if (botRes.status?.status === 'DEFEAT') {
+                            setGameOver({ isOpen: true, isDefeat: false });
+                        }
 
-                    setCurrentTurn('user');
+                        setChain(current => [
+                            ...current,
+                            {
+                                sender: 'other',
+                                text: botRes.word?.korean || '봇의 응답 없음',
+                                name: botRes.player?.name || 'kmig bot',
+                                pronunciation: botRes.word?.pronunciation,
+                                hanja: botRes.word?.hanja,
+                                part_of_speech: botRes.word?.part_of_speech,
+                                definition: botRes.word?.definition,
+                                english: botRes.word?.english,
+                                valid: botRes.word ? true : false,
+                            }
+                        ]);
+
+                        setCurrentTurn('user');
+                    }
                 } catch (botErr) {
                     console.error('Bot turn failed:', botErr);
 
@@ -225,7 +282,7 @@ export default function GamePage() {
                 <div
                     ref={chainRef}
                     onScroll={handleChainScroll}
-                    className="game-play-space w-full h-96 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2"
+                    className="game-play-space w-full h-96 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2 scrollbar-hide"
                 >
                     {[...chain].reverse().map((msg, idx) => {
                         const fadeSteps = 5;
