@@ -184,10 +184,14 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, d
         return (True, Status(status='VALID', message='First word is always valid'), response_word)
 
     last_character = words[-1][-1]  # Last character of the last word played
+    is_valid_euphonic_adjustment = await valid_euphonic_adjustment(state, game_id, word)
+
     if word[0] == last_character:
         return (True, Status(status='VALID', message='Word is valid'), response_word)
-    elif await valid_euphonic_adjustment(state, game_id, word):
+    elif is_valid_euphonic_adjustment:
         return (True, Status(status='VALID', message='Word is valid due to 두음법칙'), response_word)
+    elif not is_valid_euphonic_adjustment:
+        return (False, Status(status='INVALID', message='두음법칙 not applied correctly'), response_word)
     else:
         # If the first character of the new word does not match the last character of the last word
         return (

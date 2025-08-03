@@ -231,6 +231,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.style.setProperty('--color-text', theme.colors.text);
     root.style.setProperty('--color-error', theme.colors.error);
     root.style.setProperty('--color-error-extra', theme.colors.errorExtra);
+    root.style.setProperty('--color-glow', theme.colors.main);
 
     // Set body background
     document.body.style.backgroundColor = theme.colors.bg;

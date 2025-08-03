@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 
 
+
 export default function GamePage() {
     const location = useLocation();
     const { t } = useLanguage();
@@ -72,8 +73,11 @@ export default function GamePage() {
             const submitRes = await submitWord(gameData.game_id, submittedWord, username);
 
             if (submitRes.status.status === 'GAME OVER') {
-                setGameOver({ isOpen: true, isDefeat: true });
-
+                if (userFailures < 3) {
+                    setGameOver({ isOpen: true, isDefeat: false });
+                } else {
+                    setGameOver({ isOpen: true, isDefeat: true });
+                }
                 setChain(prev => [...prev, {
                     sender: 'user',
                     text: submitRes.word.korean,
