@@ -11,3 +11,21 @@ html, body {
 main {
   overscroll-behavior: contain;
 }
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  height: 16px;
+  width: 16px;
+  background: var(--color-serika-dark--main-color, #e2b714);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  background: var(--color-serika-dark--main-color, #e2b714);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
