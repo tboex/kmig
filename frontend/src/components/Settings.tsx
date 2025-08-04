@@ -1,33 +1,35 @@
 import { useSettings } from '../contexts/SettingsContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function Settings() {
   const { botDelay, setBotDelay, botDelayMs, setBotDelayMs, botDifficulty, setBotDifficulty } = useSettings();
+  const { t } = useLanguage();
 
   return (
     <main className="flex-1 flex flex-col bg-serika-dark--bg-color items-center justify-start p-8">
       <div className="w-full max-w-2xl">
         <h1 className="text-3xl font-bold text-serika-dark--text-color mb-8 text-center">
-          Settings
+          {t('settings.title')}
         </h1>
 
         <div className="bg-serika-dark--sub-alt-color rounded-lg p-6 mb-6">
           <h2 className="text-xl font-semibold text-serika-dark--text-color mb-4">
-            Bot Behavior
+            {t('settings.bot.title')}
           </h2>
 
           {/* Bot Difficulty Setting */}
           <div className="mb-6">
             <label className="block text-serika-dark--text-color font-medium mb-2">
-              Bot Difficulty
+              {t('settings.bot.difficulty')}
             </label>
             <p className="text-sm text-serika-dark--sub-color mb-3">
-              Controls how often the bot makes mistakes
+              {t('settings.bot.difficulty.desc')}
             </p>
             <div className="flex flex-col space-y-2">
               {[
-                { value: 'easy', label: 'Easy', chance: '30% fail chance' },
-                { value: 'medium', label: 'Medium', chance: '15% fail chance' },
-                { value: 'hard', label: 'Hard', chance: '5% fail chance' }
+                { value: 'easy', label: t('settings.difficulty.easy'), chance: '30% fail chance' },
+                { value: 'medium', label: t('settings.difficulty.medium'), chance: '15% fail chance' },
+                { value: 'hard', label: t('settings.difficulty.hard'), chance: '5% fail chance' }
               ].map((option) => (
                 <button
                   key={option.value}

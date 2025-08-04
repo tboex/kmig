@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { startGame } from '../services/game';
+import { useLanguage } from '../contexts/LanguageContext';
 import logo from '../assets/logo.svg';
 
 export default function LandingPage() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [username, setUsername] = useState(() => localStorage.getItem('kmig_username') || '');
 
@@ -31,7 +33,7 @@ export default function LandingPage() {
     />
     <input
       className="mb-15 px-4 py-2 rounded bg-serika-dark--sub-alt-color text-serika-dark--text-color text-lg"
-      placeholder="Enter your username"
+      placeholder={t('landing.username.placeholder')}
       value={username}
       onChange={e => setUsername(e.target.value)}
     />
@@ -42,7 +44,7 @@ export default function LandingPage() {
         disabled={!username.trim()}
       >
         <i className="fas fa-fw fa-user"></i>
-        <span>Solo Game</span>
+        <span>{t('landing.solo')}</span>
       </button>
       <button
         className="px-8 py-4 rounded bg-serika-dark--sub-alt-color text-xl font-bold disabled:opacity-50 flex items-center space-x-2 transition-colors duration-150 text-serika-dark--main-color hover:text-serika-dark--text-color disabled:text-serika-dark--sub-color"
@@ -50,7 +52,7 @@ export default function LandingPage() {
         disabled={!username.trim()}
       >
         <i className="fas fa-fw fa-users"></i>
-        <span>Multiplayer Game</span>
+        <span>{t('landing.multiplayer')}</span>
       </button>
     </div>
   </div>

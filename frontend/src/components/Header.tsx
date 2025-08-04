@@ -1,10 +1,14 @@
 import logo from '../assets/logo.svg';
+import LanguageToggle from './LanguageToggle';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export default function Header() {
+  const { t } = useLanguage();
+
   return (
     <header className="w-full h-15 bg-serika-dark--bg-color flex items-center justify-between">
       <div className="w-full max-w-screen-xl mx-auto flex items-center justify-between px-4 md:px-8 lg:px-16">
-        {/* Left section (Logo) */}
+        {/* Left section (Logo and Nav) */}
         <div className="flex flex-row items-center space-x-6">
           <a id="kmig" href="/" className="text-2xl lg:text-3xl font-bold tracking-tight text-serika-dark--text-color">
             <img
@@ -24,7 +28,7 @@ export default function Header() {
                 <i className="fas fa-fw fa-info"></i>
               </div>
             </a>
-            <a id="settingsButton" title="settings" href="/settings" className="hover:text-serika-dark--text-color">
+            <a id="settingsButton" title={t('nav.settings')} href="/settings" className="hover:text-serika-dark--text-color">
               <div className="icon">
                 <i className="fas fa-fw fa-cog"></i>
               </div>
@@ -32,14 +36,15 @@ export default function Header() {
           </nav>
         </div>
 
-        {/* Right section (Menu) */}
-        <div className="accountButtonAndMenu">
-          <a className="accountButton flex flex-row items-center space-x-2 text-serika-dark--sub-color hover:text-serika-dark--text-color" href="/account" title="account">
+        {/* Right section (Account button and Language toggle) */}
+        <div className="flex items-center space-x-4">
+          <a className="accountButton flex flex-row items-center space-x-2 text-serika-dark--sub-color hover:text-serika-dark--text-color" href="/account" title={t('nav.account')}>
             <div className="user">
               <i className="fas fa-fw fa-user"></i>
             </div>
             <div className="text">TODO</div>
           </a>
+          <LanguageToggle />
         </div>
       </div>
     </header>

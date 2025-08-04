@@ -7,10 +7,12 @@ import PlayerStatus from './PlayerStatus';
 import Invite from './Invite';
 import { submitWord, getBotTurn } from '../services/game';
 import { useSettings } from '../contexts/SettingsContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 
 export default function GamePage() {
     const location = useLocation();
+    const { t } = useLanguage();
     const initialGameData = location.state?.gameData;
     const [gameData, setGameData] = useState<any>(initialGameData);
     const [username, setUsername] = useState(() => localStorage.getItem('kmig_username') || '');
@@ -68,11 +70,8 @@ export default function GamePage() {
             const submitRes = await submitWord(gameData.game_id, submittedWord, username);
 
             if (submitRes.status.status === 'GAME OVER') {
-                if (userFailures < 3) {
-                    setGameOver({ isOpen: true, isDefeat: false });
-                } else {
-                    setGameOver({ isOpen: true, isDefeat: true });
-                }
+                setGameOver({ isOpen: true, isDefeat: true });
+
                 setChain(prev => [...prev, {
                     sender: 'user',
                     text: submitRes.word.korean,
@@ -133,7 +132,7 @@ export default function GamePage() {
                             ...current,
                             {
                                 sender: 'other',
-                                text: "지금 생각하고 있어...",
+                                text: t('game.thinking'),
                                 name: 'kmig',
                                 valid: true,
                             }
@@ -149,30 +148,15 @@ export default function GamePage() {
                     const shouldBotFail = Math.random() < failureChance;
 
                     const getBotFailurePhrase = (failureCount: number) => {
-                        const phraseSets = {
-                            first: [
-                                "음음... 단어를 생각할 수 없었어",
-                                "아... 모르겠어",
-                                "이번엔 패스할게"
-                            ],
-                            second: [
-                                "또 막혔네...",
-                                "이번에도 어렵다",
-                                "음... 또 모르겠어"
-                            ],
-                            final: [
-                                "마지막 기회인데...",
-                                "정말 어렵다...",
-                                "이제 정말 위험해..."
-                            ]
-                        };
+                        const phraseSets = [
+                            [`bot.failure.first.1`, `bot.failure.first.2`, `bot.failure.first.3`],
+                            [`bot.failure.second.1`, `bot.failure.second.2`, `bot.failure.second.3`],
+                            [`bot.failure.final.1`, `bot.failure.final.2`, `bot.failure.final.3`]
+                        ];
 
-                        let phrases;
-                        if (failureCount === 0) phrases = phraseSets.first;
-                        else if (failureCount === 1) phrases = phraseSets.second;
-                        else phrases = phraseSets.final;
-
-                        return phrases[Math.floor(Math.random() * phrases.length)];
+                        const phraseKeys = phraseSets[Math.min(failureCount, 2)];
+                        const randomKey = phraseKeys[Math.floor(Math.random() * phraseKeys.length)];
+                        return t(randomKey);
                     };
 
 
@@ -373,7 +357,7 @@ export default function GamePage() {
                     className="flex-1 px-3 py-2 rounded bg-serika-dark--sub-alt-color text-serika-dark--text-color outline-none"
                     value={userInput}
                     onChange={e => setUserInput(e.target.value)}
-                    placeholder="Enter a word…"
+                    placeholder={t('game.placeholder')}
                     style={{ maxWidth: '300px' }}
                 />
                 <button
@@ -385,7 +369,7 @@ export default function GamePage() {
                         disabled:hover:text-serika-dark--sub-color"
                     disabled={!isUserTurn}
                 >
-                    Submit
+                    {t('game.submit')}
                 </button>
             </form>
 
