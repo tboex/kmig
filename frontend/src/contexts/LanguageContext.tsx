@@ -36,7 +36,7 @@ const translations: Record<Language, TranslationDict> = {
     // Bot Failure Phrases
     'bot.failure.first.1': "Hmm... I can't think of a word",
     'bot.failure.first.2': "Ah... I don't know",
-    'bot.failure.first.3': "Agh, I can't think of anything",
+    'bot.failure.first.3': "I can't think of anything",
     'bot.failure.second.1': "Stuck again...",
     'bot.failure.second.2': "This is difficult",
     'bot.failure.second.3': "Hmm... I don't know again",
