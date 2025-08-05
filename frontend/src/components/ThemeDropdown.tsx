@@ -4,6 +4,7 @@ import { useTheme } from '../contexts/ThemeContext';
 export default function ThemeDropdown() {
   const { currentTheme, setTheme, availableThemes } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const [hoveredTheme, setHoveredTheme] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -19,22 +20,24 @@ export default function ThemeDropdown() {
   }, []);
 
   const ColorPalette = ({ theme }: { theme: any }) => (
-    <div className="flex items-center space-x-1 bg-theme-bg px-2 py-2 rounded">
-      <div
-        className="w-3 h-3 rounded-full border border-opacity-30"
-        style={{ backgroundColor: theme.colors.bg, borderColor: theme.colors.text }}
-        title="Background"
-      />
-      <div
-        className="w-3 h-3 rounded-full border border-opacity-30"
-        style={{ backgroundColor: theme.colors.main, borderColor: theme.colors.text }}
-        title="Main"
-      />
-      <div
-        className="w-3 h-3 rounded-full border border-opacity-30"
-        style={{ backgroundColor: theme.colors.text, borderColor: theme.colors.sub }}
-        title="Text"
-      />
+    <div className="flex items-center space-x-1 bg-theme-bg px-2 py-2 rounded"
+        style={{ backgroundColor: theme.colors.bg }}
+    >
+        <div
+            className="w-3 h-3 rounded-full"
+            style={{ backgroundColor: theme.colors.main }}
+            title="Main"
+        />
+        <div
+            className="w-3 h-3 rounded-full"
+            style={{ backgroundColor: theme.colors.sub }}
+            title="Sub"
+        />
+        <div
+            className="w-3 h-3 rounded-full"
+            style={{ backgroundColor: theme.colors.text }}
+            title="Text"
+        />
     </div>
   );
 
@@ -51,33 +54,33 @@ export default function ThemeDropdown() {
 
       {isOpen && (
         <div
-          className="absolute bottom-full right-0 mb-2 py-2 rounded-lg shadow-lg border z-50 min-w-[200px]"
+          className="absolute bottom-full right-0 mb-2 py-2 rounded-lg shadow-lg border-4 z-50 min-w-[400px]"
           style={{
-            backgroundColor: 'var(--color-sub-alt)',
+            backgroundColor: 'var(--color-sub)',
             borderColor: 'var(--color-sub)',
           }}
         >
           {availableThemes.map((theme) => (
             <button
-              key={theme.name}
-              onClick={() => {
-                setTheme(theme.name);
-                setIsOpen(false);
-              }}
-              className={`w-full px-4 py-2 text-left hover:opacity-80 transition-opacity flex items-center justify-between ${
-                currentTheme.name === theme.name ? 'font-bold' : ''
-              }`}
-              style={{
-                color: currentTheme.name === theme.name ? 'var(--color-main)' : 'var(--color-text)',
-              }}
+                key={theme.name}
+                onClick={() => {
+                    setTheme(theme.name);
+                    setIsOpen(false);
+                }}
+                className={`w-full px-4 py-2 text-left transition-opacity flex items-center justify-between ${
+                    currentTheme.name === theme.name ? 'font-bold' : ''
+                }`}
+                style={{
+                    color: hoveredTheme === theme.name ? 'var(--color-text)' : 'var(--color-bg)',
+                    backgroundColor: hoveredTheme === theme.name ? 'var(--color-sub-alt)' : 'var(--color-text)',
+                }}
+                onMouseEnter={() => setHoveredTheme(theme.name)}
+                onMouseLeave={() => setHoveredTheme(null)}
             >
-              <div className="flex items-center space-x-3">
-                <ColorPalette theme={theme} />
                 <span>{theme.displayName}</span>
-              </div>
-              {currentTheme.name === theme.name && (
-                <i className="fas fa-check text-xs"></i>
-              )}
+                <div className="flex items-center space-x-2">
+                    <ColorPalette theme={theme} />
+                </div>
             </button>
           ))}
         </div>

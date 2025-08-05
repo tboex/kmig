@@ -24,37 +24,39 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center bg-theme-bg"
-       style={{ height: 'calc(100vh - 200px)'}}>
-    <img
-      src={logo}
-      alt="KMIG Logo"
-      className="mb-8 w-100 h-30"
-    />
-    <input
-      className="mb-15 px-4 py-2 rounded bg-theme-sub-alt text-theme-text text-lg"
-      placeholder={t('landing.username.placeholder')}
-      value={username}
-      onChange={e => setUsername(e.target.value)}
-    />
-    <div className="flex flex-row space-x-4 mb-4">
-      <button
-        className="px-8 py-4 rounded bg-theme-sub-alt text-xl font-bold disabled:opacity-50 flex items-center space-x-2 transitions duration-150 text-theme-main hover:text-theme-text  disabled:text-theme-sub"
-        onClick={handleSolo}
-        disabled={!username.trim()}
-      >
-        <i className="fas fa-fw fa-user"></i>
-        <span>{t('landing.solo')}</span>
-      </button>
-      <button
-        className="px-8 py-4 rounded bg-theme-sub-alt text-xl font-bold disabled:opacity-50 flex items-center space-x-2 transitions duration-150 text-theme-main hover:text-theme-text disabled:text-theme-sub"
-        onClick={handleMulti}
-        disabled={!username.trim()}
-      >
-        <i className="fas fa-fw fa-users"></i>
-        <span>{t('landing.multiplayer')}</span>
-      </button>
+    <div className="flex-1 bg-theme-bg">
+      <div className="flex flex-col items-center justify-center h-full"
+         style={{ height: 'calc(100vh - 200px)'}}>
+        <img
+          src={logo}
+          alt="KMIG Logo"
+          className="mb-8 w-100 h-30"
+        />
+        <input
+          className="mb-15 px-4 py-2 rounded bg-theme-sub-alt text-theme-text text-lg"
+          placeholder={t('landing.username.placeholder')}
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+        />
+        <div className="flex flex-row space-x-4 mb-4">
+          <button
+            className="px-8 py-4 rounded bg-theme-sub-alt text-xl font-bold disabled:opacity-50 flex items-center space-x-2 transition duration-150 text-theme-main hover:text-theme-text disabled:text-theme-sub"
+            onClick={handleSolo}
+            disabled={!username.trim()}
+          >
+            <i className="fas fa-fw fa-user"></i>
+            <span>{t('landing.solo')}</span>
+          </button>
+          <button
+            className="px-8 py-4 rounded bg-theme-sub-alt text-xl font-bold disabled:opacity-50 flex items-center space-x-2 transition duration-150 text-theme-main hover:text-theme-text disabled:text-theme-sub"
+            onClick={handleMulti}
+            disabled={!username.trim()}
+          >
+            <i className="fas fa-fw fa-users"></i>
+            <span>{t('landing.multiplayer')}</span>
+          </button>
+        </div>
+      </div>
     </div>
-  </div>
   );
 }
