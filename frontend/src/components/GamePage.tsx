@@ -303,7 +303,7 @@ export default function GamePage() {
     ];
 
     return (
-        <main className="game-page w-full flex-1 flex flex-col bg-serika-dark--bg-color items-center justify-center"
+        <main className="game-page w-full flex-1 flex flex-col bg-theme-bg items-center justify-center"
             style={{ height: 'calc(100vh - 200px)'}}>
             {/* Player Status */}
             <PlayerStatus players={players} />
@@ -325,14 +325,14 @@ export default function GamePage() {
                                 style={{ opacity }}
                                 className={`relative px-4 py-2 rounded-lg transition-opacity duration-500 mb-2
                                     ${msg.valid === false
-                                        ? 'bg-serika-dark--error-color text-serika-dark--text-color'
+                                        ? 'bg-theme-error text-theme-text'
                                         : msg.sender === 'other'
-                                            ? 'bg-serika-dark--sub-alt-color text-serika-dark--main-color self-start'
-                                            : 'bg-serika-dark--main-color text-black self-end'
+                                            ? 'bg-theme-sub-alt text-theme-main self-start'
+                                            : 'bg-theme-main text-black self-end'
                                     }`
                                 }
                             >
-                                <div className="text-xs text-serika-dark--sub-color mb-1">{msg.name}</div>
+                                <div className="text-xs text-theme-sub mb-1">{msg.name}</div>
                                 <WordTooltip
                                     tooltip={
                                         <>
@@ -354,7 +354,7 @@ export default function GamePage() {
             {/* Input Form */}
             <form onSubmit={handleSubmit} className="w-full max-w-md flex items-center justify-center space-x-2 mt-2">
                 <input
-                    className="flex-1 px-3 py-2 rounded bg-serika-dark--sub-alt-color text-serika-dark--text-color outline-none"
+                    className="flex-1 px-3 py-2 rounded bg-theme-sub-alt text-theme-text outline-none"
                     value={userInput}
                     onChange={e => setUserInput(e.target.value)}
                     placeholder={t('game.placeholder')}
@@ -362,11 +362,11 @@ export default function GamePage() {
                 />
                 <button
                     type="submit"
-                    className="px-4 py-2 rounded bg-serika-dark--main-color text-black font-bold
-                        hover:text-serika-dark--text-color
+                    className="px-4 py-2 rounded bg-theme-main text-black font-bold
+                        hover:text-theme-text
                         disabled:opacity-50
-                        disabled:text-serika-dark--sub-color
-                        disabled:hover:text-serika-dark--sub-color"
+                        disabled:text-theme-sub
+                        disabled:hover:text-theme-sub"
                     disabled={!isUserTurn}
                 >
                     {t('game.submit')}

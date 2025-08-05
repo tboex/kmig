@@ -59,7 +59,7 @@ export default function WordTooltip({ children, tooltip }: WordTooltipProps) {
       {show &&
         createPortal(
           <div
-            className="fixed z-50 bg-serika-dark--bg-color text-serika-dark--text-color border border-serika-dark--sub-color rounded-lg p-3 shadow-lg text-xs"
+            className="fixed z-50 bg-theme-bg text-theme-text border border-theme-sub rounded-lg p-3 shadow-lg text-xs"
             style={{
               left: coords.x,
               top: coords.y - 12,

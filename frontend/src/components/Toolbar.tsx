@@ -22,12 +22,12 @@ export default function Toolbar({
     timerDuration, setTimerDuration,
 }: ToolbarProps) {
     return (
-        <div className="toolbar h-12 bg-serika-dark--sub-alt-color flex items-center justify-between px-4 mx-auto rounded-lg">
+        <div className="toolbar h-12 bg-theme-sub-alt flex items-center justify-between px-4 mx-auto rounded-lg">
             {/* Left section (Player Count) */}
             <div className="toolbar-left flex items-center space-x-4">
                 <button
-                    className={`solo-player-button flex flex-row items-center space-x-2 hover:text-serika-dark--text-color ${
-                        mode === 'solo' ? 'text-serika-dark--main-color' : 'text-serika-dark--sub-color'
+                    className={`solo-player-button flex flex-row items-center space-x-2 hover:text-theme-text ${
+                        mode === 'solo' ? 'text-theme-main' : 'text-theme-sub'
                     }`}
                     onClick={() => setMode('solo')}
                 >
@@ -36,8 +36,8 @@ export default function Toolbar({
                     <div>solo</div>
                 </button>
                 <button
-                    className={`multi-player-button flex flex-row items-center space-x-2 hover:text-serika-dark--text-color ${
-                        mode === 'multi' ? 'text-serika-dark--main-color' : 'text-serika-dark--sub-color'
+                    className={`multi-player-button flex flex-row items-center space-x-2 hover:text-theme-text ${
+                        mode === 'multi' ? 'text-theme-main' : 'text-theme-sub'
                     }`}
                     onClick={() => setMode('multi')}
                 >
@@ -46,13 +46,13 @@ export default function Toolbar({
                 </button>
             </div>
 
-            <div className="spacer leftSpacer w-1 h-6 mx-6 rounded-sm bg-serika-dark--bg-color"></div>
+            <div className="spacer leftSpacer w-1 h-6 mx-6 rounded-sm bg-theme-bg"></div>
 
             {/* Middle section (Settings) */}
             <div className="toolbar-center flex items-center space-x-4">
                 <button
-                    className={`timer-button flex flex-row items-center space-x-2 hover:text-serika-dark--text-color ${
-                        toolbarMode === 'timer' ? 'text-serika-dark--main-color' : 'text-serika-dark--sub-color'
+                    className={`timer-button flex flex-row items-center space-x-2 hover:text-theme-text ${
+                        toolbarMode === 'timer' ? 'text-theme-main' : 'text-theme-sub'
                     }`}
                     onClick={() => setToolbarMode('timer')}
                 >
@@ -60,8 +60,8 @@ export default function Toolbar({
                     <div>timer</div>
                 </button>
                 <button
-                    className={`guesses-button flex flex-row items-center space-x-2 hover:text-serika-dark--text-color ${
-                        toolbarMode === 'guesses' ? 'text-serika-dark--main-color' : 'text-serika-dark--sub-color'
+                    className={`guesses-button flex flex-row items-center space-x-2 hover:text-theme-text ${
+                        toolbarMode === 'guesses' ? 'text-theme-main' : 'text-theme-sub'
                     }`}
                     onClick={() => setToolbarMode('guesses')}
                 >
@@ -70,7 +70,7 @@ export default function Toolbar({
                 </button>
             </div>
 
-            <div className="spacer rightSpacer w-1 h-6 mx-6 rounded-sm bg-serika-dark--bg-color"></div>
+            <div className="spacer rightSpacer w-1 h-6 mx-6 rounded-sm bg-theme-bg"></div>
 
             {/* Right section (Config) */}
             <div className="toolbar-right flex items-center space-x-4">
@@ -78,8 +78,8 @@ export default function Toolbar({
                     GUESS_OPTIONS.map(opt => (
                         <button
                             key={opt}
-                            className={`textButton flex flex-row items-center space-x-2 cursor-default hover:text-serika-dark--text-color ${
-                                guessCount === opt ? 'text-serika-dark--main-color' : 'text-serika-dark--sub-color'
+                            className={`textButton flex flex-row items-center space-x-2 cursor-default hover:text-theme-text ${
+                                guessCount === opt ? 'text-theme-main' : 'text-theme-sub'
                             }`}
                             onClick={() => setGuessCount(opt)}
                         >
@@ -91,8 +91,8 @@ export default function Toolbar({
                     TIMER_OPTIONS.map(opt => (
                         <button
                             key={opt}
-                            className={`textButton flex flex-row items-center space-x-2 cursor-default hover:text-serika-dark--text-color ${
-                                timerDuration === opt ? 'text-serika-dark--main-color' : 'text-serika-dark--sub-color'
+                            className={`textButton flex flex-row items-center space-x-2 cursor-default hover:text-theme-text ${
+                                timerDuration === opt ? 'text-theme-main' : 'text-theme-sub'
                             }`}
                             onClick={() => setTimerDuration(opt)}
                         >

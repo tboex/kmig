@@ -11,6 +11,7 @@ import Support from './components/Support'
 import Settings from './components/Settings';
 import { SettingsProvider } from './contexts/SettingsContext'
 import { LanguageProvider } from './contexts/LanguageContext'
+import { ThemeProvider } from './contexts/ThemeContext'
 
 function App() {
   const [showContact, setShowContact] = useState(false);
@@ -19,6 +20,7 @@ function App() {
   return (
     <LanguageProvider>
       <SettingsProvider>
+        <ThemeProvider>
           <BrowserRouter>
             <div className="flex flex-col min-h-screen">
               <Header />
@@ -57,7 +59,8 @@ function App() {
               </div>
             )}
           </div>
-        </BrowserRouter>
+          </BrowserRouter>
+        </ThemeProvider>
       </SettingsProvider>
     </LanguageProvider>
   )

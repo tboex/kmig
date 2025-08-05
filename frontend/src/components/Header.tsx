@@ -6,29 +6,29 @@ export default function Header() {
   const { t } = useLanguage();
 
   return (
-    <header className="w-full h-15 bg-serika-dark--bg-color flex items-center justify-between">
+    <header className="w-full h-15 bg-theme-bg flex items-center justify-between">
       <div className="w-full max-w-screen-xl mx-auto flex items-center justify-between px-4 md:px-8 lg:px-16">
         {/* Left section (Logo and Nav) */}
         <div className="flex flex-row items-center space-x-6">
-          <a id="kmig" href="/" className="text-2xl lg:text-3xl font-bold tracking-tight text-serika-dark--text-color">
+          <a id="kmig" href="/" className="text-2xl lg:text-3xl font-bold tracking-tight text-theme-text">
             <img
               src={logo}
               alt="KMIG Logo"
               className="w-35 h-35 align-middle"
             />
           </a>
-          <nav className="flex flex-row items-center space-x-4 text-sm text-serika-dark--sub-color">
-            <a id="startGameButton" title="start game" href="/" className="hover:text-serika-dark--text-color">
+          <nav className="flex flex-row items-center space-x-4 text-sm text-theme-sub">
+            <a id="startGameButton" title="start game" href="/" className="hover:text-theme-text">
               <div className="icon">
                 <i className="fas fa-fw fa-gamepad"></i>
               </div>
             </a>
-            <a id="aboutButton" title="about" href="/about" className="hover:text-serika-dark--text-color">
+            <a id="aboutButton" title="about" href="/about" className="hover:text-theme-text">
               <div className="icon">
                 <i className="fas fa-fw fa-info"></i>
               </div>
             </a>
-            <a id="settingsButton" title={t('nav.settings')} href="/settings" className="hover:text-serika-dark--text-color">
+            <a id="settingsButton" title={t('nav.settings')} href="/settings" className="hover:text-theme-text">
               <div className="icon">
                 <i className="fas fa-fw fa-cog"></i>
               </div>
@@ -38,7 +38,7 @@ export default function Header() {
 
         {/* Right section (Account button and Language toggle) */}
         <div className="flex items-center space-x-4">
-          <a className="accountButton flex flex-row items-center space-x-2 text-serika-dark--sub-color hover:text-serika-dark--text-color" href="/account" title={t('nav.account')}>
+          <a className="accountButton flex flex-row items-center space-x-2 text-theme-sub hover:text-theme-text" href="/account" title={t('nav.account')}>
             <div className="user">
               <i className="fas fa-fw fa-user"></i>
             </div>

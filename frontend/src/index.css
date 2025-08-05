@@ -1,32 +1,50 @@
 @import "tailwindcss";
-@import "../static/themes/serika_dark.css";
-@import "../static/themes/desert_oasis.css";
-@import "../static/themes/lavender.css";
-@import "../static/themes/trackday.css";
 
 html, body {
   overscroll-behavior: none;
-  background-color: var(--color-bg, #323437);
+  background-color: var(--color-bg);
   overflow-x: hidden;
+  transition: background-color 0.2s ease;
 }
 
 main {
   overscroll-behavior: contain;
 }
 
+.bg-theme-bg { background-color: var(--color-bg); }
+.bg-theme-main { background-color: var(--color-main); }
+.bg-theme-sub { background-color: var(--color-sub); }
+.bg-theme-sub-alt { background-color: var(--color-sub-alt); }
+.bg-theme-error { background-color: var(--color-error); }
+
+.text-theme-bg { color: var(--color-bg); }
+.text-theme-main { color: var(--color-main); }
+.text-theme-sub { color: var(--color-sub); }
+.text-theme-sub-alt { color: var(--color-sub-alt); }
+.text-theme-text { color: var(--color-text); }
+.text-theme-error { color: var(--color-error); }
+
+.border-theme-main { border-color: var(--color-main); }
+.border-theme-sub { border-color: var(--color-sub); }
+.border-theme-error { border-color: var(--color-error); }
+
+.hover-text-theme-text:hover { color: var(--color-text); }
+.hover-text-theme-main:hover { color: var(--color-main); }
+.hover-bg-theme-main:hover { background-color: var(--color-main); }
+
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Safari and Chrome */
+  display: none;
 }
 
 .slider::-webkit-slider-thumb {
   appearance: none;
   height: 16px;
   width: 16px;
-  background: var(--color-serika-dark--main-color, #e2b714);
+  background: var(--color-main);
   border-radius: 50%;
   cursor: pointer;
 }
@@ -34,7 +52,7 @@ main {
 .slider::-moz-range-thumb {
   height: 16px;
   width: 16px;
-  background: var(--color-serika-dark--main-color, #e2b714);
+  background: var(--color-main);
   border-radius: 50%;
   cursor: pointer;
   border: none;

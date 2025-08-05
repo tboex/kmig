@@ -9,17 +9,17 @@ export default function GameOver({ isOpen, isDefeat, onClose, onPlayAgain }: Gam
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-serika-dark--bg-color bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-serika-dark--sub-color p-8 rounded-lg shadow-lg text-center max-w-md w-full mx-4">
-        <div className={`text-6xl mb-4 ${isDefeat ? 'text-serika-dark--error-color' : 'text-serika-dark--main-color'}`}>
+    <div className="fixed inset-0 bg-theme-bg bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-theme-sub p-8 rounded-lg shadow-lg text-center max-w-md w-full mx-4">
+        <div className={`text-6xl mb-4 ${isDefeat ? 'text-theme-error' : 'text-theme-main'}`}>
           {isDefeat ? '💀': '🎉'}
         </div>
 
-        <h2 className={`text-3xl font-bold mb-4 ${isDefeat ? 'text-serika-dark--error-color' : 'text-serika-dark--main-color'}`}>
+        <h2 className={`text-3xl font-bold mb-4 ${isDefeat ? 'text-theme-error' : 'text-theme-main'}`}>
           {isDefeat ? '패배!': '승리!'}
         </h2>
 
-        <p className="text-serika-dark--main-color mb-6">
+        <p className="text-theme-main mb-6">
           {isDefeat
             ?  'Game over! Better luck next time.'
             : 'Congratulations! You won the game!'
@@ -30,14 +30,14 @@ export default function GameOver({ isOpen, isDefeat, onClose, onPlayAgain }: Gam
           {onPlayAgain && (
             <button
               onClick={onPlayAgain}
-              className="px-6 py-3 bg-serika-dark--sub-alt-color text-serika-dark--main-color font-bold rounded-lg hover:opacity-80 transition-opacity"
+              className="px-6 py-3 bg-theme-sub-alt text-theme-main font-bold rounded-lg hover:opacity-80 transition-opacity"
             >
               Play Again
             </button>
           )}
           <button
             onClick={onClose}
-            className="px-6 py-3 bg-serika-dark--caret-color text-serika-dark--sub-alt-color font-bold rounded-lg hover:opacity-80 transition-opacity"
+            className="px-6 py-3 bg-theme-caret text-theme-sub-alt font-bold rounded-lg hover:opacity-80 transition-opacity"
           >
             Close
           </button>

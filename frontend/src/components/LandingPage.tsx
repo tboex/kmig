@@ -24,7 +24,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center bg-serika-dark--bg-color"
+    <div className="flex flex-col items-center justify-center bg-theme-bg"
        style={{ height: 'calc(100vh - 200px)'}}>
     <img
       src={logo}
@@ -32,14 +32,14 @@ export default function LandingPage() {
       className="mb-8 w-100 h-30"
     />
     <input
-      className="mb-15 px-4 py-2 rounded bg-serika-dark--sub-alt-color text-serika-dark--text-color text-lg"
+      className="mb-15 px-4 py-2 rounded bg-theme-sub-alt text-theme-text text-lg"
       placeholder={t('landing.username.placeholder')}
       value={username}
       onChange={e => setUsername(e.target.value)}
     />
     <div className="flex flex-row space-x-4 mb-4">
       <button
-        className="px-8 py-4 rounded bg-serika-dark--sub-alt-color text-xl font-bold disabled:opacity-50 flex items-center space-x-2 transition-colors duration-150 text-serika-dark--main-color hover:text-serika-dark--text-color  disabled:text-serika-dark--sub-color"
+        className="px-8 py-4 rounded bg-theme-sub-alt text-xl font-bold disabled:opacity-50 flex items-center space-x-2 transitions duration-150 text-theme-main hover:text-theme-text  disabled:text-theme-sub"
         onClick={handleSolo}
         disabled={!username.trim()}
       >
@@ -47,7 +47,7 @@ export default function LandingPage() {
         <span>{t('landing.solo')}</span>
       </button>
       <button
-        className="px-8 py-4 rounded bg-serika-dark--sub-alt-color text-xl font-bold disabled:opacity-50 flex items-center space-x-2 transition-colors duration-150 text-serika-dark--main-color hover:text-serika-dark--text-color disabled:text-serika-dark--sub-color"
+        className="px-8 py-4 rounded bg-theme-sub-alt text-xl font-bold disabled:opacity-50 flex items-center space-x-2 transitions duration-150 text-theme-main hover:text-theme-text disabled:text-theme-sub"
         onClick={handleMulti}
         disabled={!username.trim()}
       >
