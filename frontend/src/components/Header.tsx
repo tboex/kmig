@@ -42,7 +42,7 @@ export default function Header() {
             <div className="user">
               <i className="fas fa-fw fa-user"></i>
             </div>
-            <div className="text">TODO</div>
+            <div className="text">Account</div>
           </a>
           <LanguageToggle />
         </div>

@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "../static/themes/serika_dark.css";
 @import "../static/themes/desert_oasis.css";
+@import "../static/themes/lavender.css";
+@import "../static/themes/trackday.css";
 
 html, body {
   overscroll-behavior: none;
