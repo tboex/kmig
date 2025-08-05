@@ -16,11 +16,15 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [botDelay, setBotDelayState] = useState(() => {
-    return localStorage.getItem('kmig_bot_delay') === 'true';
+    const saved = localStorage.getItem('kmig_bot_delay');
+    // If there's a saved value, use it, otherwise default to true
+    return saved !== null ? saved === 'true' : true;
   });
 
   const [botDelayMs, setBotDelayMsState] = useState(() => {
-    return parseInt(localStorage.getItem('kmig_bot_delay_ms') || '1500');
+    const saved = localStorage.getItem('kmig_bot_delay_ms');
+    // If there's a saved value, use it, otherwise default to 1500
+    return saved !== null ? parseInt(saved) : 1500;
   });
 
   const [botDifficulty, setBotDifficultyState] = useState<BotDifficulty>(() => {
