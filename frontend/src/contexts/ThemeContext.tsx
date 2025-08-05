@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
-export type ThemeName = 'serika_dark' | 'trackday' | 'desert_oasis' | 'lavender' | 'ms_cupcakes' | 'snes';
+export type ThemeName = 'serika_dark' | 'trackday' | 'desert_oasis' | 'lavender' | 'ms_cupcakes' | 'snes' | 'dino';
 
 interface Theme {
   name: ThemeName;
@@ -14,13 +14,15 @@ interface Theme {
     text: string;
     error: string;
     errorExtra: string;
+    colorfulError?: string; // Optional for themes that support colorful errors
+    colorfulErrorExtra?: string; // Optional for themes that support colorful errors
   };
 }
 
 const themes: Record<ThemeName, Theme> = {
   serika_dark: {
     name: 'serika_dark',
-    displayName: 'Serika Dark',
+    displayName: 'serika dark',
     colors: {
       bg: '#323437',
       main: '#e2b714',
@@ -34,7 +36,7 @@ const themes: Record<ThemeName, Theme> = {
   },
   trackday: {
     name: 'trackday',
-    displayName: 'Trackday',
+    displayName: 'trackday',
     colors: {
       bg: '#464d66',
       main: '#e0513e',
@@ -48,7 +50,7 @@ const themes: Record<ThemeName, Theme> = {
   },
   desert_oasis: {
     name: 'desert_oasis',
-    displayName: 'Desert Oasis',
+    displayName: 'desert oasis',
     colors: {
       bg: '#fff2d5',
       main: '#d19d01',
@@ -62,7 +64,7 @@ const themes: Record<ThemeName, Theme> = {
   },
   lavender: {
     name: 'lavender',
-    displayName: 'Lavender',
+    displayName: 'lavender',
     colors: {
       bg: '#ada6c2',
       main: '#e4e3e9',
@@ -76,7 +78,7 @@ const themes: Record<ThemeName, Theme> = {
   },
   ms_cupcakes: {
     name: 'ms_cupcakes',
-    displayName: 'MS Cupcakes',
+    displayName: 'ms cupcakes',
     colors: {
       bg: '#ffffff',
       main: '#5ed5f3',
@@ -90,7 +92,7 @@ const themes: Record<ThemeName, Theme> = {
   },
   snes: {
     name: 'snes',
-    displayName: 'SNES',
+    displayName: 'snes',
     colors: {
       bg: '#bfbec2',
       main: '#553d94',
@@ -100,6 +102,22 @@ const themes: Record<ThemeName, Theme> = {
       text: '#2e2e2e',
       error: '#ca4754',
       errorExtra: '#7e2a33',
+    }
+  },
+  dino: {
+    name: 'dino',
+    displayName: 'dino',
+    colors: {
+        bg: "#ffffff",
+        main: "#40d672",
+        caret: "#40d672",
+        sub: "#d5d5d5",
+        subAlt: "#cafad8",
+        text: "#1d221f",
+        error: "#ff5f5f",
+        errorExtra: "#d22a2a",
+        colorfulError: "#ff5f5f",
+        colorfulErrorExtra: "#d22a2a",
     }
   }
 };

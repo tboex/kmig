@@ -6,6 +6,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://kit.fontawesome.com/992e5ae538.js" crossorigin="anonymous"></script>
     <title>끝말잇기</title>
+    <script>
+      // Apply theme immediately to prevent flash
+      (function() {
+        const themes = {
+          serika_dark: {
+            bg: '#323437',
+            main: '#e2b714',
+            caret: '#e2b714',
+            sub: '#646669',
+            subAlt: '#2c2e31',
+            text: '#d1d0c5',
+            error: '#ca4754',
+            errorExtra: '#7e2a33',
+          },
+          trackday: {
+            bg: '#464d66',
+            main: '#e0513e',
+            caret: '#475782',
+            sub: '#5c7eb9',
+            subAlt: '#3d4359',
+            text: '#cfcfcf',
+            error: '#e44e4e',
+            errorExtra: '#fd3f3f',
+          },
+          desert_oasis: {
+            bg: '#fff2d5',
+            main: '#d19d01',
+            caret: '#3a87fe',
+            sub: '#0061fe',
+            subAlt: '#eddebc',
+            text: '#332800',
+            error: '#76bb40',
+            errorExtra: '#4e7a27',
+          },
+          lavender: {
+            bg: '#ada6c2',
+            main: '#e4e3e9',
+            caret: '#e4e3e9',
+            sub: '#e4e3e9',
+            subAlt: '#a19bb9',
+            text: '#2f2a41',
+            error: '#ca4754',
+            errorExtra: '#7e2a33',
+          },
+          ms_cupcakes: {
+            bg: '#ffffff',
+            main: '#5ed5f3',
+            caret: '#303030',
+            sub: '#d64090',
+            subAlt: '#edf8fa',
+            text: '#0a282f',
+            error: '#a4dd32',
+            errorExtra: '#90bd34',
+          },
+          snes: {
+            bg: '#bfbec2',
+            main: '#553d94',
+            caret: '#523793',
+            sub: '#9f8ad4',
+            subAlt: '#b5b0c2',
+            text: '#2e2e2e',
+            error: '#ca4754',
+            errorExtra: '#7e2a33',
+          },
+          dino: {
+            bg: "#ffffff",
+            main: "#40d672",
+            caret: "#40d672",
+            sub: "#d5d5d5",
+            subAlt: "#cafad8",
+            text: "#1d221f",
+            error: "#ff5f5f",
+            errorExtra: "#d22a2a",
+            colorfulError: "#ff5f5f",
+            colorfulErrorExtra: "#d22a2a",
+          },
+        };
+
+        const savedTheme = localStorage.getItem('kmig_theme') || 'serika_dark';
+        const theme = themes[savedTheme] || themes.serika_dark;
+        const root = document.documentElement;
+
+        // Apply theme immediately
+        root.style.setProperty('--color-bg', theme.bg);
+        root.style.setProperty('--color-main', theme.main);
+        root.style.setProperty('--color-caret', theme.caret);
+        root.style.setProperty('--color-sub', theme.sub);
+        root.style.setProperty('--color-sub-alt', theme.subAlt);
+        root.style.setProperty('--color-text', theme.text);
+        root.style.setProperty('--color-error', theme.error);
+        root.style.setProperty('--color-error-extra', theme.errorExtra);
+
+        // Set body background immediately
+        document.body.style.backgroundColor = theme.bg;
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
