@@ -51,6 +51,7 @@ const translations: Record<Language, TranslationDict> = {
     'settings.bot.difficulty.desc': 'Controls how often the bot makes mistakes',
     'settings.bot.delay': 'Artificial Bot Delay',
     'settings.bot.delay.desc': 'Add a realistic thinking delay to bot responses',
+    'settings.bot.delay.duration': 'Delay Duration (ms)',
     'settings.difficulty.easy': 'Easy',
     'settings.difficulty.medium': 'Medium',
     'settings.difficulty.hard': 'Hard',
@@ -63,6 +64,10 @@ const translations: Record<Language, TranslationDict> = {
     'player.left': 'left',
     'player.players': 'Players',
     'player.possessive_turn': '\'s turn',
+
+    // Gameplay
+    'settings.gameplay.title': 'Gameplay Settings',
+    'settings.gameplay.coming-soon': 'Coming soon...',
   },
   ko: {
     // Navigation
@@ -102,6 +107,7 @@ const translations: Record<Language, TranslationDict> = {
     'settings.bot.difficulty.desc': '봇이 실수하는 빈도를 조절합니다',
     'settings.bot.delay': '인공 봇 딜레이',
     'settings.bot.delay.desc': '봇 응답에 현실적인 생각 시간을 추가합니다',
+    'settings.bot.delay.duration': '지연 시간 (ms)',
     'settings.difficulty.easy': '쉬움',
     'settings.difficulty.medium': '보통',
     'settings.difficulty.hard': '어려움',
@@ -114,6 +120,10 @@ const translations: Record<Language, TranslationDict> = {
     'player.left': '남음',
     'player.players': '플레이어',
     'player.possessive_turn': '의 차례',
+
+    // Gameplay
+    'settings.gameplay.title': '게임 플레이 설정',
+    'settings.gameplay.coming-soon': '곧 출시 예정...',
   }
 };
 
