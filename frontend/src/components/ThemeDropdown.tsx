@@ -53,7 +53,7 @@ export default function ThemeDropdown() {
         <div
           className="absolute bottom-full right-0 mb-2 py-2 rounded-lg shadow-lg border z-50 min-w-[200px]"
           style={{
-            backgroundColor: 'var(--color-sub)',
+            backgroundColor: 'var(--color-sub-alt)',
             borderColor: 'var(--color-sub)',
           }}
         >
