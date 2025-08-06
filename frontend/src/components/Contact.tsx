@@ -15,7 +15,7 @@ export default function Contact({ onClose }: ContactProps) {
         <div className='text text-lg text-theme-text'>Reach out to me with any feedback, recommended changes, or study tips</div>
         <div className='buttons flex flex-row gap-4 mt-6 w-full'>
             <a
-                className="flex-1 flex flex-row items-center justify-center space-x-4 p-4 rounded-lg bg-theme-sub-alt text-theme-text text-xl hover:bg-theme-main hover:text-black transition"
+                className="flex-1 flex flex-row items-center justify-center space-x-4 p-4 rounded-lg bg-theme-sub-alt text-theme-text text-xl hover-bg-theme-main hover-text-black transition"
                 target="_blank"
                 href="mailto:kmig.game@gmail.com?subject=[Question]"
                 rel="noopener"
@@ -26,7 +26,7 @@ export default function Contact({ onClose }: ContactProps) {
                 <div className="text">Question</div>
             </a>
             <a
-                className="flex-1 flex flex-row items-center justify-center space-x-4 p-4 rounded-lg bg-theme-sub-alt text-theme-text text-xl hover:bg-theme-main hover:text-black transition"
+                className="flex-1 flex flex-row items-center justify-center space-x-4 p-4 rounded-lg bg-theme-sub-alt text-theme-text text-xl hover-bg-theme-main hover-text-black transition"
                 target="_blank"
                 href="mailto:kmig.game@gmail.com?subject=[Feedback]"
                 rel="noopener"
@@ -37,7 +37,7 @@ export default function Contact({ onClose }: ContactProps) {
                 <div className="text">Comment</div>
             </a>
             <a
-                className="flex-1 flex flex-row items-center justify-center space-x-4 p-4 rounded-lg bg-theme-sub-alt text-theme-text text-xl hover:bg-theme-main hover:text-black transition"
+                className="flex-1 flex flex-row items-center justify-center space-x-4 p-4 rounded-lg bg-theme-sub-alt text-theme-text text-xl hover-bg-theme-main hover-text-black transition"
                 target="_blank"
                 href="mailto:kmig.game@gmail.com?subject=[Bug Report]"
                 rel="noopener"

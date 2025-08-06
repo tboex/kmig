@@ -22,7 +22,7 @@ export default function Popup({ open, message, type = 'info', word, onClose }: P
         <div className="title mb-4 text-lg font-bold">{word}</div>
         <div className="mb-4">{message}</div>
         <button
-          className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300"
+          className="px-4 py-2 rounded bg-gray-200 hover-bg-gray-300"
           onClick={onClose}
         >
           Close

@@ -14,17 +14,17 @@ export default function Header() {
             <Logo width={120} height={36} />
           </a>
           <nav className="flex flex-row items-center space-x-4 text-sm text-theme-sub">
-            <a id="startGameButton" title="start game" href="/" className="hover:text-theme-text">
+            <a id="startGameButton" title="start game" href="/" className="hover-text-theme-text">
               <div className="icon">
                 <i className="fas fa-fw fa-gamepad"></i>
               </div>
             </a>
-            <a id="aboutButton" title="about" href="/about" className="hover:text-theme-text">
+            <a id="aboutButton" title="about" href="/about" className="hover-text-theme-text">
               <div className="icon">
                 <i className="fas fa-fw fa-info"></i>
               </div>
             </a>
-            <a id="settingsButton" title={t('nav.settings')} href="/settings" className="hover:text-theme-text">
+            <a id="settingsButton" title={t('nav.settings')} href="/settings" className="hover-text-theme-text">
               <div className="icon">
                 <i className="fas fa-fw fa-cog"></i>
               </div>
@@ -34,7 +34,7 @@ export default function Header() {
 
         {/* Right section (Account button and Language toggle) */}
         <div className="flex items-center space-x-4">
-          <a className="accountButton flex flex-row items-center space-x-2 text-theme-sub hover:text-theme-text" href="/account" title={t('nav.account')}>
+          <a className="accountButton flex flex-row items-center space-x-2 text-theme-sub hover-text-theme-text" href="/account" title={t('nav.account')}>
             <div className="user">
               <i className="fas fa-fw fa-user"></i>
             </div>

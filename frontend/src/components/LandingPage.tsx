@@ -32,7 +32,11 @@ export default function LandingPage() {
           id="username"
           type="text"
           autoComplete="off"
-          className="mb-15 px-4 py-2 rounded bg-theme-sub-alt text-theme-text text-lg"
+          autoCorrect='off'
+          spellCheck="false"
+          data-lpignore="true"
+          data-form-type="other"
+          className="mb-15 px-4 py-2 rounded bg-theme-sub-alt text-theme-text text-lg focus:outline-none"
           placeholder={t('landing.username.placeholder')}
           value={username}
           onChange={e => setUsername(e.target.value)}

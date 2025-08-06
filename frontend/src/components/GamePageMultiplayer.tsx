@@ -209,23 +209,19 @@ export default function GamePageMultiplayer() {
                     className="game-play-space w-full max-w-md mb-4 h-96 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2 scrollbar-hide"
                 >
                         {[...chain].reverse().map((msg, idx) => {
-                            const fadeSteps = 5;
-                            const opacity = isScrolledUp ? 1 : Math.max(1 - idx * (0.7 / fadeSteps), 0.3);
-
                             return (
                                 <div
                                     key={chain.length - 1 - idx}
-                                    style={{ opacity }}
-                                    className={`relative px-4 py-2 rounded-lg transition-opacity duration-500 mb-2
+                                    className={`relative px-4 py-2 rounded-lg transition-opacity duration-500 mb-2 text-xl
                                         ${msg.valid === false
                                             ? 'bg-theme-error text-theme-text'
                                             : msg.sender === 'other'
-                                                ? 'bg-theme-sub-alt text-theme-main self-start'
-                                                : 'bg-theme-main text-black self-end'
+                                                ? 'bg-theme-sub-alt text-theme-sub self-start'
+                                                : 'bg-theme-sub text-theme-bg self-end'
                                         }`
                                     }
                                 >
-                                    <div className="text-xs text-theme-sub mb-1">{msg.name}</div>
+                                    <div className={`text-xs mb-1 ${msg.valid === false ? 'text-theme-text' : 'text-theme-main '}`}>{msg.name}</div>
                                     <WordTooltip
                                         tooltip={
                                             <>
@@ -255,10 +251,10 @@ export default function GamePageMultiplayer() {
                 <button
                     type="submit"
                     className="px-4 py-2 rounded bg-theme-main text-black font-bold
-                    hover:text-theme-text
+                    hover-text-theme-text
                     disabled:opacity-50
                     disabled:text-theme-sub
-                    disabled:hover:text-theme-sub"
+                    disabled:hover-text-theme-sub"
                     disabled={currentTurn !== username}
                 >
                     Submit

@@ -7,7 +7,7 @@ export default function LanguageToggle() {
     <div className="flex items-center space-x-2">
       <button
         onClick={() => setLanguage(language === 'en' ? 'ko' : 'en')}
-        className="flex items-center space-x-2 px-3 py-1  text-theme-sub hover:text-theme-text"
+        className="flex items-center space-x-2 px-3 py-1  text-theme-sub hover-text-theme-text"
       >
         <span className="text-sm font-medium">
           {t('settings.language')}

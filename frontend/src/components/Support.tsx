@@ -14,7 +14,7 @@ export default function Support({ onClose }: SupportProps) {
         <div className='text text-lg text-theme-text'>Server costs are expensive. If you enjoy the website I made, please provide anything you can.</div>
         <div className='buttons flex flex-row gap-4 mt-6 w-full'>
             <a
-                className="flex-1 flex flex-row items-center justify-center space-x-4 p-4 rounded-lg bg-theme-sub-alt text-theme-text text-xl hover:bg-theme-main hover:text-black transition"
+                className="flex-1 flex flex-row items-center justify-center space-x-4 p-4 rounded-lg bg-theme-sub-alt text-theme-text text-xl hover-bg-theme-main hover-text-black transition"
                 target="_blank"
                 href="https://ko-fi.com/kmiggame"
                 rel="noopener noreferrer"

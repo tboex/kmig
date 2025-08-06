@@ -30,14 +30,14 @@ export default function GameOver({ isOpen, isDefeat, onClose, onPlayAgain }: Gam
           {onPlayAgain && (
             <button
               onClick={onPlayAgain}
-              className="px-6 py-3 bg-theme-sub-alt text-theme-main font-bold rounded-lg hover:opacity-80 transition-opacity"
+              className="px-6 py-3 bg-theme-sub-alt text-theme-main font-bold rounded-lg hover-opacity-80 transition-opacity"
             >
               Play Again
             </button>
           )}
           <button
             onClick={onClose}
-            className="px-6 py-3 bg-theme-caret text-theme-sub-alt font-bold rounded-lg hover:opacity-80 transition-opacity"
+            className="px-6 py-3 bg-theme-caret text-theme-sub-alt font-bold rounded-lg hover-opacity-80 transition-opacity"
           >
             Close
           </button>

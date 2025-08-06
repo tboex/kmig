@@ -16,7 +16,7 @@ export default function Invite() {
   return (
     <div className="flex justify-center mt-4">
       <button
-        className={`px-4 py-2 rounded bg-theme-sub-alt text-theme-main font-bold hover:text-theme-text${
+        className={`px-4 py-2 rounded bg-theme-sub-alt text-theme-main font-bold hover-text-theme-text${
             copied ? ' text-theme-text' : ' text-theme-sub'
             } transition-colors duration-150`}
         onClick={handleCopy}

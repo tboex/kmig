@@ -26,7 +26,7 @@ export default function Toolbar({
             {/* Left section (Player Count) */}
             <div className="toolbar-left flex items-center space-x-4">
                 <button
-                    className={`solo-player-button flex flex-row items-center space-x-2 hover:text-theme-text ${
+                    className={`solo-player-button flex flex-row items-center space-x-2 hover-text-theme-text ${
                         mode === 'solo' ? 'text-theme-main' : 'text-theme-sub'
                     }`}
                     onClick={() => setMode('solo')}
@@ -36,7 +36,7 @@ export default function Toolbar({
                     <div>solo</div>
                 </button>
                 <button
-                    className={`multi-player-button flex flex-row items-center space-x-2 hover:text-theme-text ${
+                    className={`multi-player-button flex flex-row items-center space-x-2 hover-text-theme-text ${
                         mode === 'multi' ? 'text-theme-main' : 'text-theme-sub'
                     }`}
                     onClick={() => setMode('multi')}
@@ -51,7 +51,7 @@ export default function Toolbar({
             {/* Middle section (Settings) */}
             <div className="toolbar-center flex items-center space-x-4">
                 <button
-                    className={`timer-button flex flex-row items-center space-x-2 hover:text-theme-text ${
+                    className={`timer-button flex flex-row items-center space-x-2 hover-text-theme-text ${
                         toolbarMode === 'timer' ? 'text-theme-main' : 'text-theme-sub'
                     }`}
                     onClick={() => setToolbarMode('timer')}
@@ -60,7 +60,7 @@ export default function Toolbar({
                     <div>timer</div>
                 </button>
                 <button
-                    className={`guesses-button flex flex-row items-center space-x-2 hover:text-theme-text ${
+                    className={`guesses-button flex flex-row items-center space-x-2 hover-text-theme-text ${
                         toolbarMode === 'guesses' ? 'text-theme-main' : 'text-theme-sub'
                     }`}
                     onClick={() => setToolbarMode('guesses')}
@@ -78,7 +78,7 @@ export default function Toolbar({
                     GUESS_OPTIONS.map(opt => (
                         <button
                             key={opt}
-                            className={`textButton flex flex-row items-center space-x-2 cursor-default hover:text-theme-text ${
+                            className={`textButton flex flex-row items-center space-x-2 cursor-default hover-text-theme-text ${
                                 guessCount === opt ? 'text-theme-main' : 'text-theme-sub'
                             }`}
                             onClick={() => setGuessCount(opt)}
@@ -91,7 +91,7 @@ export default function Toolbar({
                     TIMER_OPTIONS.map(opt => (
                         <button
                             key={opt}
-                            className={`textButton flex flex-row items-center space-x-2 cursor-default hover:text-theme-text ${
+                            className={`textButton flex flex-row items-center space-x-2 cursor-default hover-text-theme-text ${
                                 timerDuration === opt ? 'text-theme-main' : 'text-theme-sub'
                             }`}
                             onClick={() => setTimerDuration(opt)}

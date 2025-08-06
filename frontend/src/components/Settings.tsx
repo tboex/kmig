@@ -41,7 +41,7 @@ export default function Settings() {
                     className={`flex items-center justify-between p-3 rounded-lg border-2 transition-colors
                       ${botDifficulty === option.value
                         ? 'border-theme-main bg-theme-main bg-opacity-20 text-theme-text'
-                        : 'border-theme-sub bg-theme-bg text-theme-text hover:border-theme-main'
+                        : 'border-theme-sub bg-theme-bg text-theme-text hover-border-theme-main'
                       }`}
                   >
                     <div className="flex items-center space-x-3">

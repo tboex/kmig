@@ -46,7 +46,7 @@ export default function ThemeDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="themeButton flex flex-row items-center space-x-2 text-theme-sub hover:text-theme-text transition-colors"
+        className="themeButton flex flex-row items-center space-x-2 text-theme-sub hover-text-theme-text transition-colors"
       >
         <i className="fas fa-fw fa-palette"></i>
         <div>{currentTheme.displayName}</div>
