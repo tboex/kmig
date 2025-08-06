@@ -121,6 +121,20 @@ def is_korean_word(word: str) -> bool:
 async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, dict]:
     dictionary = state.dictionary
 
+    if not word or len(word) < 2:
+        return (
+            False,
+            Status(status='INVALID', message='Word has to be at least 2 characters'),
+            Word(
+                korean=word,
+                pronunciation=None,
+                hanja=None,
+                part_of_speech=None,
+                definition=None,
+                english=None,
+            ).model_dump(),
+        )
+
     if not is_korean_word(word):
         return (
             False,
