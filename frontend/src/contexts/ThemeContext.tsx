@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
+import { createThemedFavicon, updateFavicon } from '../utils/faviconUtils';
 
 export type ThemeName = 'serika_dark' | 'trackday' | 'desert_oasis' | 'lavender' | 'ms_cupcakes' | 'snes' | 'dino';
 
@@ -141,7 +142,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('kmig_theme', themeName);
   };
 
-  // Apply theme to CSS variables
+  // Apply theme to CSS variables and favicon
   useEffect(() => {
     const theme = themes[currentThemeName];
     const root = document.documentElement;
@@ -156,8 +157,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     root.style.setProperty('--color-error', theme.colors.error);
     root.style.setProperty('--color-error-extra', theme.colors.errorExtra);
 
-    // Also set body background
+    // Set body background
     document.body.style.backgroundColor = theme.colors.bg;
+
+    // Update favicon with theme colors
+    const faviconUrl = createThemedFavicon(
+      theme.colors.bg,
+      theme.colors.main,
+      theme.colors.text
+    );
+    updateFavicon(faviconUrl);
   }, [currentThemeName]);
 
   return (
@@ -172,7 +181,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 }
 
 export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) throw new Error('useTheme must be used within ThemeProvider');
-  return context;
+    const context = useContext(ThemeContext);
+    if (!context) throw new Error('useTheme must be used within ThemeProvider');
+    return context;
 };

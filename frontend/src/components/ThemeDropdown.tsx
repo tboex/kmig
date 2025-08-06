@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 
+
 export default function ThemeDropdown() {
   const { currentTheme, setTheme, availableThemes } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +20,7 @@ export default function ThemeDropdown() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const ColorPalette = ({ theme }: { theme: any }) => (
+  const ColorPalette = ({ theme }: { theme: typeof currentTheme }) => (
     <div className="flex items-center space-x-1 bg-theme-bg px-2 py-2 rounded"
         style={{ backgroundColor: theme.colors.bg }}
     >
@@ -68,11 +69,11 @@ export default function ThemeDropdown() {
                     setIsOpen(false);
                 }}
                 className={`w-full px-4 py-2 text-left transition-opacity flex items-center justify-between ${
-                    currentTheme.name === theme.name ? 'font-bold' : ''
+                    hoveredTheme === theme.name ? 'font-bold' : ''
                 }`}
                 style={{
                     color: hoveredTheme === theme.name ? 'var(--color-text)' : 'var(--color-bg)',
-                    backgroundColor: hoveredTheme === theme.name ? 'var(--color-sub-alt)' : 'var(--color-text)',
+                    backgroundColor: hoveredTheme === theme.name ? 'var(--color-sub-alt)' : 'var(--color-sub)',
                 }}
                 onMouseEnter={() => setHoveredTheme(theme.name)}
                 onMouseLeave={() => setHoveredTheme(null)}

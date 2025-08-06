@@ -1,4 +1,4 @@
-import logo from '../assets/logo.svg';
+import Logo from './Logo';
 import LanguageToggle from './LanguageToggle';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -11,11 +11,7 @@ export default function Header() {
         {/* Left section (Logo and Nav) */}
         <div className="flex flex-row items-center space-x-6">
           <a id="kmig" href="/" className="text-2xl lg:text-3xl font-bold tracking-tight text-theme-text">
-            <img
-              src={logo}
-              alt="KMIG Logo"
-              className="w-35 h-35 align-middle"
-            />
+            <Logo width={120} height={36} />
           </a>
           <nav className="flex flex-row items-center space-x-4 text-sm text-theme-sub">
             <a id="startGameButton" title="start game" href="/" className="hover:text-theme-text">

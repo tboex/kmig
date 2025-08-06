@@ -57,3 +57,9 @@ main {
   cursor: pointer;
   border: none;
 }
+
+.black-han-sans-regular {
+  font-family: "Black Han Sans", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}

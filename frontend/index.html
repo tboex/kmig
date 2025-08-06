@@ -5,6 +5,9 @@
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://kit.fontawesome.com/992e5ae538.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
     <title>끝말잇기</title>
     <script>
       // Apply theme immediately to prevent flash
@@ -88,7 +91,7 @@
         const theme = themes[savedTheme] || themes.serika_dark;
         const root = document.documentElement;
 
-        // Apply theme immediately
+        // Apply theme to CSS variables immediately
         root.style.setProperty('--color-bg', theme.bg);
         root.style.setProperty('--color-main', theme.main);
         root.style.setProperty('--color-caret', theme.caret);
@@ -98,8 +101,19 @@
         root.style.setProperty('--color-error', theme.error);
         root.style.setProperty('--color-error-extra', theme.errorExtra);
 
-        // Set body background immediately
-        document.body.style.backgroundColor = theme.bg;
+        function setBodyBackground() {
+          if (document.body) {
+            document.body.style.backgroundColor = theme.bg;
+          } else {
+            setTimeout(setBodyBackground, 10);
+          }
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', setBodyBackground);
+        } else {
+          setBodyBackground();
+        }
       })();
     </script>
   </head>
