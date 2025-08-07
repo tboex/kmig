@@ -8,6 +8,8 @@ import Invite from './Invite';
 import { submitWord, getBotTurn } from '../services/game';
 import { useSettings } from '../contexts/SettingsContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { motion, AnimatePresence } from 'framer-motion';
+
 
 
 export default function GamePage() {
@@ -315,35 +317,43 @@ export default function GamePage() {
                     onScroll={handleChainScroll}
                     className="game-play-space w-full h-96 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2 scrollbar-hide"
                 >
-                    {[...chain].reverse().map((msg, idx) => {
-                        return (
-                            <div
-                                key={chain.length - 1 - idx}
-                                className={`relative px-4 py-2 rounded-lg transition-opacity duration-500 mb-2 text-xl
-                                    ${msg.valid === false
-                                        ? 'bg-theme-error text-theme-text'
-                                        : msg.sender === 'other'
-                                            ? 'bg-theme-sub-alt text-theme-sub self-start'
-                                            : 'bg-theme-sub text-theme-bg self-end'
-                                    }`
-                                }
-                            >
-                                <div className={`mb-1 text-xs ${msg.valid === false ? 'text-theme-text' : 'text-theme-main '}`}>{msg.name}</div>
-                                <WordTooltip
-                                    tooltip={
-                                        <>
-                                        {msg.english && <div><b>English:</b> {msg.english}</div>}
-                                        {msg.definition && <div><b>Definition:</b> {msg.definition}</div>}
-                                        {msg.pronunciation && <div><b>Pronunciation:</b> {msg.pronunciation}</div>}
-                                        {msg.hanja && <div><b>Hanja:</b> {msg.hanja}</div>}
-                                        </>
+                    <AnimatePresence>
+                        {[...chain].reverse().map((msg, idx) => {
+                            const originalIndex = chain.length - 1 - idx;
+
+                            return (
+                                <motion.div
+                                    key={originalIndex}
+                                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, y: -20, scale: 0.9, height: 0, marginBottom: 0 }}
+                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                    className={`relative px-4 py-2 rounded-lg mb-2 text-xl
+                                        ${msg.valid === false
+                                            ? 'bg-theme-error text-theme-text'
+                                            : msg.sender === 'other'
+                                                ? 'bg-theme-sub-alt text-theme-sub self-start'
+                                                : 'bg-theme-sub text-theme-bg self-end'
+                                        }`
                                     }
                                 >
-                                    {msg.text}
-                                </WordTooltip>
-                            </div>
-                        );
-                    })}
+                                    <div className={`mb-1 text-xs ${msg.valid === false ? 'text-theme-text' : 'text-theme-main '}`}>{msg.name}</div>
+                                    <WordTooltip
+                                        tooltip={
+                                            <>
+                                            {msg.english && <div><b>English:</b> {msg.english}</div>}
+                                            {msg.definition && <div><b>Definition:</b> {msg.definition}</div>}
+                                            {msg.pronunciation && <div><b>Pronunciation:</b> {msg.pronunciation}</div>}
+                                            {msg.hanja && <div><b>Hanja:</b> {msg.hanja}</div>}
+                                            </>
+                                        }
+                                    >
+                                        {msg.text}
+                                    </WordTooltip>
+                                </motion.div>
+                            );
+                        })}
+                    </AnimatePresence>
                 </div>
             </div>
 

@@ -6,6 +6,7 @@ import WordTooltip from './WordTooltip';
 import Popup from './Popup';
 import GameOver from './GameOver';
 import PlayerStatus from './PlayerStatus';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function GamePageMultiplayer() {
     const { gameId } = useParams();
@@ -208,11 +209,18 @@ export default function GamePageMultiplayer() {
                     onScroll={handleChainScroll}
                     className="game-play-space w-full max-w-md mb-4 h-96 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2 scrollbar-hide"
                 >
+                    <AnimatePresence>
                         {[...chain].reverse().map((msg, idx) => {
+                            const originalIndex = chain.length - 1 - idx;
+
                             return (
-                                <div
-                                    key={chain.length - 1 - idx}
-                                    className={`relative px-4 py-2 rounded-lg transition-opacity duration-500 mb-2 text-xl
+                                <motion.div
+                                    key={originalIndex}
+                                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    exit={{ opacity: 0, y: -20, scale: 0.9, height: 0, marginBottom: 0 }}
+                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                    className={`relative px-4 py-2 rounded-lg mb-2 text-xl
                                         ${msg.valid === false
                                             ? 'bg-theme-error text-theme-text'
                                             : msg.sender === 'other'
@@ -234,9 +242,10 @@ export default function GamePageMultiplayer() {
                                         >
                                         {msg.text}
                                     </WordTooltip>
-                                </div>
+                                </motion.div>
                             );
                         })}
+                    </AnimatePresence>
                 </div>
 
             </div>
