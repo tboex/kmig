@@ -16,7 +16,7 @@ from models.game import (
     Player,
     Status,
 )
-from constants import KMIG_BOT_NAME, KMIG_BOT_ID, KEY_EXPIRY
+from constants import KMIG_BOT_NAME, KMIG_BOT_ID, KEY_EXPIRY, EUPHONIC_CONVERSIONS
 from settings import LOGGER_NAME
 
 
@@ -186,6 +186,8 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, d
     last_character = words[-1][-1]  # Last character of the last word played
     if word[0] == last_character:
         return (True, Status(status='VALID', message='Word is valid'), response_word)
+    elif await valid_euphonic_adjustment(state, game_id, word):
+        return (True, Status(status='VALID', message='Word is valid due to 두음법칙'), response_word)
     else:
         # If the first character of the new word does not match the last character of the last word
         return (
@@ -193,6 +195,38 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, d
             Status(status='INVALID', message='First character does not match last character of the previous word'),
             response_word,
         )
+
+
+async def valid_euphonic_adjustment(state, game_id: str, word: str) -> bool:
+    if not word or len(word) < 2:
+        return False
+
+    previous_words = await state.redis_client.lrange(f'game:{game_id}:words', 0, -1)
+    if not previous_words:
+        return False
+
+    last_character = previous_words[-1][-1]  # Last character of the last word played
+    first_character = word[0]
+
+    if last_character in EUPHONIC_CONVERSIONS:
+        possible_conversions = EUPHONIC_CONVERSIONS[last_character]
+        if first_character in possible_conversions:
+            return True
+
+    return False
+
+
+async def euphonic_adjustments(word: str) -> list:
+    if not word or len(word) < 2:
+        return []
+
+    first_character = word[0]
+    adjustments = [first_character]
+
+    if first_character in EUPHONIC_CONVERSIONS:
+        adjustments.extend(EUPHONIC_CONVERSIONS[first_character])
+
+    return adjustments
 
 
 async def add_word(state, game_id: str, player: Player, word: str) -> dict:
@@ -295,12 +329,13 @@ async def bot_pick_word(state, game_id: str) -> Optional[Word]:
             english=word_dict.get('english'),
         )
 
-    last_character = previous_words[-1][-1]  # Last character of the last word played
+    euphonic_adjustments_list = await euphonic_adjustments(previous_words[-1][-1])
 
     valid_words = []
     for word in state.dictionary:
-        if word.startswith(last_character) and word not in previous_words:
-            valid_words.append(word)
+        for last_character in euphonic_adjustments_list:
+            if word.startswith(last_character) and word not in previous_words:
+                valid_words.append(word)
 
     if valid_words:
         chosen_word = random.choice(valid_words)
