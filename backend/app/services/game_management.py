@@ -216,10 +216,7 @@ async def valid_euphonic_adjustment(state, game_id: str, word: str) -> bool:
     return False
 
 
-async def euphonic_adjustments(word: str) -> list:
-    if not word or len(word) < 2:
-        return []
-
+async def get_euphonic_adjustments(word: str) -> list:
     first_character = word[0]
     adjustments = [first_character]
 
@@ -329,13 +326,12 @@ async def bot_pick_word(state, game_id: str) -> Optional[Word]:
             english=word_dict.get('english'),
         )
 
-    euphonic_adjustments_list = await euphonic_adjustments(previous_words[-1][-1])
+    euphonic_adjustments_list = await get_euphonic_adjustments(previous_words[-1][-1])
 
     valid_words = []
     for word in state.dictionary:
-        for last_character in euphonic_adjustments_list:
-            if word.startswith(last_character) and word not in previous_words:
-                valid_words.append(word)
+        if word.startswith(tuple(euphonic_adjustments_list)) and word not in previous_words:
+            valid_words.append(word)
 
     if valid_words:
         chosen_word = random.choice(valid_words)

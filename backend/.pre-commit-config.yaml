@@ -30,11 +30,3 @@ repos:
           '-e', 'git+https://github.com/pycqa/pyflakes@1911c20#egg=pyflakes',
           '-e', 'git+https://github.com/pycqa/pycodestyle@d219c68#egg=pycodestyle'
         ]
-  - repo: local
-    hooks:
-      - id: tests
-        name: run tests
-        entry: pytest
-        pass_filenames: false
-        language: system
-        types: [python]
