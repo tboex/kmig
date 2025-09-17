@@ -9,7 +9,12 @@ from models.game import (
     WSStatusRequest,
     Player,
 )
-from services.game_management import join_game, add_word
+from services.game_management import (
+    init_game,
+    join_game,
+    add_word,
+    chose_starting_player,
+)
 from services.cache_management import (
     update_game_state,
     get_player_list,
@@ -86,6 +91,14 @@ async def handle_message(
         )
         await handle_websocket_status_request(request, state, manager, websocket)
         return request
+    elif payload_type == 'restart':
+        request = WSJoinRequest(
+            game_id=game_id,
+            player_id=payload.get('player_id', ''),
+            player_name=payload.get('player_name', '')
+        )
+        await handle_websocket_restart_request(request, state, manager, websocket)
+        return request
     else:
         raise ValueError(f'Unknown message type: {payload_type}')
 
@@ -147,6 +160,49 @@ async def handle_websocket_join_request(
     await manager.broadcast(
         json.dumps({
             'type': 'player_joined',
+            'game_id': request.game_id,
+            'current_turn': status['turn'].id if status.get('turn') else 'n/a',
+            'players': players,
+        })
+    )
+
+
+async def handle_websocket_restart_request(
+    request: WSJoinRequest,
+    state,
+    manager: ConnectionManager,
+    websocket: WebSocket,
+):
+    status = await init_game(
+        state=state,
+        game_id=request.game_id,
+        mode='multi',
+        player=Player(
+            id=request.player_id,
+            name=request.player_name,
+        ),
+    )
+
+    starting_player = await chose_starting_player(
+        state=state,
+        game_id=request.game_id,
+    )
+
+    status['turn'] = starting_player
+    status['server_status'] = 'READY'
+
+
+    await update_game_state(
+        state=state,
+        game_id=request.game_id,
+        round_state=status,
+    )
+
+    players = await get_player_list(state, request.game_id)
+
+    await manager.broadcast(
+        json.dumps({
+            'type': 'game_restarted',
             'game_id': request.game_id,
             'current_turn': status['turn'].id if status.get('turn') else 'n/a',
             'players': players,

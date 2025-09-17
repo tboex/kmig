@@ -23,7 +23,7 @@ from settings import LOGGER_NAME
 logger = logging.getLogger(LOGGER_NAME)
 
 
-async def init_game(state, game_id: str, mode: str, player: Player, word: str) -> dict[str, Any]:
+async def init_game(state, game_id: str, mode: str, player: Player, word: str = '') -> dict[str, Any]:
     game_status = {
         'game_id': game_id,
         'mode': mode,
