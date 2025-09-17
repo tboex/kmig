@@ -133,6 +133,18 @@ export default function GamePageMultiplayer() {
                             type: 'error'
                         });
                     }
+                } else if (msg.type === 'game_restarted') {
+                    setCurrentTurn(msg.current_turn);
+                    if (msg.players) {
+                        setPlayerIds(msg.players);
+                        setPlayerFailures(() => {
+                            const updated: Record<string, number> = {};
+                            msg.players.forEach((playerId: string) => {
+                                updated[playerId] = 0;
+                            });
+                            return updated;
+                        });
+                    }
                 }
             } catch (e) {
                 console.error('Invalid message:', event.data);
@@ -166,8 +178,17 @@ export default function GamePageMultiplayer() {
         setGameOver({ isOpen: false, isDefeat: false });
         setChain([]);
         setCurrentTurn('');
-        // You might want to redirect to landing page or restart the game
-        window.location.href = '/';
+
+        if (!wsRef.current || wsRef.current.readyState !== 1) return;
+
+        wsRef.current.send(JSON.stringify({
+            type: 'restart',
+            player_id: username,
+            player_name: username,
+            word: userInput.trim(),
+         }));
+        setUserInput('');
+
     }
 
     if (showUsernamePrompt) {
