@@ -165,15 +165,15 @@ export default function GamePageMultiplayer() {
             ws.onerror = () => {
                 ws.close();
             };
+        };
 
-            connect();
+        connect();
 
-            return () => {
-                shouldReconnect = false;
-                ws.close();
-                wsRef.current = null;
-                if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current);
-            };
+        return () => {
+            shouldReconnect = false;
+            ws.close();
+            wsRef.current = null;
+            if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current);
         };
     }, [gameId, showUsernamePrompt, username]);
 
