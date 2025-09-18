@@ -10,17 +10,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function GamePageMultiplayer() {
     const { gameId } = useParams();
-    const [chain, setChain] = useState<{
-        sender: 'other' | 'user',
-        text: string,
-        name: string,
-        pronunciation?: string,
-        hanja?: string,
-        part_of_speech?: string,
-        definition?: string,
-        english?: string,
-        valid?: boolean,
-    }[]>([]);
+    const [chain, setChain] = useState(() => {
+        if (typeof window === "undefined" || !gameId) return [];
+        const saved = localStorage.getItem(`kmig_chain_${gameId}`);
+        return saved ? JSON.parse(saved) : [];
+    });
     const [userInput, setUserInput] = useState('');
     const [username, setUsername] = useState(() => localStorage.getItem('kmig_username') || '');
     const [showUsernamePrompt, setShowUsernamePrompt] = useState(!username);
@@ -58,13 +52,6 @@ export default function GamePageMultiplayer() {
         if (!gameId) return;
         localStorage.setItem(`kmig_chain_${gameId}`, JSON.stringify(chain));
     }, [chain, gameId]);
-
-    useEffect(() => {
-        if (!gameId) return;
-        const saved = localStorage.getItem(`kmig_chain_${gameId}`);
-        if (saved) setChain(JSON.parse(saved));
-        console.log('Loaded chain from localStorage');
-    }, [gameId]);
 
     const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
 
