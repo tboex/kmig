@@ -85,7 +85,7 @@ export default function GamePageMultiplayer() {
                 try {
                     const msg = JSON.parse(event.data);
 
-                    if (msg.type === 'player_joined' && msg.current_turn !== 'n/a') {
+                    if ((msg.type === 'player_joined' || msg.type === 'status') && msg.current_turn !== 'n/a') {
                         setCurrentTurn(msg.current_turn);
                         if (msg.players) {
                             setPlayerIds(msg.players);
@@ -163,7 +163,6 @@ export default function GamePageMultiplayer() {
             };
             ws.onclose = () => {
                 if (shouldReconnect) {
-                    // Try to reconnect after 1 second
                     reconnectTimeout.current = setTimeout(connect, 1000);
                 }
             };
