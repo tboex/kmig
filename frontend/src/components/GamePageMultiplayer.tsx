@@ -54,6 +54,17 @@ export default function GamePageMultiplayer() {
         }
     }, [chain, isScrolledUp]);
 
+    useEffect(() => {
+        if (!gameId) return;
+        localStorage.setItem(`kmig_chain_${gameId}`, JSON.stringify(chain));
+    }, [chain, gameId]);
+
+    useEffect(() => {
+        if (!gameId) return;
+        const saved = localStorage.getItem(`kmig_chain_${gameId}`);
+        if (saved) setChain(JSON.parse(saved));
+    }, [gameId]);
+
     const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
 
     // Connect to WebSocket on mount
@@ -146,6 +157,7 @@ export default function GamePageMultiplayer() {
                         }
                     } else if (msg.type === 'game_restarted') {
                         setCurrentTurn(msg.current_turn);
+                        setChain([]);
                         if (msg.players) {
                             setPlayerIds(msg.players);
                             setPlayerFailures(() => {
