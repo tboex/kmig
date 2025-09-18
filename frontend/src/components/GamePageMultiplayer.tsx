@@ -75,6 +75,11 @@ export default function GamePageMultiplayer() {
                     player_id: username,
                     player_name: username, // TODO: differentiate account name once made
                 }));
+                ws.send(JSON.stringify({
+                    type: 'status',
+                    player_id: username,
+                    player_name: username,
+                }));
             };
             ws.onmessage = (event) => {
                 try {
