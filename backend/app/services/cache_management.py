@@ -76,6 +76,12 @@ async def get_player_details(state, game_id: str, player_id: str) -> Player | No
     )
 
 
+async def reset_all_players_failures(state, game_id: str) -> None:
+    players = await get_player_list(state, game_id)
+    for player_id in players:
+        await reset_player_failures(state, game_id, player_id)
+
+
 async def decrement_player_failures(state, game_id: str, player_id: str) -> int:
     player_key = f'game:{game_id}:player:{player_id}'
     current_failures = await state.redis_client.hget(player_key, 'remaining_failures')
@@ -93,6 +99,13 @@ async def decrement_player_failures(state, game_id: str, player_id: str) -> int:
 async def get_player_failures(state, game_id: str, player_id: str) -> int:
     failures = await state.redis_client.hget(f'game:{game_id}:player:{player_id}', 'remaining_failures')
     return int(failures) if failures else 0
+
+
+async def reset_player_failures(state, game_id: str, player_id: str) -> None:
+    player_key = f'game:{game_id}:player:{player_id}'
+    print(player_key)
+    await state.redis_client.hset(player_key, 'remaining_failures', 3)
+    await state.redis_client.expire(player_key, KEY_EXPIRY)
 
 
 async def check_game_over(state, game_id: str) -> bool:

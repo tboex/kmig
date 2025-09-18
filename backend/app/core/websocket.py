@@ -19,6 +19,7 @@ from services.cache_management import (
     update_game_state,
     get_player_list,
     get_game_state,
+    reset_all_players_failures,
 )
 
 
@@ -190,6 +191,8 @@ async def handle_websocket_restart_request(
 
     status['turn'] = starting_player
     status['server_status'] = 'READY'
+
+    await reset_all_players_failures(state, request.game_id)
 
 
     await update_game_state(
