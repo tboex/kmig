@@ -54,111 +54,128 @@ export default function GamePageMultiplayer() {
         }
     }, [chain, isScrolledUp]);
 
+    const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
+
     // Connect to WebSocket on mount
     useEffect(() => {
         if (!gameId || !username) return;
-        const apiBase = import.meta.env.VITE_KMIG_API_URL;
-        const wsBase = apiBase.replace(/^http/, 'ws');
-        const wsUrl = `${wsBase}/kmig/v1/game/ws/${gameId}`;
-        const ws = new WebSocket(wsUrl);
-        wsRef.current = ws;
+        let ws: WebSocket;
+        let shouldReconnect = true;
 
-        ws.onopen = () => {
-            ws.send(JSON.stringify({
-                type: 'join',
-                player_id: username,
-                player_name: username, // TODO: differentiate account name once made
-            }));
-        };
-        ws.onmessage = (event) => {
-            try {
-                const msg = JSON.parse(event.data);
+        const connect = () => {
+            const apiBase = import.meta.env.VITE_KMIG_API_URL;
+            const wsBase = apiBase.replace(/^http/, 'ws');
+            const wsUrl = `${wsBase}/kmig/v1/game/ws/${gameId}`;
+            ws = new WebSocket(wsUrl);
+            wsRef.current = ws;
 
-                if (msg.type === 'player_joined' && msg.current_turn !== 'n/a') {
-                    setCurrentTurn(msg.current_turn);
-                    if (msg.players) {
-                        setPlayerIds(msg.players);
-                        setPlayerFailures(prev => {
-                            const updated = { ...prev };
-                            msg.players.forEach((playerId: string) => {
-                                if (!(playerId in updated)) {
+            ws.onopen = () => {
+                ws.send(JSON.stringify({
+                    type: 'join',
+                    player_id: username,
+                    player_name: username, // TODO: differentiate account name once made
+                }));
+            };
+            ws.onmessage = (event) => {
+                try {
+                    const msg = JSON.parse(event.data);
+
+                    if (msg.type === 'player_joined' && msg.current_turn !== 'n/a') {
+                        setCurrentTurn(msg.current_turn);
+                        if (msg.players) {
+                            setPlayerIds(msg.players);
+                            setPlayerFailures(prev => {
+                                const updated = { ...prev };
+                                msg.players.forEach((playerId: string) => {
+                                    if (!(playerId in updated)) {
+                                        updated[playerId] = 0;
+                                    }
+                                });
+                                return updated;
+                            });
+                        }
+                    } else if (msg.type === 'word_submitted' && msg.status === 'GAME OVER') {
+                        const isDefeat = msg.current_turn === username;
+                        setGameOver({ isOpen: true, isDefeat });
+                    } else if (msg.type === 'word_submitted' && msg.current_turn !== 'n/a' && msg.status === 'VALID') {
+                        setCurrentTurn(msg.current_turn);
+                        setChain(prev => [...prev, {
+                            sender: msg.player_name === username ? 'user' : 'other',
+                            text: msg.word.korean,
+                            name: msg.player_name,
+                            pronunciation: msg.word.pronunciation,
+                            hanja: msg.word.hanja,
+                            part_of_speech: msg.word.part_of_speech,
+                            definition: msg.word.definition,
+                            english: msg.word.english,
+                            valid: true,
+                        }]);
+                    } else if (msg.type === 'word_submitted' && msg.status === 'INVALID') {
+                        setCurrentTurn(msg.current_turn);
+
+                        if (msg.player_name) {
+                            setPlayerFailures(prev => ({
+                                ...prev,
+                                [msg.player_name]: (prev[msg.player_name] || 0) + 1
+                            }));
+                        }
+
+                        setChain(prev => [...prev, {
+                            sender: msg.player_name === username ? 'user' : 'other',
+                            text: msg.word.korean,
+                            name: msg.player_name,
+                            pronunciation: msg.word.pronunciation,
+                            hanja: msg.word.hanja,
+                            part_of_speech: msg.word.part_of_speech,
+                            definition: msg.word.definition,
+                            english: msg.word.english,
+                            valid: false,
+                        }]);
+                        if (username === msg.player_name) {
+                            setPopup({
+                                open: true,
+                                message: msg.message || 'Invalid word.',
+                                word: msg.word.korean,
+                                type: 'error'
+                            });
+                        }
+                    } else if (msg.type === 'game_restarted') {
+                        setCurrentTurn(msg.current_turn);
+                        if (msg.players) {
+                            setPlayerIds(msg.players);
+                            setPlayerFailures(() => {
+                                const updated: Record<string, number> = {};
+                                msg.players.forEach((playerId: string) => {
                                     updated[playerId] = 0;
-                                }
+                                });
+                                return updated;
                             });
-                            return updated;
-                        });
+                        }
                     }
-                } else if (msg.type === 'word_submitted' && msg.status === 'GAME OVER') {
-                    const isDefeat = msg.current_turn === username;
-                    setGameOver({ isOpen: true, isDefeat });
-                } else if (msg.type === 'word_submitted' && msg.current_turn !== 'n/a' && msg.status === 'VALID') {
-                    setCurrentTurn(msg.current_turn);
-                    setChain(prev => [...prev, {
-                        sender: msg.player_name === username ? 'user' : 'other',
-                        text: msg.word.korean,
-                        name: msg.player_name,
-                        pronunciation: msg.word.pronunciation,
-                        hanja: msg.word.hanja,
-                        part_of_speech: msg.word.part_of_speech,
-                        definition: msg.word.definition,
-                        english: msg.word.english,
-                        valid: true,
-                    }]);
-                } else if (msg.type === 'word_submitted' && msg.status === 'INVALID') {
-                    setCurrentTurn(msg.current_turn);
-
-                    if (msg.player_name) {
-                        setPlayerFailures(prev => ({
-                            ...prev,
-                            [msg.player_name]: (prev[msg.player_name] || 0) + 1
-                        }));
-                    }
-
-                    setChain(prev => [...prev, {
-                        sender: msg.player_name === username ? 'user' : 'other',
-                        text: msg.word.korean,
-                        name: msg.player_name,
-                        pronunciation: msg.word.pronunciation,
-                        hanja: msg.word.hanja,
-                        part_of_speech: msg.word.part_of_speech,
-                        definition: msg.word.definition,
-                        english: msg.word.english,
-                        valid: false,
-                    }]);
-                    if (username === msg.player_name) {
-                        setPopup({
-                            open: true,
-                            message: msg.message || 'Invalid word.',
-                            word: msg.word.korean,
-                            type: 'error'
-                        });
-                    }
-                } else if (msg.type === 'game_restarted') {
-                    setCurrentTurn(msg.current_turn);
-                    if (msg.players) {
-                        setPlayerIds(msg.players);
-                        setPlayerFailures(() => {
-                            const updated: Record<string, number> = {};
-                            msg.players.forEach((playerId: string) => {
-                                updated[playerId] = 0;
-                            });
-                            return updated;
-                        });
-                    }
+                } catch (e) {
+                    console.error('Invalid message:', event.data);
                 }
-            } catch (e) {
-                console.error('Invalid message:', event.data);
-            }
-        };
-        ws.onclose = () => {
-            console.log('WebSocket closed');
-        };
+            };
+            ws.onclose = () => {
+                if (shouldReconnect) {
+                    // Try to reconnect after 1 second
+                    reconnectTimeout.current = setTimeout(connect, 1000);
+                }
+            };
+            ws.onerror = () => {
+                ws.close();
+            };
 
-        return () => {
-            ws.close();
-            wsRef.current = null;
+            connect();
+
+            return () => {
+                shouldReconnect = false;
+                ws.close();
+                wsRef.current = null;
+                if (reconnectTimeout.current) clearTimeout(reconnectTimeout.current);
+            };
         };
-    }, [gameId, showUsernamePrompt]);
+    }, [gameId, showUsernamePrompt, username]);
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
