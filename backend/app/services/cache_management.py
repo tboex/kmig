@@ -103,9 +103,17 @@ async def get_player_failures(state, game_id: str, player_id: str) -> int:
 
 async def reset_player_failures(state, game_id: str, player_id: str) -> None:
     player_key = f'game:{game_id}:player:{player_id}'
-    print(player_key)
     await state.redis_client.hset(player_key, 'remaining_failures', 3)
     await state.redis_client.expire(player_key, KEY_EXPIRY)
+
+
+async def reset_word_history(state, game_id: str) -> None:
+    await state.redis_client.delete(f'game:{game_id}:words')
+
+
+async def reset_game(state, game_id: str) -> None:
+    await reset_all_players_failures(state, game_id)
+    await reset_word_history(state, game_id)
 
 
 async def check_game_over(state, game_id: str) -> bool:
