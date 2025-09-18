@@ -63,6 +63,7 @@ export default function GamePageMultiplayer() {
         if (!gameId) return;
         const saved = localStorage.getItem(`kmig_chain_${gameId}`);
         if (saved) setChain(JSON.parse(saved));
+        console.log('Loaded chain from localStorage');
     }, [gameId]);
 
     const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
