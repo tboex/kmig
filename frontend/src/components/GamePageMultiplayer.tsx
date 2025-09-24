@@ -311,7 +311,7 @@ export default function GamePageMultiplayer() {
                     Submit
                 </button>
             </form>
-            <Invite pulse={playerIds.length === 1} />
+            <Invite pulse={playerIds.length === 0} />
             <Popup
                 open={popup.open}
                 message={popup.message}
