@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function Invite() {
+export default function Invite({ pulse = false }: { pulse?: boolean }) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -18,7 +18,7 @@ export default function Invite() {
       <button
         className={`px-4 py-2 rounded bg-theme-sub-alt text-theme-main font-bold hover-text-theme-text${
             copied ? ' text-theme-text' : ' text-theme-sub'
-            } transition-colors duration-150`}
+            } transition-colors duration-150${pulse ? ' pulse-glow' : ''}`}
         onClick={handleCopy}
       >
         {copied ? "Invite Link Copied!" : "Invite a Friend"}
