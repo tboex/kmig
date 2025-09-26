@@ -21,4 +21,4 @@ an over-engineered version of the Korean word game 끝말잇기
 # Credits
 All me @timboex
 
-I mainly do backend development, so I was heavily inspired by ![Monkeytype](www.monkeytype.com)'s website and used it as a learning place for how to do React/Vite
+I mainly do backend development, so I was heavily inspired by [Monkeytype](www.monkeytype.com)'s website and used it as a learning place for how to do React/Vite
