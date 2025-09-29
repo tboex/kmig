@@ -5,6 +5,7 @@ import Header from './components/Header'
 import LandingPage from './components/LandingPage'
 import GamePage from './components/GamePage'
 import GamePageMultiplayer from './components/GamePageMultiplayer'
+import GameSetupPage from './components/GameSetupPage'
 import Footer from './components/Footer'
 import Contact from './components/Contact'
 import Support from './components/Support'
@@ -28,6 +29,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/solo" element={<GamePage />} />
+                <Route path="/setup/:mode" element={<GameSetupPage />} />
                 <Route path="/game/:gameId" element={<GamePageMultiplayer />} />
                 <Route path="/settings" element={<Settings />} />
               </Routes>

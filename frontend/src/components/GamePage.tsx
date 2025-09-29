@@ -9,6 +9,8 @@ import { submitWord, getBotTurn } from '../services/game';
 import { useSettings } from '../contexts/SettingsContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import PressableButton from './PressableButton';
+import FloatingInput from './FloatingInput';
 
 
 
@@ -363,24 +365,18 @@ export default function GamePage() {
 
             {/* Input Form */}
             <form onSubmit={handleSubmit} className="w-full max-w-md flex items-center justify-center space-x-2 mt-2">
-                <input
-                    className="flex-1 px-3 py-2 rounded bg-theme-sub-alt text-theme-text outline-none"
-                    value={userInput}
-                    onChange={e => setUserInput(e.target.value)}
-                    placeholder={t('game.placeholder')}
-                    style={{ maxWidth: '300px' }}
-                />
-                <button
-                    type="submit"
-                    className="px-4 py-2 rounded bg-theme-main text-black font-bold
-                        hover-text-theme-text
-                        disabled:opacity-50
-                        disabled:text-theme-sub
-                        disabled:hover-text-theme-sub"
-                    disabled={!isUserTurn}
-                >
+                                    <div className="flex-1 max-w-[300px]">
+                                                            <FloatingInput
+                                                                id="single-user-input"
+                                                                label={t('game.placeholder') || 'Enter a word…'}
+                                                                value={userInput}
+                                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserInput(e.target.value)}
+                                                                required={false}
+                                                            />
+                                    </div>
+                <PressableButton type="submit" disabled={!isUserTurn} className="px-4 py-2">
                     {t('game.submit')}
-                </button>
+                </PressableButton>
             </form>
 
             {/* Don't show Invite for single player */}
