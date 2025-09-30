@@ -314,6 +314,7 @@ async def add_word(state, game_id: str, player: Player, word: str) -> dict:
 
     if not await is_valid_turn(state, game_id, player.id):
         game_status['status'] = Status(status='INVALID', message='Not your turn')
+        game_status['word'] = game_status['word'].model_dump()
         return game_status
 
     valid, status, response_word = await is_valid_word(state, game_id, word)

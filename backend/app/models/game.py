@@ -142,7 +142,7 @@ class WSInitRequest(BaseModel):
     game_id: str = Field(..., description='Unique identifier for the game')
     player_id: str = Field(..., description='Unique identifier for the player')
     player_name: str = Field(..., description='Name of the player joining the game')
-    guess_count: int = Field(5, description='Number of guesses allowed per player')
+    guess_count: int = Field(3, description='Number of guesses allowed per player')
     max_time: int = Field(
         0,
         description='Maximum time allowed for the game in seconds, if 0 game is played without time limit',

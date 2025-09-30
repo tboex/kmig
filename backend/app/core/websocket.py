@@ -7,6 +7,7 @@ from models.game import (
     WSSubmitWordRequest,
     WSChatRequest,
     WSStatusRequest,
+    WSInitRequest,
     Player,
 )
 from services.game_management import (
@@ -48,7 +49,7 @@ async def handle_message(
     state,
     manager: ConnectionManager,
     websocket: WebSocket,
-) -> Union[WSJoinRequest, WSSubmitWordRequest, WSChatRequest, WSStatusRequest]:
+) -> Union[WSJoinRequest, WSSubmitWordRequest, WSChatRequest, WSStatusRequest, WSInitRequest]:
     '''
     Determine the type of message based on its content.
     This is a placeholder function and should be implemented based on actual requirements.
@@ -93,10 +94,15 @@ async def handle_message(
         await handle_websocket_status_request(request, state, manager, websocket)
         return request
     elif payload_type == 'restart':
-        request = WSJoinRequest(
+        request = WSInitRequest(
             game_id=game_id,
             player_id=payload.get('player_id', ''),
-            player_name=payload.get('player_name', '')
+            player_name=payload.get('player_name', ''),
+            guess_count=payload.get('guess_count', 3),
+            max_time=payload.get('max_time', 0),
+            allow_verbs=payload.get('allow_verbs', False),
+            allow_adjectives=payload.get('allow_adjectives', False),
+            allow_adverbs=payload.get('allow_adverbs', False),
         )
         await handle_websocket_restart_request(request, state, manager, websocket)
         return request
@@ -169,7 +175,7 @@ async def handle_websocket_join_request(
 
 
 async def handle_websocket_restart_request(
-    request: WSJoinRequest,
+    request: WSInitRequest,
     state,
     manager: ConnectionManager,
     websocket: WebSocket,
