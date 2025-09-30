@@ -54,27 +54,40 @@ export default function GamePage() {
     // Render a string that might be a serialized list (e.g. "['a','b']") as separate lines
     const renderMultiline = (val?: string | null) => {
         if (!val) return null;
-            const trimmed = val.trim();
-            if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
-                const attempt = trimmed.replace(/'([^']*)'/g, '"$1"');
-                try {
-                    const parsed = JSON.parse(attempt);
-                    if (Array.isArray(parsed)) {
-                        return <>
-                            {parsed.map((it, i) => <div key={i}>{String(it)}</div>)}
-                        </>;
-                    }
-                } catch (_err) {
-                    void _err;
-                }
-                const stripped = trimmed.replace(/^\[|\]$/g, '').trim();
-                if (!stripped) return null;
-                const parts = stripped.split(',').map(s => s.trim().replace(/^['"]|['"]$/g, ''));
-                return <>
-                    {parts.map((p, i) => <div key={i}>{p}</div>)}
-                </>;
+        let s = val.trim();
+        if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+            s = s.slice(1, -1).trim();
+        }
+        if (s.startsWith('[') && s.endsWith(']')) {
+            const inner = s.slice(1, -1).trim();
+            try {
+                const parsed = JSON.parse(s);
+                if (Array.isArray(parsed)) return <>{parsed.map((it, i) => <div key={i}>{String(it)}</div>)}</>;
+            } catch (_err) { void _err; }
+            const converted = s.replace(/'([^']*)'/g, '"$1"');
+            try {
+                const parsed2 = JSON.parse(converted);
+                if (Array.isArray(parsed2)) return <>{parsed2.map((it, i) => <div key={i}>{String(it)}</div>)}</>;
+            } catch (_err) { void _err; }
+            const parts: string[] = [];
+            let cur = '';
+            let inSingle = false;
+            let inDouble = false;
+            let esc = false;
+            for (let i = 0; i < inner.length; i++) {
+                const ch = inner[i];
+                if (esc) { cur += ch; esc = false; continue; }
+                if (ch === '\\') { esc = true; cur += ch; continue; }
+                if (ch === "'" && !inDouble) { inSingle = !inSingle; cur += ch; continue; }
+                if (ch === '"' && !inSingle) { inDouble = !inDouble; cur += ch; continue; }
+                if (ch === ',' && !inSingle && !inDouble) { parts.push(cur.trim()); cur = ''; continue; }
+                cur += ch;
             }
-            return val;
+            if (cur.trim()) parts.push(cur.trim());
+            const cleaned = parts.map(p => p.replace(/^['"]|['"]$/g, '').trim()).filter(Boolean);
+            return <>{cleaned.map((it, i) => <div key={i}>{it}</div>)}</>;
+        }
+        return s;
     };
 
     const [botFailures, setBotFailures] = useState(0);
@@ -118,6 +131,8 @@ export default function GamePage() {
                     part_of_speech: submitRes.word.part_of_speech,
                     definition: submitRes.word.definition,
                     english: submitRes.word.english,
+                    usages: submitRes.word.usages,
+                    semantic_category: submitRes.word.semantic_category,
                     valid: true,
                 }]);
             } else if (submitRes.status.status === 'INVALID') {
@@ -145,9 +160,12 @@ export default function GamePage() {
                     part_of_speech: submitRes.word.part_of_speech,
                     definition: submitRes.word.definition,
                     english: submitRes.word.english,
+                    usages: submitRes.word.usages,
+                    semantic_category: submitRes.word.semantic_category,
                     valid: true,
                 }]);
             } else {
+                console.log('SubmitRes:', submitRes);
                 setChain(prev => [...prev, {
                     sender: 'user',
                     text: submitRes.word.korean,
@@ -157,6 +175,8 @@ export default function GamePage() {
                     part_of_speech: submitRes.word.part_of_speech,
                     definition: submitRes.word.definition,
                     english: submitRes.word.english,
+                    usages: submitRes.word.usages,
+                    semantic_category: submitRes.word.semantic_category,
                     valid: true,
                 }]);
 
@@ -232,6 +252,8 @@ export default function GamePage() {
                                     part_of_speech: botRes.word?.part_of_speech,
                                     definition: botRes.word?.definition,
                                     english: botRes.word?.english,
+                                    usages: botRes.word?.usages,
+                                    semantic_category: botRes.word?.semantic_category,
                                     valid: botRes.word ? true : false,
                                 }
                             ]);
@@ -257,6 +279,8 @@ export default function GamePage() {
                                 part_of_speech: botRes.word?.part_of_speech,
                                 definition: botRes.word?.definition,
                                 english: botRes.word?.english,
+                                usages: botRes.word?.usages,
+                                semantic_category: botRes.word?.semantic_category,
                                 valid: botRes.word ? true : false,
                             }
                         ]);

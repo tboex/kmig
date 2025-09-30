@@ -40,31 +40,56 @@ export default function GamePageMultiplayer() {
     // Render a string that might be a serialized list (e.g. "['a','b']") as separate lines
     const renderMultiline = (val?: string | null) => {
         if (!val) return null;
-        const trimmed = val.trim();
-        // If it looks like an array (even with single quotes), try to convert to valid JSON and parse
-        if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
-            // Convert single-quoted items to double-quoted so JSON.parse can handle it
-            const attempt = trimmed.replace(/'([^']*)'/g, '"$1"');
-            try {
-                const parsed = JSON.parse(attempt);
-                if (Array.isArray(parsed)) {
-                    return <>
-                        {parsed.map((it, i) => <div key={i}>{String(it)}</div>)}
-                    </>;
-                }
-            } catch (_err) {
-                void _err;
-                // fall through to fallback
-            }
-            // fallback: strip brackets then split on commas
-            const stripped = trimmed.replace(/^\[|\]$/g, '').trim();
-            if (!stripped) return null;
-            const parts = stripped.split(',').map(s => s.trim().replace(/^['"]|['"]$/g, ''));
-            return <>
-                {parts.map((p, i) => <div key={i}>{p}</div>)}
-            </>;
+        let s = val.trim();
+        // Strip surrounding quotes if the entire value is quoted
+        if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+            s = s.slice(1, -1).trim();
         }
-        return val;
+        if (s.startsWith('[') && s.endsWith(']')) {
+            const inner = s.slice(1, -1).trim();
+
+            // Try JSON.parse directly
+            try {
+                const parsed = JSON.parse(s);
+                if (Array.isArray(parsed)) return <>{parsed.map((it, i) => <div key={i}>{String(it)}</div>)}</>;
+            } catch (_err) { void _err; }
+
+            // Try converting single-quoted items to double-quoted JSON
+            const converted = s.replace(/'([^']*)'/g, '"$1"');
+            try {
+                const parsed2 = JSON.parse(converted);
+                if (Array.isArray(parsed2)) return <>{parsed2.map((it, i) => <div key={i}>{String(it)}</div>)}</>;
+            } catch (_err) { void _err; }
+
+            // Fallback: manual top-level split that respects quotes
+            const parts: string[] = [];
+            let cur = '';
+            let inSingle = false;
+            let inDouble = false;
+            let esc = false;
+            for (let i = 0; i < inner.length; i++) {
+                const ch = inner[i];
+                if (esc) {
+                    cur += ch;
+                    esc = false;
+                    continue;
+                }
+                if (ch === '\\') { esc = true; cur += ch; continue; }
+                if (ch === "'" && !inDouble) { inSingle = !inSingle; cur += ch; continue; }
+                if (ch === '"' && !inSingle) { inDouble = !inDouble; cur += ch; continue; }
+                if (ch === ',' && !inSingle && !inDouble) {
+                    parts.push(cur.trim());
+                    cur = '';
+                    continue;
+                }
+                cur += ch;
+            }
+            if (cur.trim()) parts.push(cur.trim());
+
+            const cleaned = parts.map(p => p.replace(/^['"]|['"]$/g, '').trim()).filter(Boolean);
+            return <>{cleaned.map((it, i) => <div key={i}>{it}</div>)}</>;
+        }
+        return s;
     };
 
     // Prompt for username if not set
