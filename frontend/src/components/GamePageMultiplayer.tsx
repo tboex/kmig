@@ -7,6 +7,8 @@ import Popup from './Popup';
 import GameOver from './GameOver';
 import PlayerStatus from './PlayerStatus';
 import { motion, AnimatePresence } from 'framer-motion';
+import PressableButton from './PressableButton';
+import FloatingInput from './FloatingInput';
 
 export default function GamePageMultiplayer() {
     const { gameId } = useParams();
@@ -55,9 +57,9 @@ export default function GamePageMultiplayer() {
 
     const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
 
-    // Connect to WebSocket on mount
+    // Connect to WebSocket on mount — only after we have a username and the username prompt is closed
     useEffect(() => {
-        if (!gameId || !username) return;
+        if (!gameId || !username || showUsernamePrompt) return;
         let ws: WebSocket;
         let shouldReconnect = true;
 
@@ -103,7 +105,7 @@ export default function GamePageMultiplayer() {
                         setGameOver({ isOpen: true, isDefeat });
                     } else if (msg.type === 'word_submitted' && msg.current_turn !== 'n/a' && msg.status === 'VALID') {
                         setCurrentTurn(msg.current_turn);
-                        setChain(prev => [...prev, {
+                        setChain((prev: typeof chain) => [...prev, {
                             sender: msg.player_name === username ? 'user' : 'other',
                             text: msg.word.korean,
                             name: msg.player_name,
@@ -124,7 +126,7 @@ export default function GamePageMultiplayer() {
                             }));
                         }
 
-                        setChain(prev => [...prev, {
+                        setChain((prev: typeof chain) => [...prev, {
                             sender: msg.player_name === username ? 'user' : 'other',
                             text: msg.word.korean,
                             name: msg.player_name,
@@ -218,8 +220,7 @@ export default function GamePageMultiplayer() {
                 <Username
                     open={showUsernamePrompt}
                     usernameInput={username}
-                    setUsernameInput={setUsername}
-                    onSubmit={() => handleUsernameSubmit(username)}
+                    onSubmit={(name: string) => handleUsernameSubmit(name)}
                 />
             </div>
         );
@@ -249,7 +250,7 @@ export default function GamePageMultiplayer() {
                 <div
                     ref={chainRef}
                     onScroll={handleChainScroll}
-                    className="game-play-space w-full max-w-md mb-4 h-96 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2 scrollbar-hide"
+                    className="game-play-space w-full max-w-md mb-4 h-75 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2 scrollbar-hide"
                 >
                     <AnimatePresence>
                         {[...chain].reverse().map((msg, idx) => {
@@ -292,24 +293,18 @@ export default function GamePageMultiplayer() {
 
             </div>
             <form onSubmit={handleSubmit} className="w-full max-w-md flex items-center justify-center space-x-2 mt-2">
-                <input
-                    className="flex-1 px-3 py-2 rounded bg-theme-sub-alt text-theme-text outline-none"
-                    value={userInput}
-                    onChange={e => setUserInput(e.target.value)}
-                    placeholder="Enter a word…"
-                    style={{ maxWidth: '300px' }} // Equal width from center
-                />
-                <button
-                    type="submit"
-                    className="px-4 py-2 rounded bg-theme-main text-black font-bold
-                    hover-text-theme-text
-                    disabled:opacity-50
-                    disabled:text-theme-sub
-                    disabled:hover-text-theme-sub"
-                    disabled={currentTurn !== username}
-                >
+                                <div className="flex-1 max-w-[300px]">
+                                    <FloatingInput
+                                        id="multi-user-input"
+                                        label={'Enter a word…'}
+                                        value={userInput}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserInput(e.target.value)}
+                                        required={false}
+                                    />
+                                </div>
+                <PressableButton type="submit" disabled={currentTurn !== username} className="px-4 py-2">
                     Submit
-                </button>
+                </PressableButton>
             </form>
             <Invite pulse={playerIds.length === 0} />
             <Popup

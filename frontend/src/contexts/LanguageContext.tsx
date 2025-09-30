@@ -24,6 +24,14 @@ const translations: Record<Language, TranslationDict> = {
     'landing.solo': 'Solo Game',
     'landing.multiplayer': 'Multiplayer Game',
 
+    // Setup Page
+    'setup.title': 'Game Setup',
+    'setup.allowVerbs': 'Allow Verbs',
+    'setup.guessCount': 'Guess Count',
+    'setup.timer': 'Timer (seconds)',
+    'setup.start': 'Start Game',
+    'setup.back': 'Back',
+
     // Game Page
     'game.thinking': "I'm thinking...",
     'game.submit': 'Submit',
@@ -32,6 +40,7 @@ const translations: Record<Language, TranslationDict> = {
     'game.defeat': 'Defeat!',
     'game.playAgain': 'Play Again',
     'game.close': 'Close',
+    'game.yourTurn': "It's your turn!",
 
     // Bot Failure Phrases
     'bot.failure.first.1': "Hmm... I can't think of a word",
@@ -80,6 +89,14 @@ const translations: Record<Language, TranslationDict> = {
     'landing.solo': '솔로 게임',
     'landing.multiplayer': '멀티플레이어 게임',
 
+    // Setup Page
+    'setup.title': '게임 설정',
+    'setup.allowVerbs': '동사 허용',
+    'setup.guessCount': '추측 횟수',
+    'setup.timer': '타이머 (초)',
+    'setup.start': '게임 시작',
+    'setup.back': '뒤로',
+
     // Game Page
     'game.thinking': '지금 생각하고 있어...',
     'game.submit': '제출',
@@ -88,6 +105,7 @@ const translations: Record<Language, TranslationDict> = {
     'game.defeat': '패배!',
     'game.playAgain': '다시 하기',
     'game.close': '닫기',
+    'game.yourTurn': '당신의 차례입니다!',
 
     // Bot Failure Phrases
     'bot.failure.first.1': '음음... 단어를 생각할 수 없었어',

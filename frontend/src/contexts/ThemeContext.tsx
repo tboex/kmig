@@ -91,9 +91,9 @@ const themes: Record<ThemeName, Theme> = {
         }
     },
     lavender: {
-        name: 'lavender',
-        displayName: 'lavender',
-        colors: {
+      name: 'lavender',
+      displayName: 'lavender',
+      colors: {
         bg: '#ada6c2',
         main: '#A6C2BB',
         caret: '#e4e3e9',
@@ -102,7 +102,7 @@ const themes: Record<ThemeName, Theme> = {
         text: '#2f2a41',
         error: '#ca4754',
         errorExtra: '#7e2a33',
-        }
+      }
     },
     ms_cupcakes: {
         name: 'ms_cupcakes',

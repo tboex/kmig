@@ -1,0 +1,134 @@
+.switch {
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: 3.5em;
+  height: 2em;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+/* The slider */
+.slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: var(--color-sub, rgb(182,182,182));
+	transition: .4s;
+	border-radius: 10px;
+}
+
+.slider:before {
+	position: absolute;
+	content: "";
+	height: 1.4em;
+	width: 1.4em;
+	border-radius: 8px;
+	left: 0.3em;
+	bottom: 0.3em;
+	transform: rotate(270deg);
+	background-color: var(--color-bg, #fff);
+	transition: .4s;
+}
+
+.switch input:checked + .slider {
+	background-color: var(--color-main, #21cc4c);
+}
+
+.switch input:focus + .slider {
+	box-shadow: 0 0 1px var(--color-main, #2196F3);
+}
+
+.switch input:checked + .slider:before {
+	transform: translateX(1.5em);
+}
+
+
+/* Pressable button: uses box-shadow instead of changing border widths so surrounding layout doesn't shift */
+.pressable-button {
+	border-radius: 0.5rem; /* matches rounded-lg */
+	transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 0 rgba(0,0,0,0.12); /* base 'depth' */
+	border: 1px solid rgba(0,0,0,0.06);
+}
+
+.pressable-button:hover {
+	filter: brightness(1.05);
+	transform: translateY(-2px);
+	box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+.pressable-button:active {
+	transform: translateY(1px);
+	box-shadow: 0 2px 0 rgba(0,0,0,0.08);
+	filter: brightness(0.95);
+}
+
+.pressable-button[disabled],
+.pressable-button[aria-disabled="true"] {
+	transform: none;
+	box-shadow: none;
+	filter: none;
+}
+
+/* Floating input (label moves up when focused or filled) */
+.floating-input {
+	position: relative;
+	width: 100%;
+	margin-bottom: 0.75rem;
+}
+
+.floating-input__input {
+	width: 100%;
+	font-size: 1rem;
+	padding: 0.5rem 0 0.25rem 0;
+	border: none;
+	border-bottom: 2px solid var(--color-sub, #b7b7b7);
+	background: transparent;
+	color: var(--color-sub);
+	outline: none;
+}
+
+.floating-input__label {
+	position: absolute;
+	left: 0;
+	top: 0.5rem;
+	color: var(--color-sub, #b7b7b7);
+	transition: all 0.2s ease;
+	pointer-events: none;
+}
+
+.floating-input__input:focus ~ .floating-input__label,
+.floating-input__input:valid ~ .floating-input__label {
+	top: -0.75rem;
+	font-size: 0.875rem;
+	color: var(--color-sub, #b7b7b7);
+}
+
+.floating-input__underline {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 2px;
+	width: 100%;
+	background: var(--color-main);
+	transform: scaleX(0);
+	transform-origin: left center;
+	transition: transform 0.25s ease;
+}
+
+.floating-input__input:focus ~ .floating-input__underline,
+.floating-input__input:valid ~ .floating-input__underline {
+	transform: scaleX(1);
+}
