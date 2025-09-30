@@ -40,6 +40,7 @@ const translations: Record<Language, TranslationDict> = {
     'game.defeat': 'Defeat!',
     'game.playAgain': 'Play Again',
     'game.close': 'Close',
+    'game.yourTurn': "It's your turn!",
 
     // Bot Failure Phrases
     'bot.failure.first.1': "Hmm... I can't think of a word",
@@ -104,6 +105,7 @@ const translations: Record<Language, TranslationDict> = {
     'game.defeat': '패배!',
     'game.playAgain': '다시 하기',
     'game.close': '닫기',
+    'game.yourTurn': '당신의 차례입니다!',
 
     // Bot Failure Phrases
     'bot.failure.first.1': '음음... 단어를 생각할 수 없었어',

@@ -27,6 +27,7 @@ export default function GameSetupPage() {
 
   async function handleStart() {
     if (!username.trim()) return;
+    localStorage.setItem('kmig_username', username.trim());
     const data = await startGame(
         mode,
         username.trim(),
@@ -35,9 +36,9 @@ export default function GameSetupPage() {
         undefined
     );
     if (mode === 'solo') {
-      navigate('/solo', { state: { gameData: data } });
+        navigate('/solo', { state: { gameData: data } });
     } else {
-      navigate(`/game/${data.game_id}`, { state: { gameData: data } });
+        navigate(`/game/${data.game_id}`, { state: { gameData: data } });
     }
   }
 

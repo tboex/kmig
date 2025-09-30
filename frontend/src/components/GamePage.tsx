@@ -321,7 +321,7 @@ export default function GamePage() {
                 <div
                     ref={chainRef}
                     onScroll={handleChainScroll}
-                    className="game-play-space w-full h-96 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2 scrollbar-hide"
+                    className="game-play-space w-full h-75 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2 scrollbar-hide"
                 >
                     <AnimatePresence>
                         {[...chain].reverse().map((msg, idx) => {

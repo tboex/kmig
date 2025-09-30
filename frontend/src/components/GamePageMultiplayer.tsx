@@ -57,9 +57,9 @@ export default function GamePageMultiplayer() {
 
     const reconnectTimeout = useRef<NodeJS.Timeout | null>(null);
 
-    // Connect to WebSocket on mount
+    // Connect to WebSocket on mount — only after we have a username and the username prompt is closed
     useEffect(() => {
-        if (!gameId || !username) return;
+        if (!gameId || !username || showUsernamePrompt) return;
         let ws: WebSocket;
         let shouldReconnect = true;
 
@@ -220,8 +220,7 @@ export default function GamePageMultiplayer() {
                 <Username
                     open={showUsernamePrompt}
                     usernameInput={username}
-                    setUsernameInput={setUsername}
-                    onSubmit={() => handleUsernameSubmit(username)}
+                    onSubmit={(name: string) => handleUsernameSubmit(name)}
                 />
             </div>
         );
@@ -251,7 +250,7 @@ export default function GamePageMultiplayer() {
                 <div
                     ref={chainRef}
                     onScroll={handleChainScroll}
-                    className="game-play-space w-full max-w-md mb-4 h-96 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2 scrollbar-hide"
+                    className="game-play-space w-full max-w-md mb-4 h-75 overflow-y-auto flex flex-col-reverse space-y-reverse space-y-2 scrollbar-hide"
                 >
                     <AnimatePresence>
                         {[...chain].reverse().map((msg, idx) => {
