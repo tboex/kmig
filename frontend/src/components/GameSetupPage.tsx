@@ -1,5 +1,10 @@
+<<<<<<< Updated upstream
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+=======
+import { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
+>>>>>>> Stashed changes
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import Logo from './Logo';
@@ -19,8 +24,23 @@ export default function GameSetupPage() {
   const initialUsername = locState?.username || '';
   const [username, setUsername] = useState(initialUsername);
   const [allowVerbs, setAllowVerbs] = useState(true);
+  const [allowAdjectives, setAllowAdjectives] = useState(true);
+  const [allowAdverbs, setAllowAdverbs] = useState(true);
   const [guessCount, setGuessCount] = useState<number | ''>(3);
   const [timerDuration, setTimerDuration] = useState<number | ''>(20);
+
+  // measure the settings content to animate height from 0 -> measuredHeight
+  const settingsRef = useRef<HTMLDivElement | null>(null);
+  const [settingsHeight, setSettingsHeight] = useState<number>(0);
+
+  useEffect(() => {
+    const measure = () => {
+      if (settingsRef.current) setSettingsHeight(settingsRef.current.scrollHeight);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [allowVerbs, allowAdjectives, allowAdverbs, guessCount, timerDuration]);
 
   // infer mode from the URL path (/setup/solo or /setup/multi)
   const path = location.pathname;
@@ -34,7 +54,10 @@ export default function GameSetupPage() {
         username.trim(),
         typeof guessCount === 'number' ? guessCount : undefined,
         typeof timerDuration === 'number' ? timerDuration : undefined,
-        undefined
+        undefined,
+        allowVerbs,
+        allowAdjectives,
+        allowAdverbs,
     );
     if (mode === 'solo') {
         navigate('/solo', { state: { gameData: data } });

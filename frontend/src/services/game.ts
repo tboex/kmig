@@ -6,6 +6,9 @@ export async function startGame(
     guessCount?: number,
     timerDuration?: number,
     word?: string,
+    allowVerbs?: boolean,
+    allowAdjectives?: boolean,
+    allowAdverbs?: boolean,
 ) {
     if (mode === 'solo') {
         const res = await fetch(`${API_BASE_URL}/kmig/v1/game/single`, {
@@ -17,6 +20,9 @@ export async function startGame(
                 'guess_count': guessCount,
                 'max_time': timerDuration,
                 'word': word,
+                'allow_verbs': allowVerbs,
+                'allow_adjectives': allowAdjectives,
+                'allow_adverbs': allowAdverbs,
             })
         });
         if (!res.ok) throw new Error('Failed to start single player game');
@@ -32,6 +38,9 @@ export async function startGame(
                 'guess_count': guessCount,
                 'max_time': timerDuration,
                 'word': word,
+                'allow_verbs': allowVerbs,
+                'allow_adjectives': allowAdjectives,
+                'allow_adverbs': allowAdverbs,
             })
         });
         if (!res.ok) throw new Error('Failed to start single player game');
