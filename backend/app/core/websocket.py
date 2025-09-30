@@ -182,6 +182,7 @@ async def handle_websocket_restart_request(
             id=request.player_id,
             name=request.player_name,
         ),
+        request=request,
     )
 
     starting_player = await chose_starting_player(
@@ -193,7 +194,6 @@ async def handle_websocket_restart_request(
     status['server_status'] = 'READY'
 
     await reset_game(state, request.game_id)
-
 
     await update_game_state(
         state=state,

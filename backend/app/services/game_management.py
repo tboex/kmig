@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Optional, Any, Union
 import random
 import logging
 import unicodedata
@@ -15,6 +15,9 @@ from models.game import (
     Word,
     Player,
     Status,
+    SinglePlayerRequest,
+    MultiplayerRequest,
+    WSInitRequest,
 )
 from constants import KMIG_BOT_NAME, KMIG_BOT_ID, KEY_EXPIRY, EUPHONIC_CONVERSIONS
 from settings import LOGGER_NAME
@@ -23,7 +26,13 @@ from settings import LOGGER_NAME
 logger = logging.getLogger(LOGGER_NAME)
 
 
-async def init_game(state, game_id: str, mode: str, player: Player, word: str = '') -> dict[str, Any]:
+async def init_game(
+    state,
+    game_id: str,
+    mode: str,
+    player: Player,
+    request: Union[SinglePlayerRequest, MultiplayerRequest, WSInitRequest],
+) -> dict[str, Any]:
     game_status = {
         'game_id': game_id,
         'mode': mode,
@@ -34,7 +43,7 @@ async def init_game(state, game_id: str, mode: str, player: Player, word: str = 
         'turn': None,
     }
 
-    await init_game_state(state=state, game_id=game_id, mode=mode)
+    await init_game_state(state=state, game_id=game_id, mode=mode, request=request)
     await add_player(state, game_id, player)
 
     if mode == 'single':
@@ -127,9 +136,8 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, d
             Status(status='INVALID', message='Word has to be at least 2 characters'),
             Word(
                 korean=word,
-                pronunciation=None,
-                hanja=None,
                 part_of_speech=None,
+                hanja=None,
                 definition=None,
                 english=None,
             ).model_dump(),
@@ -141,9 +149,8 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, d
             Status(status='INVALID', message='Word is not a valid Korean word'),
             Word(
                 korean=word,
-                pronunciation=None,
-                hanja=None,
                 part_of_speech=None,
+                hanja=None,
                 definition=None,
                 english=None,
             ).model_dump(),
@@ -157,26 +164,68 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, d
             Status(status='INVALID', message='Word already used'),
             Word(
                 korean=word,
-                pronunciation=None,
-                hanja=None,
                 part_of_speech=None,
+                hanja=None,
                 definition=None,
                 english=None,
             ).model_dump(),
         )
 
     response_word = dictionary.get(word, '')
+
+    allow_verbs, allow_adjectives, allow_adverbs = await state.redis_client.hmget(
+        f'game:{game_id}', ['allow_verbs', 'allow_adjectives', 'allow_adverbs']
+    )
+    allow_verbs = allow_verbs or 'true'
+    allow_adjectives = allow_adjectives or 'true'
+    allow_adverbs = allow_adverbs or 'true'
+
     if not response_word:
         return (
             False,
             Status(status='INVALID', message='Word not in dictionary'),
             Word(
                 korean=word,
-                pronunciation=None,
-                hanja=None,
                 part_of_speech=None,
+                hanja=None,
                 definition=None,
                 english=None,
+            ).model_dump(),
+        )
+    elif allow_verbs.lower() == 'false' and response_word.get('part_of_speech', '').startswith('동사'):
+        return (
+            False,
+            Status(status='INVALID', message='Verbs are not allowed in this game'),
+            Word(
+                korean=word,
+                part_of_speech=response_word.get('part_of_speech'),
+                hanja=response_word.get('hanja', ''),
+                definition=response_word.get('definition'),
+                english=response_word.get('english'),
+            ).model_dump(),
+        )
+    elif allow_adjectives.lower() == 'false' and response_word.get('part_of_speech', '').startswith('형용사'):
+        return (
+            False,
+            Status(status='INVALID', message='Adjectives are not allowed in this game'),
+            Word(
+                korean=word,
+                part_of_speech=response_word.get('part_of_speech'),
+                hanja=response_word.get('hanja', ''),
+                definition=response_word.get('definition'),
+                english=response_word.get('english'),
+            ).model_dump(),
+        )
+    elif allow_adverbs.lower() == 'false' and response_word.get('part_of_speech', '').startswith('부사'):
+        return (
+            False,
+            Status(status='INVALID', message='Adverbs are not allowed in this game'),
+            Word(
+                korean=word,
+                part_of_speech=response_word.get('part_of_speech'),
+                hanja=response_word.get('hanja', ''),
+                definition=response_word.get('definition'),
+                english=response_word.get('english'),
             ).model_dump(),
         )
 
@@ -332,9 +381,25 @@ async def bot_pick_word(state, game_id: str) -> Optional[Word]:
 
     euphonic_adjustments_list = await get_euphonic_adjustments(previous_words[-1][-1])
 
+    allow_verbs, allow_adjectives, allow_adverbs = await state.redis_client.hmget(
+        f'game:{game_id}', ['allow_verbs', 'allow_adjectives', 'allow_adverbs']
+    )
+    allow_verbs = allow_verbs or 'true'
+    allow_adjectives = allow_adjectives or 'true'
+    allow_adverbs = allow_adverbs or 'true'
+
     valid_words = []
     for word in state.dictionary:
         if word.startswith(tuple(euphonic_adjustments_list)) and word not in previous_words:
+            if allow_verbs.lower() == 'false' and \
+                    state.dictionary[word].get('part_of_speech', '').startswith('동사'):
+                continue
+            elif allow_adjectives.lower() == 'false' and \
+                    state.dictionary[word].get('part_of_speech', '').startswith('형용사'):
+                continue
+            elif allow_adverbs.lower() == 'false' and \
+                    state.dictionary[word].get('part_of_speech', '').startswith('부사'):
+                continue
             valid_words.append(word)
 
     if valid_words:
