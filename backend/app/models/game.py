@@ -47,14 +47,22 @@ class SinglePlayerRequest(BaseModel):
     player_name: str = Field(..., description="Player's name")
     player_id: str = Field(..., description='Unique identifier for the player')
     word: str = Field('', description='The word to be played in the game')
-    guess_count: int = Field(5, description='Number of guesses allowed per player')
+    guess_count: int = Field(3, description='Number of guesses allowed per player')
     max_time: int = Field(
         0,
         description='Maximum time allowed for the game in seconds, if 0 game is played without time limit',
     )
-    max_fails: int = Field(
-        3,
-        description='Maximum number of failed attempts allowed per player before the game ends',
+    allow_verbs: bool = Field(
+        False,
+        description='Whether to allow verbs in the game',
+    )
+    allow_adjectives: bool = Field(
+        False,
+        description='Whether to allow adjectives in the game',
+    )
+    allow_adverbs: bool = Field(
+        False,
+        description='Whether to allow verbs in the game',
     )
 
 
@@ -123,6 +131,32 @@ class WSJoinRequest(BaseModel):
     game_id: str = Field(..., description='Unique identifier for the game')
     player_id: str = Field(..., description='Unique identifier for the player')
     player_name: str = Field(..., description='Name of the player joining the game')
+
+
+class WSInitRequest(BaseModel):
+    '''
+    Request model for joining a game via WebSocket.
+    '''
+    game_id: str = Field(..., description='Unique identifier for the game')
+    player_id: str = Field(..., description='Unique identifier for the player')
+    player_name: str = Field(..., description='Name of the player joining the game')
+    guess_count: int = Field(5, description='Number of guesses allowed per player')
+    max_time: int = Field(
+        0,
+        description='Maximum time allowed for the game in seconds, if 0 game is played without time limit',
+    )
+    allow_verbs: bool = Field(
+        False,
+        description='Whether to allow verbs in the game',
+    )
+    allow_adjectives: bool = Field(
+        False,
+        description='Whether to allow adjectives in the game',
+    )
+    allow_adverbs: bool = Field(
+        False,
+        description='Whether to allow verbs in the game',
+    )
 
 
 class WSSubmitWordRequest(SubmitWordRequest):

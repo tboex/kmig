@@ -20,12 +20,13 @@ def load_dictionary(filepath) -> dict[str, dict]:
         dict: a dictionary where each key is the 'korean word'
         {
             '가게': {
-                krWord: 가게
-                Pronunciation: 가ː게
-                Hanja: ''
-                Part of Speech: 명사
-                Definition: 작은 규모로 물건을 펼쳐 놓고 파는 집.
-                English Meaning: shop; store
+                korean: 가게
+                part_of_speech: 명사
+                korea_definition: 작은 규모로 물건을 펼쳐 놓고 파는 집.
+                english_definition: shop; store
+                usages: []
+                vocabulary_level: 초급
+                semantic_category: 장소
             }
         }
     '''

@@ -1,7 +1,11 @@
 import logging
+from typing import Union
 
 from models.game import (
     Player,
+    SinglePlayerRequest,
+    MultiplayerRequest,
+    WSInitRequest,
 )
 from constants import KEY_EXPIRY
 from settings import LOGGER_NAME
@@ -10,7 +14,12 @@ from settings import LOGGER_NAME
 logger = logging.getLogger(LOGGER_NAME)
 
 
-async def init_game_state(state, game_id:str, mode: str) -> None:
+async def init_game_state(
+    state,
+    game_id:str,
+    mode: str,
+    request: Union[SinglePlayerRequest, MultiplayerRequest, WSInitRequest],
+) -> None:
     await state.redis_client.hset(
         f'game:{game_id}',
         mapping={
@@ -19,6 +28,10 @@ async def init_game_state(state, game_id:str, mode: str) -> None:
             'message': 'First turn not taken',
             'previous_player': 'n/a',
             'current_turn': 'n/a',
+            'guess_count': str(request.guess_count),
+            'allow_verbs': str(request.allow_verbs),
+            'allow_adjectives': str(request.allow_adjectives),
+            'allow_adverbs': str(request.allow_adverbs),
         },
     )
     await state.redis_client.expire(f'game:{game_id}', KEY_EXPIRY)
@@ -26,12 +39,14 @@ async def init_game_state(state, game_id:str, mode: str) -> None:
 
 async def add_player(state, game_id: str, player: Player) -> None:
     if not await state.redis_client.exists(f'game:{game_id}:player:{player.id}'):
+        guess_count = await state.redis_client.hget(f'game:{game_id}', 'guess_count')
+
         await state.redis_client.rpush(f'game:{game_id}:players', player.id)
         await state.redis_client.expire(f'game:{game_id}:players', KEY_EXPIRY)
         await state.redis_client.hset(f'game:{game_id}:player:{player.id}', mapping={
             'id': player.id,
             'name': player.name,
-            'remaining_failures': 3,
+            'remaining_failures': guess_count,
         })
         await state.redis_client.expire(f'game:{game_id}:player:{player.id}', KEY_EXPIRY)
 
@@ -103,7 +118,8 @@ async def get_player_failures(state, game_id: str, player_id: str) -> int:
 
 async def reset_player_failures(state, game_id: str, player_id: str) -> None:
     player_key = f'game:{game_id}:player:{player_id}'
-    await state.redis_client.hset(player_key, 'remaining_failures', 3)
+    guess_count = await state.redis_client.hget(f'game:{game_id}', 'guess_count')
+    await state.redis_client.hset(player_key, 'remaining_failures', guess_count)
     await state.redis_client.expire(player_key, KEY_EXPIRY)
 
 

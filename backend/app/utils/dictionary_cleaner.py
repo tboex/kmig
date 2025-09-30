@@ -16,10 +16,10 @@ def remove_substring_from_column(df: pd.DataFrame, column_name: str, substring: 
     return df[~df[column_name].astype(str).str.contains(substring, na=False)]
 
 
-column_name = 'korean'
+column_name = 'form'
 substring_to_remove = '-'
 
 df_cleaned = remove_substring_from_column(df, column_name, substring_to_remove)
 
 # Save the cleaned DataFrame to a new CSV file
-df_cleaned.to_csv('dictionary.csv', index=False)
+df_cleaned.to_csv('app/utils/dictionary_cleaned.csv', index=False)

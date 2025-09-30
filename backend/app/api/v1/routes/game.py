@@ -59,7 +59,7 @@ async def single(
             id=request.player_id,
             name=request.player_name,
         ),
-        word=request.word,
+        request=request,
     )
 
     await update_game_state(
@@ -97,7 +97,7 @@ async def multi(
             id=request.player_id,
             name=request.player_name,
         ),
-        word=request.word,  # TODO: Do I want the ability to pass word in MP?
+        request=request,
     )
 
     await update_game_state(
