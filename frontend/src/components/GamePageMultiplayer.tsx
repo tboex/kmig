@@ -37,6 +37,36 @@ export default function GamePageMultiplayer() {
     const [playerIds, setPlayerIds] = useState<string[]>([]);
     const [playerFailures, setPlayerFailures] = useState<Record<string, number>>({});
 
+    // Render a string that might be a serialized list (e.g. "['a','b']") as separate lines
+    const renderMultiline = (val?: string | null) => {
+        if (!val) return null;
+        const trimmed = val.trim();
+        // If it looks like an array (even with single quotes), try to convert to valid JSON and parse
+        if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+            // Convert single-quoted items to double-quoted so JSON.parse can handle it
+            const attempt = trimmed.replace(/'([^']*)'/g, '"$1"');
+            try {
+                const parsed = JSON.parse(attempt);
+                if (Array.isArray(parsed)) {
+                    return <>
+                        {parsed.map((it, i) => <div key={i}>{String(it)}</div>)}
+                    </>;
+                }
+            } catch (_err) {
+                void _err;
+                // fall through to fallback
+            }
+            // fallback: strip brackets then split on commas
+            const stripped = trimmed.replace(/^\[|\]$/g, '').trim();
+            if (!stripped) return null;
+            const parts = stripped.split(',').map(s => s.trim().replace(/^['"]|['"]$/g, ''));
+            return <>
+                {parts.map((p, i) => <div key={i}>{p}</div>)}
+            </>;
+        }
+        return val;
+    };
+
     // Prompt for username if not set
     function handleUsernameSubmit(name: string) {
         setUsername(name);
@@ -109,11 +139,14 @@ export default function GamePageMultiplayer() {
                             sender: msg.player_name === username ? 'user' : 'other',
                             text: msg.word.korean,
                             name: msg.player_name,
+                            korean: msg.word.korean,
                             pronunciation: msg.word.pronunciation,
                             hanja: msg.word.hanja,
                             part_of_speech: msg.word.part_of_speech,
                             definition: msg.word.definition,
                             english: msg.word.english,
+                            usages: msg.word.usages,
+                            semantic_category: msg.word.semantic_category,
                             valid: true,
                         }]);
                     } else if (msg.type === 'word_submitted' && msg.status === 'INVALID') {
@@ -130,11 +163,14 @@ export default function GamePageMultiplayer() {
                             sender: msg.player_name === username ? 'user' : 'other',
                             text: msg.word.korean,
                             name: msg.player_name,
+                            korean: msg.word.korean,
                             pronunciation: msg.word.pronunciation,
                             hanja: msg.word.hanja,
                             part_of_speech: msg.word.part_of_speech,
                             definition: msg.word.definition,
                             english: msg.word.english,
+                            usages: msg.word.usages,
+                            semantic_category: msg.word.semantic_category,
                             valid: false,
                         }]);
                         if (username === msg.player_name) {
@@ -159,7 +195,8 @@ export default function GamePageMultiplayer() {
                             });
                         }
                     }
-                } catch (e) {
+                } catch (_err) {
+                    void _err;
                     console.error('Invalid message:', event.data);
                 }
             };
@@ -273,18 +310,21 @@ export default function GamePageMultiplayer() {
                                     }
                                 >
                                     <div className={`text-xs mb-1 ${msg.valid === false ? 'text-theme-text' : 'text-theme-main '}`}>{msg.name}</div>
-                                    <WordTooltip
-                                        tooltip={
-                                            <>
-                                            {msg.english && <div><b>English:</b> {msg.english}</div>}
-                                            {msg.definition && <div><b>Definition:</b> {msg.definition}</div>}
-                                            {msg.pronunciation && <div><b>Pronunciation:</b> {msg.pronunciation}</div>}
-                                            {msg.hanja && <div><b>Hanja:</b> {msg.hanja}</div>}
-                                            </>
-                                        }
-                                        >
-                                        {msg.text}
-                                    </WordTooltip>
+                                                            <WordTooltip
+                                                                tooltip={
+                                                                    <>
+                                                                        { (msg.part_of_speech) && <div><b>Part of speech:</b> {msg.part_of_speech}</div> }
+                                                                        { (msg.english) && <div><b>English:</b> {renderMultiline(msg.english)}</div> }
+                                                                        { (msg.definition) && <div><b>Definition:</b> {renderMultiline(msg.definition)}</div> }
+                                                                        { (msg.usages) && <div><b>Usages:</b> {renderMultiline(msg.usages)}</div> }
+                                                                        { (msg.semantic_category) && <div><b>Category:</b> {msg.semantic_category}</div> }
+                                                                        { (msg.pronunciation) && <div><b>Pronunciation:</b> {msg.pronunciation}</div> }
+                                                                        { (msg.hanja) && <div><b>Hanja:</b> {msg.hanja}</div> }
+                                                                    </>
+                                                                }
+                                                            >
+                                                                {msg.korean || msg.text}
+                                                            </WordTooltip>
                                 </motion.div>
                             );
                         })}

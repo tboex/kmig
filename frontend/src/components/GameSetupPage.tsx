@@ -1,10 +1,5 @@
-<<<<<<< Updated upstream
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-=======
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
->>>>>>> Stashed changes
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import Logo from './Logo';
@@ -71,7 +66,7 @@ export default function GameSetupPage() {
       <div className="flex flex-col items-center justify-center h-full" style={{ height: 'calc(100vh - 200px)'}}>
         <Logo width={300} height={90} className="mb-6" />
         <div className="w-full max-w-md bg-theme-sub-alt p-6 rounded">
-          <h2 className="text-2xl font-bold mb-14 text-theme-main">{t('setup.title') || 'Game Setup'}</h2>
+          <h2 className="text-2xl font-bold mb-8 text-theme-main">{t('setup.title') || 'Game Setup'}</h2>
           <FloatingInput
             id="setup-username"
             label={t('landing.username.placeholder') || 'Username'}
@@ -79,58 +74,74 @@ export default function GameSetupPage() {
             onChange={e => setUsername(e.target.value)}
           />
 
-          {/* Hide the rest of the settings until a username is provided */}
-          <AnimatePresence>
-            {username.trim() === '' ? (
-              <motion.div key="setup-hint" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-4">
-              </motion.div>
-            ) : (
-              <motion.div
-                key="setup-settings"
-                initial={{ height: 0, opacity: 0, y: -8 }}
-                animate={{ height: 'auto', opacity: 1, y: 0 }}
-                exit={{ height: 0, opacity: 0, y: -8 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 40 }}
-                className="mt-4 overflow-hidden"
-              >
-                <div className="mb-4 mt-8">
-                  <div className="flex items-center justify-between">
-                    <span className="text-theme-sub">{t('setup.allowVerbs') || 'Allow Verbs'}</span>
-                    <Toggle
-                      checked={allowVerbs}
-                      onChange={v => setAllowVerbs(v)}
-                      ariaLabel={t('setup.allowVerbs') || 'Allow Verbs'}
-                    />
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-sm mb-1 text-theme-sub"></label>
-                  <FloatingInput
-                    id="guess-count"
-                    label={t('setup.guessCount') || 'Guesses'}
-                    type="number"
-                    value={guessCount === '' ? '' : String(guessCount)}
-                    onChange={e => setGuessCount(e.target.value === '' ? '' : Number(e.target.value))}
-                    required={false}
+          <motion.div
+            initial={{ maxHeight: 0, opacity: 0, y: -8 }}
+            animate={username.trim() ? { maxHeight: settingsHeight + 12, opacity: 1, y: 0 } : { maxHeight: 0, opacity: 0, y: -8 }}
+            transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+            style={{ overflow: 'hidden' }}
+            className="mt-4"
+            aria-hidden={username.trim() === ''}
+          >
+            <div ref={settingsRef} className="pb-3">
+              <div className="mb-4 mt-8">
+                <div className="flex items-center justify-between">
+                  <span className="text-theme-sub">{t('setup.allowVerbs') || 'Allow Verbs'}</span>
+                  <Toggle
+                    checked={allowVerbs}
+                    onChange={v => setAllowVerbs(v)}
+                    ariaLabel={t('setup.allowVerbs') || 'Allow Verbs'}
                   />
                 </div>
+              </div>
 
-                <div className="mb-6">
-                  <label className="block text-sm mb-1 text-theme-sub"></label>
-                  <FloatingInput
-                    id="timer-duration"
-                    label={t('setup.timer') || 'Timer (seconds)'}
-                    type="number"
-                    min={0}
-                    value={timerDuration === '' ? '' : String(timerDuration)}
-                    onChange={e => setTimerDuration(e.target.value === '' ? '' : Number(e.target.value))}
-                    required={false}
+              <div className="mb-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-theme-sub">{t('setup.allowAdverbs') || 'Allow Adverbs'}</span>
+                  <Toggle
+                    checked={allowAdverbs}
+                    onChange={v => setAllowAdverbs(v)}
+                    ariaLabel={t('setup.allowAdverbs') || 'Allow Adverbs'}
                   />
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+
+              <div className="mb-8">
+                <div className="flex items-center justify-between">
+                  <span className="text-theme-sub">{t('setup.allowAdjectives') || 'Allow Adjectives'}</span>
+                  <Toggle
+                    checked={allowAdjectives}
+                    onChange={v => setAllowAdjectives(v)}
+                    ariaLabel={t('setup.allowAdjectives') || 'Allow Adjectives'}
+                  />
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm mb-1 text-theme-sub"></label>
+                <FloatingInput
+                  id="guess-count"
+                  label={t('setup.guessCount') || 'Guesses'}
+                  type="number"
+                  value={guessCount === '' ? '' : String(guessCount)}
+                  onChange={e => setGuessCount(e.target.value === '' ? '' : Number(e.target.value))}
+                  required={false}
+                />
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm mb-1 text-theme-sub"></label>
+                <FloatingInput
+                  id="timer-duration"
+                  label={t('setup.timer') || 'Timer (seconds)'}
+                  type="number"
+                  min={0}
+                  value={timerDuration === '' ? '' : String(timerDuration)}
+                  onChange={e => setTimerDuration(e.target.value === '' ? '' : Number(e.target.value))}
+                  required={false}
+                />
+              </div>
+            </div>
+          </motion.div>
 
           <div className="flex space-x-4">
             <PressableButton onClick={handleStart} disabled={!username.trim()} className="flex-1 px-4 py-2">

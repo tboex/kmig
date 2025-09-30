@@ -137,9 +137,12 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, d
             Word(
                 korean=word,
                 part_of_speech=None,
-                hanja=None,
                 definition=None,
                 english=None,
+                usages=None,
+                semantic_category=None,
+                pronunciation=None,
+                hanja=None,
             ).model_dump(),
         )
 
@@ -150,9 +153,12 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, d
             Word(
                 korean=word,
                 part_of_speech=None,
-                hanja=None,
                 definition=None,
                 english=None,
+                usages=None,
+                semantic_category=None,
+                pronunciation=None,
+                hanja=None,
             ).model_dump(),
         )
 
@@ -165,9 +171,12 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, d
             Word(
                 korean=word,
                 part_of_speech=None,
-                hanja=None,
                 definition=None,
                 english=None,
+                usages=None,
+                semantic_category=None,
+                pronunciation=None,
+                hanja=None,
             ).model_dump(),
         )
 
@@ -187,9 +196,12 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, d
             Word(
                 korean=word,
                 part_of_speech=None,
-                hanja=None,
                 definition=None,
                 english=None,
+                usages=None,
+                semantic_category=None,
+                pronunciation=None,
+                hanja=None,
             ).model_dump(),
         )
     elif allow_verbs.lower() == 'false' and response_word.get('part_of_speech', '').startswith('동사'):
@@ -199,9 +211,12 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, d
             Word(
                 korean=word,
                 part_of_speech=response_word.get('part_of_speech'),
-                hanja=response_word.get('hanja', ''),
                 definition=response_word.get('definition'),
                 english=response_word.get('english'),
+                usages=response_word.get('usages'),
+                semantic_category=response_word.get('semantic_category'),
+                pronunciation=None,
+                hanja=None,
             ).model_dump(),
         )
     elif allow_adjectives.lower() == 'false' and response_word.get('part_of_speech', '').startswith('형용사'):
@@ -211,9 +226,12 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, d
             Word(
                 korean=word,
                 part_of_speech=response_word.get('part_of_speech'),
-                hanja=response_word.get('hanja', ''),
                 definition=response_word.get('definition'),
                 english=response_word.get('english'),
+                usages=response_word.get('usages'),
+                semantic_category=response_word.get('semantic_category'),
+                pronunciation=None,
+                hanja=None,
             ).model_dump(),
         )
     elif allow_adverbs.lower() == 'false' and response_word.get('part_of_speech', '').startswith('부사'):
@@ -223,9 +241,12 @@ async def is_valid_word(state, game_id: str, word: str) -> tuple[bool, Status, d
             Word(
                 korean=word,
                 part_of_speech=response_word.get('part_of_speech'),
-                hanja=response_word.get('hanja', ''),
                 definition=response_word.get('definition'),
                 english=response_word.get('english'),
+                usages=response_word.get('usages'),
+                semantic_category=response_word.get('semantic_category'),
+                pronunciation=None,
+                hanja=None,
             ).model_dump(),
         )
 
@@ -372,11 +393,13 @@ async def bot_pick_word(state, game_id: str) -> Optional[Word]:
 
         return Word(
             korean=word_dict.get('korean'),
-            pronunciation=word_dict.get('pronunciation'),
-            hanja=word_dict.get('hanja', ''),
             part_of_speech=word_dict.get('part_of_speech'),
             definition=word_dict.get('definition'),
             english=word_dict.get('english'),
+            usages=word_dict.get('usages'),
+            semantic_category=word_dict.get('semantic_category'),
+            pronunciation=None,
+            hanja=None,
         )
 
     euphonic_adjustments_list = await get_euphonic_adjustments(previous_words[-1][-1])
@@ -415,11 +438,13 @@ async def bot_pick_word(state, game_id: str) -> Optional[Word]:
         await state.redis_client.expire(f'game:{game_id}:words', KEY_EXPIRY)
         return Word(
             korean=chosen_word_dict.get('korean'),
-            pronunciation=chosen_word_dict.get('pronunciation'),
-            hanja=chosen_word_dict.get('hanja', ''),
             part_of_speech=chosen_word_dict.get('part_of_speech'),
             definition=chosen_word_dict.get('definition'),
             english=chosen_word_dict.get('english'),
+            usages=chosen_word_dict.get('usages'),
+            semantic_category=chosen_word_dict.get('semantic_category'),
+            pronunciation=None,
+            hanja=None,
         )
 
     return None

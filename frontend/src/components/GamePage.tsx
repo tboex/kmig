@@ -36,17 +36,46 @@ export default function GamePage() {
         sender: 'other' | 'user',
         text: string,
         name: string,
+        korean?: string,
         pronunciation?: string,
         hanja?: string,
         part_of_speech?: string,
         definition?: string,
         english?: string,
+        usages?: string,
+        semantic_category?: string,
         valid?: boolean,
     }[]>([]);
 
     const [userInput, setUserInput] = useState('');
     const chainRef = useRef<HTMLDivElement>(null);
     const [isScrolledUp, setIsScrolledUp] = useState(false);
+
+    // Render a string that might be a serialized list (e.g. "['a','b']") as separate lines
+    const renderMultiline = (val?: string | null) => {
+        if (!val) return null;
+            const trimmed = val.trim();
+            if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+                const attempt = trimmed.replace(/'([^']*)'/g, '"$1"');
+                try {
+                    const parsed = JSON.parse(attempt);
+                    if (Array.isArray(parsed)) {
+                        return <>
+                            {parsed.map((it, i) => <div key={i}>{String(it)}</div>)}
+                        </>;
+                    }
+                } catch (_err) {
+                    void _err;
+                }
+                const stripped = trimmed.replace(/^\[|\]$/g, '').trim();
+                if (!stripped) return null;
+                const parts = stripped.split(',').map(s => s.trim().replace(/^['"]|['"]$/g, ''));
+                return <>
+                    {parts.map((p, i) => <div key={i}>{p}</div>)}
+                </>;
+            }
+            return val;
+    };
 
     const [botFailures, setBotFailures] = useState(0);
     const [userFailures, setUserFailures] = useState(0);
@@ -344,18 +373,21 @@ export default function GamePage() {
                                     }
                                 >
                                     <div className={`mb-1 text-xs ${msg.valid === false ? 'text-theme-text' : 'text-theme-main '}`}>{msg.name}</div>
-                                    <WordTooltip
-                                        tooltip={
-                                            <>
-                                            {msg.english && <div><b>English:</b> {msg.english}</div>}
-                                            {msg.definition && <div><b>Definition:</b> {msg.definition}</div>}
-                                            {msg.pronunciation && <div><b>Pronunciation:</b> {msg.pronunciation}</div>}
-                                            {msg.hanja && <div><b>Hanja:</b> {msg.hanja}</div>}
-                                            </>
-                                        }
-                                    >
-                                        {msg.text}
-                                    </WordTooltip>
+                                        <WordTooltip
+                                            tooltip={
+                                                <>
+                                                    { (msg.part_of_speech) && <div><b>Part of speech:</b> {msg.part_of_speech}</div> }
+                                                    { (msg.english) && <div><b>English:</b> {renderMultiline(msg.english)}</div> }
+                                                    { (msg.definition) && <div><b>Definition:</b> {renderMultiline(msg.definition)}</div> }
+                                                    { (msg.usages) && <div><b>Usages:</b> {renderMultiline(msg.usages)}</div> }
+                                                    { (msg.semantic_category) && <div><b>Category:</b> {msg.semantic_category}</div> }
+                                                    { (msg.pronunciation) && <div><b>Pronunciation:</b> {msg.pronunciation}</div> }
+                                                    { (msg.hanja) && <div><b>Hanja:</b> {msg.hanja}</div> }
+                                                </>
+                                            }
+                                        >
+                                            {msg.korean || msg.text}
+                                        </WordTooltip>
                                 </motion.div>
                             );
                         })}
