@@ -27,6 +27,8 @@ const translations: Record<Language, TranslationDict> = {
     // Setup Page
     'setup.title': 'Game Setup',
     'setup.allowVerbs': 'Allow Verbs',
+    'setup.allowAdjectives': 'Allow Adjectives',
+    'setup.allowAdverbs': 'Allow Adverbs',
     'setup.guessCount': 'Guess Count',
     'setup.timer': 'Timer (seconds)',
     'setup.start': 'Start Game',
@@ -92,6 +94,8 @@ const translations: Record<Language, TranslationDict> = {
     // Setup Page
     'setup.title': '게임 설정',
     'setup.allowVerbs': '동사 허용',
+    'setup.allowAdjectives': '형용사 허용',
+    'setup.allowAdverbs': '부사 허용',
     'setup.guessCount': '추측 횟수',
     'setup.timer': '타이머 (초)',
     'setup.start': '게임 시작',

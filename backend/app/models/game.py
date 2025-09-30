@@ -13,11 +13,13 @@ class Word(BaseModel):
     Model representing a word in the game.
     '''
     korean: str = Field('', description='Korean word')
-    pronunciation: str | None = None
-    hanja: str | None = None
     part_of_speech: str | None = None
     definition: str | None = None
     english: str | None = None
+    usages: str | None = None
+    semantic_category: str | None = None
+    pronunciation: str | None = None
+    hanja: str | None = None
 
 
 class Player(BaseModel):
