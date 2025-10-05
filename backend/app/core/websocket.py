@@ -180,6 +180,12 @@ async def handle_websocket_restart_request(
     manager: ConnectionManager,
     websocket: WebSocket,
 ):
+    previous_game_state = await get_game_state(state, request.game_id)
+    request.allow_adjectives = previous_game_state.get('allow_adjectives', 'False')
+    request.allow_adverbs = previous_game_state.get('allow_adverbs', 'False')
+    request.allow_verbs = previous_game_state.get('allow_verbs', 'False')
+    request.guess_count = int(previous_game_state.get('guess_count', 3))
+
     status = await init_game(
         state=state,
         game_id=request.game_id,

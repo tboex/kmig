@@ -13,6 +13,7 @@ from settings import PACKAGE_SEVERITY_LEVELS, SEVERITY_LEVEL, LOGGER_NAME
 def setup_routers(app: FastAPI) -> None:
     from api.v1.routes import health
     from api.v1.routes import game
+    from api.v1.routes import maintenance
 
     app.include_router(
         health.router,
@@ -23,6 +24,11 @@ def setup_routers(app: FastAPI) -> None:
         game.router,
         prefix=f'/{KMIG_SERVICE_PREFIX}/{KMIG_VERSION_PREFIX}/game',
         tags=[APITags.GAME],
+    )
+    app.include_router(
+        maintenance.router,
+        prefix=f'/{KMIG_SERVICE_PREFIX}/{KMIG_VERSION_PREFIX}/maintenance',
+        tags=[APITags.MAINTENANCE],
     )
 
 

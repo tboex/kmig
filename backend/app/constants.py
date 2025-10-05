@@ -9,6 +9,7 @@ class APITags(str, Enum):
     AUTH = 'auth'
     GAME = 'game'
     WORDS = 'words'
+    MAINTENANCE = 'maintenance'
 
 
 KMIG_BOT_NAME = 'kmig_bot'
