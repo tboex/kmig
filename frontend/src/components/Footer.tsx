@@ -28,10 +28,10 @@ export default function Footer({ onContactClick, onSupportClick }: FooterProps) 
           <i className="fab fa-fw fa-github"></i>
           <div>github</div>
         </a>
-        <a href="/public/terms-of-service" target="_blank" className="flex flex-row items-center space-x-2 text-theme-sub hover-text-theme-text">
+        {/* <a href="/public/terms-of-service" target="_blank" className="flex flex-row items-center space-x-2 text-theme-sub hover-text-theme-text">
           <i className="fas fa-fw fa-file-contract"></i>
           <div>terms</div>
-        </a>
+        </a> */}
       </div>
 
       {/* Right section */}
